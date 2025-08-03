@@ -1,13 +1,9 @@
 import type { Config } from "tailwindcss";
-import framework7 from "framework7/plugin";
-import konsta from "konsta/plugin";
+import konsta from "konsta/config";
 
-const config: Config = {
+export default konsta({
   content: ["./src/**/*.{js,ts,jsx,tsx}"],
   theme: {
     extend: {},
   },
-  plugins: [framework7, konsta],
-};
-
-export default config;
+}) satisfies Config;

@@ -1,5 +1,4 @@
-@import "framework7/framework7-bundle.css";
-@import "konsta/css";
+@import "framework7/css/bundle";
 @import "tailwindcss";
 
 :root {
