@@ -1,12 +1,12 @@
 import type { Config } from "tailwindcss";
-import konsta from "konsta/plugin";
+import konstaConfig from "konsta/config";
 
-const config: Config = {
+const config = konstaConfig({
   content: ["./src/**/*.{js,ts,jsx,tsx}"],
   theme: {
     extend: {},
   },
-  plugins: [konsta],
-};
+  plugins: [],
+}) satisfies Config;
 
 export default config;
