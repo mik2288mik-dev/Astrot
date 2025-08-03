@@ -1,7 +1,8 @@
 // src/app/page.tsx
-export default function Page() {
+
+export default function HomePage() {
   return (
-    <div style={{padding: 40, textAlign: 'center', fontSize: 32}}>
+    <div className="flex h-screen items-center justify-center bg-gradient-to-b from-black via-purple-900 to-black text-white text-3xl">
       Astrot работает! 🚀
     </div>
   );
