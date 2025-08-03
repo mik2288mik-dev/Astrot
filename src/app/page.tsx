@@ -1,4 +1,5 @@
 import Image from "next/image";
+import Link from "next/link";
 
 export default function Home() {
   return (
@@ -24,6 +25,13 @@ export default function Home() {
             Save and see your changes instantly.
           </li>
         </ol>
+
+        <Link
+          href="/telegram"
+          className="text-blue-500 underline"
+        >
+          Open Telegram Mini App Demo
+        </Link>
 
         <div className="flex gap-4 items-center flex-col sm:flex-row">
           <a
