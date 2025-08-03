@@ -1,5 +1,4 @@
 import type { Config } from "tailwindcss";
-import framework7 from "framework7/plugin";
 import konsta from "konsta/plugin";
 
 const config: Config = {
@@ -7,7 +6,7 @@ const config: Config = {
   theme: {
     extend: {},
   },
-  plugins: [framework7, konsta],
+  plugins: [konsta],
 };
 
 export default config;
