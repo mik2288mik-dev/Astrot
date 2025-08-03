@@ -22,6 +22,8 @@ You can start editing the page by modifying `app/page.tsx`. The page auto-update
 
 This project includes a simple Telegram Mini App example built with Framework7, Konsta UI and TailwindCSS. Visit `/telegram` while running the development server to see a small form that reads Telegram WebApp user data and collects birth details locally.
 
+To integrate the mini app with an actual Telegram Bot, configure your bot's webhook to point to `/api/telegram`. The route accepts `GET` for health checks and `POST` for updates, preventing Telegram from receiving a 404 when calling your server.
+
 This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
 
 ## Learn More
