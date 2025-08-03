@@ -1,4 +1,4 @@
-import CosmicLoader from "../../components/CosmicLoader";
+import CosmicLoader from "@/components/CosmicLoader";
 
 export default function Loading() {
   return <CosmicLoader message="Загрузка натальной карты..." />;
