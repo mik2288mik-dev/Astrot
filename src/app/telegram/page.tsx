@@ -37,7 +37,9 @@ export default function TelegramPage() {
     }
   }, []);
 
-  const handleSubmit = async (e: React.FormEvent) => {
+  const handleSubmit = async (
+    e: React.FormEvent | React.MouseEvent
+  ) => {
     e.preventDefault();
     if (!telegramId) return;
     try {
@@ -89,7 +91,7 @@ export default function TelegramPage() {
                   placeholder="City"
                 />
               </List>
-              <Button type="submit">Save</Button>
+              <Button onClick={handleSubmit}>Save</Button>
             </form>
           </Block>
         </Page>
