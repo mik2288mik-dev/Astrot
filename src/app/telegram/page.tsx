@@ -3,11 +3,13 @@
 import { useEffect, useState } from "react";
 import { App as Framework7App, View } from "framework7-react";
 import { Page, Navbar, Block, List, ListInput, Button } from "konsta/react";
+import { upsertProfile } from "@/lib/supabase";
 
 interface TelegramWebApp {
   expand: () => void;
   initDataUnsafe?: {
     user?: {
+      id?: number;
       first_name?: string;
     };
   };
@@ -21,6 +23,7 @@ declare global {
 
 export default function TelegramPage() {
   const [telegramUser, setTelegramUser] = useState<string | undefined>();
+  const [telegramId, setTelegramId] = useState<number | undefined>();
   const [birthDate, setBirthDate] = useState("");
   const [birthTime, setBirthTime] = useState("");
   const [birthPlace, setBirthPlace] = useState("");
@@ -30,13 +33,25 @@ export default function TelegramPage() {
     if (tg) {
       tg.expand();
       setTelegramUser(tg.initDataUnsafe?.user?.first_name);
+      setTelegramId(tg.initDataUnsafe?.user?.id);
     }
   }, []);
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    const message = `Birth info:\nDate: ${birthDate}\nTime: ${birthTime}\nPlace: ${birthPlace}`;
-    alert(message);
+    if (!telegramId) return;
+    try {
+      await upsertProfile({
+        id: telegramId.toString(),
+        birth_date: birthDate,
+        birth_time: birthTime,
+        birth_place: birthPlace,
+      });
+      alert("Saved!");
+    } catch (err) {
+      console.error(err);
+      alert("Failed to save");
+    }
   };
 
   return (
