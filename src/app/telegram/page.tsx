@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import { App as Framework7App, View } from "framework7-react";
 import { Page, Navbar, Block, List, ListInput, Button } from "konsta/react";
+import { getSunSign } from "@/lib/astro";
 import { upsertProfile } from "@/lib/supabase";
 
 interface TelegramWebApp {
@@ -27,6 +28,7 @@ export default function TelegramPage() {
   const [birthDate, setBirthDate] = useState("");
   const [birthTime, setBirthTime] = useState("");
   const [birthPlace, setBirthPlace] = useState("");
+  const [sunSign, setSunSign] = useState<string | undefined>();
 
   useEffect(() => {
     const tg = window.Telegram?.WebApp;
@@ -49,6 +51,7 @@ export default function TelegramPage() {
         birth_time: birthTime,
         birth_place: birthPlace,
       });
+      setSunSign(getSunSign(birthDate));
       alert("Saved!");
     } catch (err) {
       console.error(err);
@@ -93,6 +96,11 @@ export default function TelegramPage() {
               </List>
               <Button onClick={handleSubmit}>Save</Button>
             </form>
+            {sunSign && (
+              <Block strong className="mt-4">
+                <p>Your Sun sign is {sunSign}.</p>
+              </Block>
+            )}
           </Block>
         </Page>
       </View>
