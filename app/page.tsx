@@ -3,41 +3,48 @@
 import { useEffect, useState } from 'react';
 import { App as Framework7App, View } from 'framework7-react';
 import { Page, Navbar, Block, List, ListItem } from 'konsta/react';
-
+import { useTelegramAuth } from '../src/lib/telegram-auth';
+import { UserProfile } from '../src/components/UserProfile';
+import { LoadingScreen } from '../src/components/LoadingScreen';
+import { ErrorScreen } from '../src/components/ErrorScreen';
 
 export default function HomePage() {
-  const [name, setName] = useState<string>('');
-  const [userId, setUserId] = useState<number | null>(null);
+  const { user, isAuthenticated, isLoading, error, initTelegram, logout } = useTelegramAuth();
   const [platform, setPlatform] = useState<'ios' | 'md'>('ios');
   const [colorScheme, setColorScheme] = useState<'light' | 'dark'>('light');
 
   useEffect(() => {
     const tg = window.Telegram?.WebApp;
     if (tg) {
-      tg.ready();
       setPlatform(tg.platform === 'ios' ? 'ios' : 'md');
       setColorScheme(tg.colorScheme === 'dark' ? 'dark' : 'light');
-      const user = tg.initDataUnsafe?.user;
-      if (user) {
-        const displayName =
-          user.username || [user.first_name, user.last_name].filter(Boolean).join(' ');
-        setName(displayName);
-        if (user.id !== undefined) setUserId(user.id);
-      }
     }
   }, []);
+
+  // Показываем экран загрузки
+  if (isLoading) {
+    return <LoadingScreen />;
+  }
+
+  // Показываем экран ошибки
+  if (error) {
+    return <ErrorScreen error={error} onRetry={initTelegram} />;
+  }
+
+  // Если пользователь не авторизован, показываем экран загрузки
+  if (!isAuthenticated || !user) {
+    return <LoadingScreen />;
+  }
 
   return (
     <Framework7App theme={platform} className={colorScheme === 'dark' ? 'dark' : ''}>
       <View main>
         <Page>
           <Navbar title="Astrot" />
-          <Block strong>
-            {name && <p>Привет, {name}!</p>}
-            {userId && <p>ID: {userId}</p>}
-          </Block>
+          <UserProfile user={user} onLogout={logout} />
           <List strong inset>
             <ListItem title="Настройки" component="a" href="/settings" />
+            <ListItem title="Профиль" component="a" href="/profile" />
           </List>
         </Page>
       </View>

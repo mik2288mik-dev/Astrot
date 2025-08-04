@@ -1,42 +1,169 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Astrot - Telegram Mini App
 
-## Getting Started
+Telegram Mini App с полноценной авторизацией через Telegram и автоматической загрузкой данных пользователя.
 
-First, run the development server:
+## Возможности
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+✅ **Автоматическая авторизация через Telegram**
+- Мгновенная загрузка данных пользователя при входе
+- Получение ID, имени, фамилии, username
+- Загрузка аватара пользователя
+- Определение Premium статуса
+- Поддержка языковых настроек
+
+✅ **Полная интеграция с Telegram Web App API**
+- Отправка данных в Telegram
+- Запрос контактов пользователя
+- Чтение буфера обмена
+- Показ алертов и подтверждений
+- Открытие ссылок
+
+✅ **Современный UI/UX**
+- Адаптивный дизайн для iOS и Android
+- Поддержка темной и светлой темы
+- Красивые компоненты с Konsta UI
+- Анимации и переходы
+
+✅ **Управление состоянием**
+- Контекст для авторизации
+- Персистентность данных в localStorage
+- Обработка ошибок
+- Состояния загрузки
+
+## Структура проекта
+
+```
+src/
+├── lib/
+│   ├── telegram-auth.tsx      # Контекст авторизации
+│   └── use-telegram-api.ts    # Хук для работы с Telegram API
+├── components/
+│   ├── UserProfile.tsx        # Компонент профиля пользователя
+│   ├── LoadingScreen.tsx      # Экран загрузки
+│   └── ErrorScreen.tsx        # Экран ошибок
+app/
+├── layout.tsx                 # Корневой layout с провайдером
+├── page.tsx                   # Главная страница
+└── profile/
+    └── page.tsx              # Страница профиля
+types/
+└── telegram.d.ts             # Типы для Telegram Web App
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+## Установка и запуск
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+1. Установите зависимости:
+```bash
+npm install
+```
 
-## Telegram Mini App Demo
+2. Запустите проект в режиме разработки:
+```bash
+npm run dev
+```
 
-This project includes a simple Telegram Mini App example built with Framework7, Konsta UI and TailwindCSS. Visit `/telegram` while running the development server to see a small form that reads Telegram WebApp user data and collects birth details locally.
+3. Откройте [http://localhost:3000](http://localhost:3000) в браузере
 
-To integrate the mini app with an actual Telegram Bot, configure your bot's webhook to point to `/api/telegram`. The route accepts `GET` for health checks and `POST` for updates, preventing Telegram from receiving a 404 when calling your server.
+## Использование
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+### Основные компоненты
 
-## Learn More
+#### TelegramAuthProvider
+Провайдер для управления состоянием авторизации:
 
-To learn more about Next.js, take a look at the following resources:
+```tsx
+import { TelegramAuthProvider } from '../src/lib/telegram-auth';
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+export default function RootLayout({ children }) {
+  return (
+    <html>
+      <body>
+        <TelegramAuthProvider>
+          {children}
+        </TelegramAuthProvider>
+      </body>
+    </html>
+  );
+}
+```
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+#### useTelegramAuth
+Хук для получения данных авторизации:
 
-## Deploy on Vercel
+```tsx
+import { useTelegramAuth } from '../src/lib/telegram-auth';
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+function MyComponent() {
+  const { user, isAuthenticated, isLoading, error, logout } = useTelegramAuth();
+  
+  if (isLoading) return <LoadingScreen />;
+  if (error) return <ErrorScreen error={error} />;
+  if (!isAuthenticated) return <AuthScreen />;
+  
+  return <UserProfile user={user} onLogout={logout} />;
+}
+```
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+#### useTelegramApi
+Хук для работы с Telegram API:
+
+```tsx
+import { useTelegramApi } from '../src/lib/use-telegram-api';
+
+function MyComponent() {
+  const { sendData, showAlert, requestContact, readClipboard } = useTelegramApi();
+  
+  const handleSendData = async () => {
+    await sendData(JSON.stringify({ action: 'test' }));
+    showAlert('Данные отправлены!');
+  };
+  
+  return <button onClick={handleSendData}>Отправить данные</button>;
+}
+```
+
+### Данные пользователя
+
+При авторизации автоматически загружаются следующие данные:
+
+```typescript
+interface TelegramUser {
+  id: number;                    // ID пользователя
+  first_name: string;           // Имя
+  last_name?: string;           // Фамилия
+  username?: string;            // Username
+  language_code?: string;       // Код языка
+  is_premium?: boolean;         // Premium статус
+  photo_url?: string;           // URL аватара
+}
+```
+
+### Функции Telegram API
+
+- `sendData(data)` - Отправка данных в Telegram
+- `showAlert(message)` - Показ алерта
+- `showConfirm(message)` - Показ подтверждения
+- `requestContact()` - Запрос контакта пользователя
+- `readClipboard()` - Чтение буфера обмена
+- `openLink(url)` - Открытие ссылки
+
+## Настройка для продакшена
+
+1. Создайте бота в Telegram через @BotFather
+2. Получите токен бота
+3. Настройте Web App в настройках бота
+4. Укажите URL вашего приложения
+5. Настройте домен в настройках бота
+
+## Технологии
+
+- **Next.js 15** - React фреймворк
+- **Framework7** - UI фреймворк для мобильных приложений
+- **Konsta UI** - Компоненты для мобильных приложений
+- **TypeScript** - Типизация
+- **Tailwind CSS** - Стилизация
+- **Telegram Web App API** - Интеграция с Telegram
+
+## Лицензия
+
+MIT
