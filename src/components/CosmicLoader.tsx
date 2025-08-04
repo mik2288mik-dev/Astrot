@@ -3,10 +3,10 @@
 import { useMemo } from "react";
 
 type Props = {
-  message: string;
+  message?: string;
 };
 
-export default function CosmicLoader({ message }: Props) {
+export default function CosmicLoader({ message = "Подключение к космосу..." }: Props) {
   const stars = useMemo(
     () =>
       Array.from({ length: 60 }).map(() => ({
@@ -14,22 +14,33 @@ export default function CosmicLoader({ message }: Props) {
         top: Math.random() * 100,
         delay: Math.random() * 5,
         duration: 2 + Math.random() * 3,
+        size: 1 + Math.random() * 2,
       })),
     []
   );
 
   return (
     <div className="relative flex h-screen items-center justify-center overflow-hidden bg-gradient-to-b from-black via-indigo-950 to-black text-white">
+      <div
+        className="absolute inset-0 -z-20 opacity-40"
+        style={{
+          background:
+            "conic-gradient(at 50% 50%, rgba(79,70,229,0.6), rgba(147,51,234,0.6), rgba(59,7,100,0.6), rgba(79,70,229,0.6))",
+          animation: "spin 30s linear infinite",
+        }}
+      />
       <div className="absolute inset-0 -z-10">
         {stars.map((star, i) => (
           <span
             key={i}
-            className="absolute h-1 w-1 rounded-full bg-white opacity-70 animate-pulse"
+            className="absolute rounded-full bg-white opacity-70 animate-pulse"
             style={{
               left: `${star.left}%`,
               top: `${star.top}%`,
               animationDelay: `${star.delay}s`,
               animationDuration: `${star.duration}s`,
+              width: `${star.size}px`,
+              height: `${star.size}px`,
             }}
           />
         ))}
