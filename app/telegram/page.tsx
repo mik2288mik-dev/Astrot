@@ -65,7 +65,12 @@ export default function TelegramPage() {
         <Page>
           <Navbar title="AstroT" />
           <Block strong>
-            {telegramUser && <p className="mb-4">Hello, {telegramUser}!</p>}
+            {(telegramUser || telegramId) && (
+              <p className="mb-4">
+                {telegramUser && <>Hello, {telegramUser}! </>}
+                {telegramId && <>Your Telegram ID is {telegramId}.</>}
+              </p>
+            )}
             <form onSubmit={handleSubmit} className="space-y-4">
               <List strong inset>
                 <ListInput
