@@ -21,8 +21,8 @@
     "framer-motion": "^11.0.0",
     "clsx": "^2.1.0",
     "tailwind-merge": "^2.5.0",
-    "@tma.js/sdk-react": "^2.2.8",
-    "@tma.js/sdk": "^2.7.0"
+    "@telegram-apps/sdk-react": "^3.3.6",
+    "@telegram-apps/sdk": "^3.3.6"
   },
   "devDependencies": {
     "typescript": "^5",
