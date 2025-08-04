@@ -21,7 +21,7 @@ import { getSunSign } from "@/lib/astro";
 import { upsertProfile } from "@/lib/supabase";
 
 export default function TelegramPage() {
-  const { user, isAuthorized, platform, colorScheme } = useTelegramAuth();
+  const { user, platform, colorScheme } = useTelegramAuth();
   const { hapticFeedback, showAlert } = useTelegram();
   const [birthDate, setBirthDate] = useState("");
   const [birthTime, setBirthTime] = useState("");

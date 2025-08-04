@@ -47,7 +47,7 @@ export interface TelegramWebApp {
       added_to_attachment_menu?: boolean;
       allows_write_to_pm?: boolean;
     };
-    chat?: any;
+    chat?: unknown;
     chat_type?: string;
     chat_instance?: string;
     start_param?: string;
@@ -108,7 +108,7 @@ export interface TelegramWebApp {
     user_id?: number;
     vcard?: string;
   }) => void) => void;
-  invokeCustomMethod: (method: string, params?: any) => void;
+  invokeCustomMethod: (method: string, params?: unknown) => void;
   isVersionAtLeast: (version: string) => boolean;
 }
 

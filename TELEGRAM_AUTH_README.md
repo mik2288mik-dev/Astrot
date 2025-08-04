@@ -35,7 +35,7 @@ types/
 В `app/layout.tsx` уже настроены провайдеры:
 
 ```tsx
-import { SDKProvider } from "@tma.js/sdk-react";
+import { SDKProvider } from "@telegram-apps/sdk-react";
 import { TelegramAuthProvider } from "@/lib/telegram-auth";
 
 export default function RootLayout({ children }) {

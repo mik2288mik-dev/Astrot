@@ -5,13 +5,13 @@ import { useTelegramAuth } from '@/lib/telegram-auth';
 import { useTelegram } from '@/lib/use-telegram';
 import { 
   UserIcon, 
-  CrownIcon, 
   CheckCircleIcon, 
   XCircleIcon,
   GlobeAltIcon,
   IdentificationIcon,
   ChatBubbleLeftRightIcon
 } from '@heroicons/react/24/outline';
+import { StarIcon } from '@heroicons/react/24/solid';
 
 export function UserDetails() {
   const { user, isAuthorized, isLoading } = useTelegramAuth();
@@ -100,7 +100,7 @@ export function UserDetails() {
             <div className="flex items-center">
               {user.is_premium ? (
                 <>
-                  <CrownIcon className="h-4 w-4 text-yellow-500 mr-1" />
+                  <StarIcon className="h-4 w-4 text-yellow-500 mr-1" />
                   <span className="text-sm font-medium text-yellow-600">Premium</span>
                 </>
               ) : (

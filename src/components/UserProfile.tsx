@@ -2,7 +2,8 @@
 
 import React from 'react';
 import Image from 'next/image';
-import { UserIcon, CrownIcon, CheckCircleIcon } from '@heroicons/react/24/solid';
+import { UserIcon, CheckCircleIcon } from '@heroicons/react/24/solid';
+import { StarIcon } from '@heroicons/react/24/solid';
 import { useTelegramAuth, TelegramUser } from '@/lib/telegram-auth';
 
 interface UserProfileProps {
@@ -54,7 +55,7 @@ export function UserProfile({ user, showDetails = true, className = '' }: UserPr
         {/* Индикатор Premium */}
         {displayUser.is_premium && (
           <div className="absolute -top-1 -right-1">
-            <CrownIcon className="h-5 w-5 text-yellow-500" />
+            <StarIcon className="h-5 w-5 text-yellow-500" />
           </div>
         )}
       </div>
@@ -66,7 +67,7 @@ export function UserProfile({ user, showDetails = true, className = '' }: UserPr
             {displayName}
           </h3>
           {displayUser.is_premium && (
-            <CrownIcon className="h-4 w-4 text-yellow-500" />
+            <StarIcon className="h-4 w-4 text-yellow-500" />
           )}
         </div>
         

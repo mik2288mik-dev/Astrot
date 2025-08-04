@@ -1,7 +1,7 @@
 'use client';
 
 import React, { createContext, useContext, useEffect, useState, ReactNode } from 'react';
-import { useInitData, useThemeParams, useViewport } from '@tma.js/sdk-react';
+import { useInitData, useThemeParams, useViewport } from '@telegram-apps/sdk-react';
 
 export interface TelegramUser {
   id: number;
@@ -78,9 +78,22 @@ export function TelegramAuthProvider({ children }: TelegramAuthProviderProps) {
         const user = initData?.user;
         
         if (user) {
+          // Преобразуем тип пользователя в наш интерфейс
+          const telegramUser: TelegramUser = {
+            id: user.id,
+            first_name: user.firstName,
+            last_name: user.lastName,
+            username: user.username,
+            photo_url: user.photoUrl,
+            language_code: user.languageCode,
+            is_premium: user.isPremium,
+            added_to_attachment_menu: user.addedToAttachmentMenu,
+            allows_write_to_pm: user.allowsWriteToPm,
+          };
+          
           setState(prev => ({
             ...prev,
-            user,
+            user: telegramUser,
             isAuthorized: true,
             isLoading: false,
           }));
@@ -99,7 +112,7 @@ export function TelegramAuthProvider({ children }: TelegramAuthProviderProps) {
                 isLoading: false,
                 theme: tg.colorScheme === 'dark' ? 'dark' : 'light',
                 colorScheme: tg.colorScheme === 'dark' ? 'dark' : 'light',
-                platform: tg.platform as any,
+                platform: tg.platform as 'ios' | 'android' | 'web' | 'macos' | 'tdesktop' | 'weba' | 'unigram' | 'unknown',
                 viewport: {
                   height: tg.viewportHeight,
                   width: tg.viewportWidth,

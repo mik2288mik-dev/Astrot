@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import Script from "next/script";
 import "./globals.css";
-import { SDKProvider } from "@tma.js/sdk-react";
+import { SDKProvider } from "@telegram-apps/sdk-react";
 import { TelegramAuthProvider } from "@/lib/telegram-auth";
 
 export const metadata: Metadata = {
