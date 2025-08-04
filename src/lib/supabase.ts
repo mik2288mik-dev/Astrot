@@ -1,3 +1,10 @@
+import { createClient } from '@supabase/supabase-js';
+
+const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!;
+const supabaseKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!;
+
+export const supabase = createClient(supabaseUrl, supabaseKey);
+
 export interface ProfileData {
   id: string;
   birth_date: string;
@@ -5,24 +12,14 @@ export interface ProfileData {
   birth_place: string;
 }
 
-const SUPABASE_URL = process.env.NEXT_PUBLIC_SUPABASE_URL as string;
-const SUPABASE_KEY = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY as string;
-
 export async function upsertProfile(data: ProfileData) {
-  const res = await fetch(`${SUPABASE_URL}/rest/v1/profiles`, {
-    method: "POST",
-    headers: {
-      apikey: SUPABASE_KEY,
-      Authorization: `Bearer ${SUPABASE_KEY}`,
-      "Content-Type": "application/json",
-      Prefer: "resolution=merge-duplicates",
-    },
-    body: JSON.stringify(data),
-  });
+  const { data: result, error } = await supabase
+    .from('profiles')
+    .upsert(data, { onConflict: 'id' });
 
-  if (!res.ok) {
-    throw new Error(`Supabase error: ${res.status}`);
+  if (error) {
+    throw error;
   }
 
-  return res.json();
+  return result;
 }

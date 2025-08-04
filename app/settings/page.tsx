@@ -1,31 +1,29 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { App as Framework7App, View } from 'framework7-react';
-import { Page, Navbar, List, ListItem } from 'konsta/react';
-
+import { Page, Navbar, List, ListItem, Toggle } from 'konsta/react';
+import { useTelegramAuth } from '@/lib/telegram-auth';
 
 export default function SettingsPage() {
-  const [platform, setPlatform] = useState<string>('unknown');
-  const [colorScheme, setColorScheme] = useState<'light' | 'dark'>('light');
-
-  useEffect(() => {
-    const tg = window.Telegram?.WebApp;
-    if (tg) {
-      tg.ready();
-      setPlatform(tg.platform);
-      setColorScheme(tg.colorScheme === 'dark' ? 'dark' : 'light');
-    }
-  }, []);
+  const { platform, colorScheme } = useTelegramAuth();
+  const [scheme, setScheme] = useState<'light' | 'dark'>(colorScheme);
 
   return (
-    <Framework7App theme={platform === 'ios' ? 'ios' : 'md'} className={colorScheme === 'dark' ? 'dark' : ''}>
+    <Framework7App theme={platform} className={scheme === 'dark' ? 'dark' : ''}>
       <View main>
         <Page>
           <Navbar title="Настройки" />
           <List strong inset>
-            <ListItem title="Платформа" after={platform} />
-            <ListItem title="Тема" after={colorScheme} />
+            <ListItem
+              title="Тёмная тема"
+              after={
+                <Toggle
+                  checked={scheme === 'dark'}
+                  onChange={(e) => setScheme(e.target.checked ? 'dark' : 'light')}
+                />
+              }
+            />
           </List>
         </Page>
       </View>
