@@ -1,7 +1,6 @@
 import type { Metadata } from "next";
 import Script from "next/script";
 import "./globals.css";
-import { SDKProvider } from "@tma.js/sdk-react";
 import { TelegramAuthProvider } from "@/lib/telegram-auth";
 
 export const metadata: Metadata = {
@@ -20,11 +19,9 @@ export default function RootLayout({
         <Script src="https://telegram.org/js/telegram-web-app.js" strategy="beforeInteractive" />
       </head>
       <body className="antialiased">
-        <SDKProvider>
-          <TelegramAuthProvider>
-            {children}
-          </TelegramAuthProvider>
-        </SDKProvider>
+        <TelegramAuthProvider>
+          {children}
+        </TelegramAuthProvider>
       </body>
     </html>
   );
