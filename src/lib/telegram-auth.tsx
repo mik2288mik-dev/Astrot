@@ -1,7 +1,6 @@
 'use client';
 
 import React, { createContext, useContext, useEffect, useState, ReactNode } from 'react';
-import { useInitData, useThemeParams, useViewport } from '@tma.js/sdk-react';
 
 export interface TelegramUser {
   id: number;
@@ -50,10 +49,6 @@ interface TelegramAuthProviderProps {
 }
 
 export function TelegramAuthProvider({ children }: TelegramAuthProviderProps) {
-  const initData = useInitData();
-  const themeParams = useThemeParams();
-  const viewport = useViewport();
-  
   const [state, setState] = useState<TelegramAuthState>({
     user: null,
     isAuthorized: false,
@@ -74,54 +69,41 @@ export function TelegramAuthProvider({ children }: TelegramAuthProviderProps) {
       try {
         setState(prev => ({ ...prev, isLoading: true, error: null }));
 
-        // Получаем данные пользователя из initData
-        const user = initData?.user;
-        
-        if (user) {
-          setState(prev => ({
-            ...prev,
-            user,
-            isAuthorized: true,
-            isLoading: false,
-          }));
-        } else {
-          // Если нет данных пользователя, проверяем Telegram WebApp
-          const tg = window.Telegram?.WebApp;
-          if (tg) {
-            tg.ready();
-            
-            const webAppUser = tg.initDataUnsafe?.user;
-            if (webAppUser) {
-              setState(prev => ({
-                ...prev,
-                user: webAppUser,
-                isAuthorized: true,
-                isLoading: false,
-                theme: tg.colorScheme === 'dark' ? 'dark' : 'light',
-                colorScheme: tg.colorScheme === 'dark' ? 'dark' : 'light',
-                platform: tg.platform as any,
-                viewport: {
-                  height: tg.viewportHeight,
-                  width: tg.viewportWidth,
-                  is_expanded: tg.isExpanded,
-                },
-              }));
-            } else {
-              setState(prev => ({
-                ...prev,
-                isAuthorized: false,
-                isLoading: false,
-                error: 'Пользователь не авторизован в Telegram',
-              }));
-            }
+        const tg = window.Telegram?.WebApp;
+        if (tg) {
+          tg.ready();
+
+          const webAppUser = tg.initDataUnsafe?.user;
+          if (webAppUser) {
+            setState(prev => ({
+              ...prev,
+              user: webAppUser,
+              isAuthorized: true,
+              isLoading: false,
+              theme: tg.colorScheme === 'dark' ? 'dark' : 'light',
+              colorScheme: tg.colorScheme === 'dark' ? 'dark' : 'light',
+              platform: tg.platform as any,
+              viewport: {
+                height: tg.viewportHeight,
+                width: tg.viewportWidth,
+                is_expanded: tg.isExpanded,
+              },
+            }));
           } else {
             setState(prev => ({
               ...prev,
               isAuthorized: false,
               isLoading: false,
-              error: 'Telegram WebApp не доступен',
+              error: 'Пользователь не авторизован в Telegram',
             }));
           }
+        } else {
+          setState(prev => ({
+            ...prev,
+            isAuthorized: false,
+            isLoading: false,
+            error: 'Telegram WebApp не доступен',
+          }));
         }
       } catch (error) {
         console.error('Ошибка инициализации Telegram:', error);
@@ -134,35 +116,7 @@ export function TelegramAuthProvider({ children }: TelegramAuthProviderProps) {
     };
 
     initializeTelegram();
-  }, [initData]);
-
-  // Обновляем состояние при изменении viewport
-  useEffect(() => {
-    if (viewport) {
-      setState(prev => ({
-        ...prev,
-        viewport: {
-          height: viewport.height,
-          width: viewport.width,
-          is_expanded: viewport.is_expanded,
-        },
-      }));
-    }
-  }, [viewport]);
-
-  // Обновляем тему при изменении themeParams
-  useEffect(() => {
-    if (themeParams) {
-      const isDark = themeParams.bg_color && 
-        parseInt(themeParams.bg_color.slice(1), 16) < 0x888888;
-      
-      setState(prev => ({
-        ...prev,
-        theme: isDark ? 'dark' : 'light',
-        colorScheme: isDark ? 'dark' : 'light',
-      }));
-    }
-  }, [themeParams]);
+  }, []);
 
   const refreshUser = () => {
     const tg = window.Telegram?.WebApp;
