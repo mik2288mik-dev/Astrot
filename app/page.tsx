@@ -1,5 +1,8 @@
+'use client';
+
 import Link from "next/link";
 import Image from "next/image";
+import { useEffect, useState } from "react";
 
 const features = [
   {
@@ -20,6 +23,17 @@ const features = [
 ];
 
 export default function HomePage() {
+  const [telegramUser, setTelegramUser] = useState<string | undefined>();
+  const [telegramId, setTelegramId] = useState<number | undefined>();
+
+  useEffect(() => {
+    const tg = window.Telegram?.WebApp;
+    if (tg?.initDataUnsafe?.user) {
+      setTelegramUser(tg.initDataUnsafe.user.username || tg.initDataUnsafe.user.first_name);
+      setTelegramId(tg.initDataUnsafe.user.id);
+    }
+  }, []);
+
   return (
     <div className="flex min-h-screen flex-col justify-center bg-gradient-to-b from-black via-purple-900 to-black p-6 text-white">
       <main className="mx-auto max-w-4xl text-center">
@@ -28,6 +42,12 @@ export default function HomePage() {
             Astrot
           </span>
         </h1>
+        {(telegramUser || telegramId) && (
+          <p className="mb-4">
+            {telegramUser && <>Привет, {telegramUser}! </>}
+            {telegramId && <>ID: {telegramId}</>}
+          </p>
+        )}
         <p className="mx-auto mb-8 max-w-xl text-xl">
           Погрузитесь в мир астрологии и узнайте больше о своей натальной карте.
         </p>
