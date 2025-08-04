@@ -1,8 +1,8 @@
 'use client';
 
 import React from 'react';
-import { Block, List, ListItem, Avatar, Button } from 'konsta/react';
-import { useTelegramAuth, TelegramUser } from '../lib/telegram-auth';
+import { Block, List, ListItem, Button } from 'konsta/react';
+import { TelegramUser } from '../lib/telegram-auth';
 import { User, LogOut, Crown, Globe, Camera } from 'lucide-react';
 
 interface UserProfileProps {
@@ -30,10 +30,10 @@ export const UserProfile: React.FC<UserProfileProps> = ({ user, onLogout }) => {
           {/* Аватар */}
           <div className="relative">
             {user.photo_url ? (
-              <Avatar
+              <img
                 src={user.photo_url}
-                size="w-20 h-20"
-                className="rounded-full border-4 border-blue-500"
+                alt="Avatar"
+                className="w-20 h-20 rounded-full border-4 border-blue-500"
               />
             ) : (
               <div className="w-20 h-20 bg-blue-500 rounded-full flex items-center justify-center">
@@ -109,10 +109,9 @@ export const UserProfile: React.FC<UserProfileProps> = ({ user, onLogout }) => {
       {/* Кнопка выхода */}
       <Block>
         <Button
-          fill
           color="red"
           onClick={onLogout}
-          className="flex items-center justify-center space-x-2"
+          className="flex items-center justify-center space-x-2 w-full"
         >
           <LogOut className="w-4 h-4" />
           <span>Выйти</span>

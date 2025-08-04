@@ -107,7 +107,7 @@ export const TelegramAuthProvider: React.FC<TelegramAuthProviderProps> = ({ chil
         const userData = JSON.parse(savedUser);
         setUser(userData);
         setIsAuthenticated(true);
-      } catch (err) {
+      } catch {
         localStorage.removeItem('telegram_user');
         localStorage.removeItem('telegram_auth');
       }

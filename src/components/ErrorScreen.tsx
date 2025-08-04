@@ -20,10 +20,9 @@ export const ErrorScreen: React.FC<ErrorScreenProps> = ({ error, onRetry }) => {
             {error}
           </p>
           <Button
-            fill
             color="blue"
             onClick={onRetry}
-            className="flex items-center justify-center space-x-2"
+            className="flex items-center justify-center space-x-2 w-full"
           >
             <RefreshCw className="w-4 h-4" />
             <span>Попробовать снова</span>

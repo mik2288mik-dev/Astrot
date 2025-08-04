@@ -6,13 +6,11 @@ import { Page, Navbar, Block, List, ListItem, Button } from 'konsta/react';
 import { useTelegramAuth } from '../../src/lib/telegram-auth';
 import { useTelegramApi } from '../../src/lib/use-telegram-api';
 import { LoadingScreen } from '../../src/components/LoadingScreen';
-import { ErrorScreen } from '../../src/components/ErrorScreen';
-import { User, Phone, Copy, ExternalLink, Send } from 'lucide-react';
+import { User, Phone, Copy, Send } from 'lucide-react';
 
 export default function ProfilePage() {
   const { user, isAuthenticated, logout } = useTelegramAuth();
   const { 
-    getMe, 
     sendData, 
     showAlert, 
     showConfirm, 
@@ -89,7 +87,7 @@ export default function ProfilePage() {
     <Framework7App theme={platform} className={colorScheme === 'dark' ? 'dark' : ''}>
       <View main>
         <Page>
-          <Navbar title="Профиль" backLink />
+          <Navbar title="Профиль" />
           
           {/* Основная информация */}
           <Block strong className="text-center">
@@ -177,43 +175,39 @@ export default function ProfilePage() {
           <Block>
             <div className="space-y-3">
               <Button
-                fill
                 color="blue"
                 onClick={handleSendData}
                 disabled={apiLoading}
-                className="flex items-center justify-center space-x-2"
+                className="flex items-center justify-center space-x-2 w-full"
               >
                 <Send className="w-4 h-4" />
                 <span>Отправить данные в Telegram</span>
               </Button>
 
               <Button
-                fill
                 color="green"
                 onClick={handleRequestContact}
                 disabled={apiLoading}
-                className="flex items-center justify-center space-x-2"
+                className="flex items-center justify-center space-x-2 w-full"
               >
                 <Phone className="w-4 h-4" />
                 <span>Запросить контакт</span>
               </Button>
 
               <Button
-                fill
                 color="purple"
                 onClick={handleReadClipboard}
                 disabled={apiLoading}
-                className="flex items-center justify-center space-x-2"
+                className="flex items-center justify-center space-x-2 w-full"
               >
                 <Copy className="w-4 h-4" />
                 <span>Читать буфер обмена</span>
               </Button>
 
               <Button
-                fill
                 color="red"
                 onClick={handleLogout}
-                className="flex items-center justify-center space-x-2"
+                className="flex items-center justify-center space-x-2 w-full"
               >
                 <span>Выйти</span>
               </Button>
@@ -233,10 +227,9 @@ export default function ProfilePage() {
             <Block strong color="red">
               <p className="text-red-600">{apiError}</p>
               <Button
-                fill
                 color="red"
                 onClick={clearError}
-                className="mt-2"
+                className="mt-2 w-full"
               >
                 Закрыть
               </Button>

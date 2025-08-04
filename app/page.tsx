@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from 'react';
 import { App as Framework7App, View } from 'framework7-react';
-import { Page, Navbar, Block, List, ListItem } from 'konsta/react';
+import { Page, Navbar, List, ListItem } from 'konsta/react';
 import { useTelegramAuth } from '../src/lib/telegram-auth';
 import { UserProfile } from '../src/components/UserProfile';
 import { LoadingScreen } from '../src/components/LoadingScreen';
