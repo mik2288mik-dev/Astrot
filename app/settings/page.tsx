@@ -4,17 +4,6 @@ import { useEffect, useState } from 'react';
 import { App as Framework7App, View } from 'framework7-react';
 import { Page, Navbar, List, ListItem } from 'konsta/react';
 
-interface TelegramWebApp {
-  ready: () => void;
-  platform: string;
-  colorScheme?: string;
-}
-
-declare global {
-  interface Window {
-    Telegram?: { WebApp?: TelegramWebApp };
-  }
-}
 
 export default function SettingsPage() {
   const [platform, setPlatform] = useState<string>('unknown');

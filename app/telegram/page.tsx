@@ -7,24 +7,6 @@ import { Page, Navbar, Block, List, ListInput, Button } from "konsta/react";
 import { getSunSign } from "@/lib/astro";
 import { upsertProfile } from "@/lib/supabase";
 
-interface TelegramWebApp {
-  expand: () => void;
-  initDataUnsafe?: {
-    user?: {
-      id?: number;
-      first_name?: string;
-      last_name?: string;
-      username?: string;
-      photo_url?: string;
-    };
-  };
-}
-
-declare global {
-  interface Window {
-    Telegram?: { WebApp?: TelegramWebApp };
-  }
-}
 
 export default function TelegramPage() {
   const [telegramName, setTelegramName] = useState<string | undefined>();

@@ -4,25 +4,6 @@ import { useEffect, useState } from 'react';
 import { App as Framework7App, View } from 'framework7-react';
 import { Page, Navbar, Block, List, ListItem } from 'konsta/react';
 
-interface TelegramWebApp {
-  ready: () => void;
-  platform: string;
-  colorScheme?: string;
-  initDataUnsafe?: {
-    user?: {
-      id?: number;
-      first_name?: string;
-      last_name?: string;
-      username?: string;
-    };
-  };
-}
-
-declare global {
-  interface Window {
-    Telegram?: { WebApp?: TelegramWebApp };
-  }
-}
 
 export default function HomePage() {
   const [name, setName] = useState<string>('');
