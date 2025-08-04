@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import Image from "next/image";
 import { App as Framework7App, View } from "framework7-react";
 import { Page, Navbar, Block, List, ListInput, Button } from "konsta/react";
 import { getSunSign } from "@/lib/astro";
@@ -12,7 +13,9 @@ interface TelegramWebApp {
     user?: {
       id?: number;
       first_name?: string;
+      last_name?: string;
       username?: string;
+      photo_url?: string;
     };
   };
 }
@@ -24,7 +27,11 @@ declare global {
 }
 
 export default function TelegramPage() {
-  const [telegramUser, setTelegramUser] = useState<string | undefined>();
+  const [telegramName, setTelegramName] = useState<string | undefined>();
+  const [telegramUsername, setTelegramUsername] =
+    useState<string | undefined>();
+  const [telegramPhotoUrl, setTelegramPhotoUrl] =
+    useState<string | undefined>();
   const [telegramId, setTelegramId] = useState<number | undefined>();
   const [birthDate, setBirthDate] = useState("");
   const [birthTime, setBirthTime] = useState("");
@@ -35,12 +42,17 @@ export default function TelegramPage() {
     const tg = window.Telegram?.WebApp;
     if (tg) {
       tg.expand();
-      const name =
-        tg.initDataUnsafe?.user?.username ||
-        tg.initDataUnsafe?.user?.first_name ||
-        "Unknown";
-      setTelegramUser(name);
-      setTelegramId(tg.initDataUnsafe?.user?.id);
+      const user = tg.initDataUnsafe?.user;
+      if (user) {
+        const name = [user.first_name, user.last_name]
+          .filter(Boolean)
+          .join(" ") ||
+          "Unknown";
+        setTelegramName(name);
+        setTelegramUsername(user.username);
+        setTelegramPhotoUrl(user.photo_url);
+        setTelegramId(user.id);
+      }
     }
   }, []);
 
@@ -70,11 +82,23 @@ export default function TelegramPage() {
         <Page>
           <Navbar title="AstroT" />
           <Block strong>
-            {(telegramUser || telegramId) && (
-              <p className="mb-4">
-                {telegramUser && <>Hello, {telegramUser}! </>}
-                {telegramId && <>Your Telegram ID is {telegramId}.</>}
-              </p>
+            {(telegramName || telegramUsername || telegramId || telegramPhotoUrl) && (
+              <div className="mb-4 flex items-center space-x-4">
+                {telegramPhotoUrl && (
+                  <Image
+                    src={telegramPhotoUrl}
+                    alt="Avatar"
+                    width={64}
+                    height={64}
+                    className="rounded-full"
+                  />
+                )}
+                <div>
+                  {telegramName && <p>Name: {telegramName}</p>}
+                  {telegramUsername && <p>Login: @{telegramUsername}</p>}
+                  {telegramId && <p>ID: {telegramId}</p>}
+                </div>
+              </div>
             )}
             <form onSubmit={handleSubmit} className="space-y-4">
               <List strong inset>
