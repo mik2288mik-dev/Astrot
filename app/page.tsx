@@ -1,76 +1,65 @@
 'use client';
 
-import Link from "next/link";
-import Image from "next/image";
-import { useEffect, useState } from "react";
+import { useEffect, useState } from 'react';
+import { App as Framework7App, View } from 'framework7-react';
+import { Page, Navbar, Block, List, ListItem } from 'konsta/react';
 
-const features = [
-  {
-    icon: "/globe.svg",
-    title: "Астрологические карты",
-    description: "Исследуйте расположение планет на момент рождения.",
-  },
-  {
-    icon: "/window.svg",
-    title: "Прогнозы",
-    description: "Получайте актуальные гороскопы и предсказания.",
-  },
-  {
-    icon: "/file.svg",
-    title: "История",
-    description: "Сохраняйте свои карты и возвращайтесь к ним позже.",
-  },
-];
+interface TelegramWebApp {
+  ready: () => void;
+  platform: string;
+  colorScheme?: string;
+  initDataUnsafe?: {
+    user?: {
+      id?: number;
+      first_name?: string;
+      last_name?: string;
+      username?: string;
+    };
+  };
+}
+
+declare global {
+  interface Window {
+    Telegram?: { WebApp?: TelegramWebApp };
+  }
+}
 
 export default function HomePage() {
-  const [telegramUser, setTelegramUser] = useState<string | undefined>();
-  const [telegramId, setTelegramId] = useState<number | undefined>();
+  const [name, setName] = useState<string>('');
+  const [userId, setUserId] = useState<number | null>(null);
+  const [platform, setPlatform] = useState<'ios' | 'md'>('ios');
+  const [colorScheme, setColorScheme] = useState<'light' | 'dark'>('light');
 
   useEffect(() => {
     const tg = window.Telegram?.WebApp;
-    if (tg?.initDataUnsafe?.user) {
-      const name =
-        tg.initDataUnsafe.user.username ||
-        tg.initDataUnsafe.user.first_name ||
-        "Unknown";
-      setTelegramUser(name);
-      setTelegramId(tg.initDataUnsafe.user.id);
+    if (tg) {
+      tg.ready();
+      setPlatform(tg.platform === 'ios' ? 'ios' : 'md');
+      setColorScheme(tg.colorScheme === 'dark' ? 'dark' : 'light');
+      const user = tg.initDataUnsafe?.user;
+      if (user) {
+        const displayName =
+          user.username || [user.first_name, user.last_name].filter(Boolean).join(' ');
+        setName(displayName);
+        if (user.id !== undefined) setUserId(user.id);
+      }
     }
   }, []);
 
   return (
-    <div className="flex min-h-screen flex-col justify-center bg-gradient-to-b from-black via-purple-900 to-black p-6 text-white">
-      <main className="mx-auto max-w-4xl text-center">
-        <h1 className="mb-4 text-6xl font-extrabold tracking-tight">
-          <span className="bg-gradient-to-r from-pink-400 to-violet-500 bg-clip-text text-transparent">
-            Astrot
-          </span>
-        </h1>
-        {(telegramUser || telegramId) && (
-          <p className="mb-4">
-            {telegramUser && <>Привет, {telegramUser}! </>}
-            {telegramId && <>ID: {telegramId}</>}
-          </p>
-        )}
-        <p className="mx-auto mb-8 max-w-xl text-xl">
-          Погрузитесь в мир астрологии и узнайте больше о своей натальной карте.
-        </p>
-        <Link
-          href="/natal"
-          className="inline-block rounded-lg bg-purple-600 px-8 py-3 text-lg font-semibold shadow-lg transition-colors hover:bg-purple-700"
-        >
-          Перейти к натальной карте
-        </Link>
-        <div className="mt-16 grid grid-cols-1 gap-8 sm:grid-cols-3">
-          {features.map((f) => (
-            <div key={f.title} className="flex flex-col items-center">
-              <Image src={f.icon} alt="" width={48} height={48} className="mb-4" />
-              <h3 className="mb-2 text-xl font-semibold">{f.title}</h3>
-              <p className="text-sm text-gray-200">{f.description}</p>
-            </div>
-          ))}
-        </div>
-      </main>
-    </div>
+    <Framework7App theme={platform} className={colorScheme === 'dark' ? 'dark' : ''}>
+      <View main>
+        <Page>
+          <Navbar title="Astrot" />
+          <Block strong>
+            {name && <p>Привет, {name}!</p>}
+            {userId && <p>ID: {userId}</p>}
+          </Block>
+          <List strong inset>
+            <ListItem title="Настройки" component="a" href="/settings" />
+          </List>
+        </Page>
+      </View>
+    </Framework7App>
   );
 }
