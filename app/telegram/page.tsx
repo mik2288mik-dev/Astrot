@@ -1,42 +1,49 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import Image from "next/image";
 import { App as Framework7App, View } from "framework7-react";
-import { Page, Navbar, Block, List, ListInput, Button } from "konsta/react";
+import {
+  Page,
+  Navbar,
+  Block,
+  List,
+  ListInput,
+  Button,
+} from "konsta/react";
+import { Sun } from "lucide-react";
+import { motion } from "framer-motion";
+import clsx from "clsx";
+import { twMerge } from "tailwind-merge";
+import { Transition } from "@headlessui/react";
+import { UserIcon } from "@heroicons/react/24/solid";
+import { SDKProvider, useInitData } from "@tma.js/sdk-react";
 import { getSunSign } from "@/lib/astro";
 import { upsertProfile } from "@/lib/supabase";
 
 
 export default function TelegramPage() {
-  const [telegramName, setTelegramName] = useState<string | undefined>();
-  const [telegramUsername, setTelegramUsername] =
-    useState<string | undefined>();
-  const [telegramPhotoUrl, setTelegramPhotoUrl] =
-    useState<string | undefined>();
-  const [telegramId, setTelegramId] = useState<number | undefined>();
+  return (
+    <SDKProvider>
+      <TelegramInner />
+    </SDKProvider>
+  );
+}
+
+function TelegramInner() {
+  const initData = useInitData();
+  const user = initData?.user;
   const [birthDate, setBirthDate] = useState("");
   const [birthTime, setBirthTime] = useState("");
   const [birthPlace, setBirthPlace] = useState("");
   const [sunSign, setSunSign] = useState<string | undefined>();
 
-  useEffect(() => {
-    const tg = window.Telegram?.WebApp;
-    if (tg) {
-      tg.expand();
-      const user = tg.initDataUnsafe?.user;
-      if (user) {
-        const name = [user.first_name, user.last_name]
-          .filter(Boolean)
-          .join(" ") ||
-          "Unknown";
-        setTelegramName(name);
-        setTelegramUsername(user.username);
-        setTelegramPhotoUrl(user.photo_url);
-        setTelegramId(user.id);
-      }
-    }
-  }, []);
+  const telegramName =
+    [user?.first_name, user?.last_name].filter(Boolean).join(" ") ||
+    undefined;
+  const telegramUsername = user?.username;
+  const telegramPhotoUrl = user?.photo_url;
+  const telegramId = user?.id;
 
   const handleSubmit = async (
     e: React.FormEvent | React.MouseEvent
@@ -66,7 +73,7 @@ export default function TelegramPage() {
           <Block strong>
             {(telegramName || telegramUsername || telegramId || telegramPhotoUrl) && (
               <div className="mb-4 flex items-center space-x-4">
-                {telegramPhotoUrl && (
+                {telegramPhotoUrl ? (
                   <Image
                     src={telegramPhotoUrl}
                     alt="Avatar"
@@ -74,6 +81,8 @@ export default function TelegramPage() {
                     height={64}
                     className="rounded-full"
                   />
+                ) : (
+                  <UserIcon className="h-16 w-16 text-indigo-400" />
                 )}
                 <div>
                   {telegramName && <p>Name: {telegramName}</p>}
@@ -112,11 +121,31 @@ export default function TelegramPage() {
               </List>
               <Button onClick={handleSubmit}>Save</Button>
             </form>
-            {sunSign && (
-              <Block strong className="mt-4">
-                <p>Your Sun sign is {sunSign}.</p>
-              </Block>
-            )}
+            <Transition
+              show={Boolean(sunSign)}
+              enter="transition-opacity duration-300"
+              enterFrom="opacity-0"
+              enterTo="opacity-100"
+            >
+              {sunSign && (
+                <Block strong className="mt-4 flex items-center space-x-2">
+                  <motion.div
+                    initial={{ rotate: 0, scale: 0.8 }}
+                    animate={{ rotate: 360, scale: 1 }}
+                    transition={{ repeat: Infinity, duration: 8, ease: "linear" }}
+                  >
+                    <Sun className="h-5 w-5 text-yellow-400" />
+                  </motion.div>
+                  <p
+                    className={twMerge(
+                      clsx("font-medium", "text-sm"),
+                    )}
+                  >
+                    Your Sun sign is {sunSign}.
+                  </p>
+                </Block>
+              )}
+            </Transition>
           </Block>
         </Page>
       </View>
