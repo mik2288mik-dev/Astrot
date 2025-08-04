@@ -12,6 +12,7 @@ interface TelegramWebApp {
     user?: {
       id?: number;
       first_name?: string;
+      username?: string;
     };
   };
 }
@@ -34,7 +35,11 @@ export default function TelegramPage() {
     const tg = window.Telegram?.WebApp;
     if (tg) {
       tg.expand();
-      setTelegramUser(tg.initDataUnsafe?.user?.first_name);
+      const name =
+        tg.initDataUnsafe?.user?.username ||
+        tg.initDataUnsafe?.user?.first_name ||
+        "Unknown";
+      setTelegramUser(name);
       setTelegramId(tg.initDataUnsafe?.user?.id);
     }
   }, []);
