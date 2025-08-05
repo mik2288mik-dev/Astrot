@@ -17,12 +17,48 @@ export const initTelegramSDK = () => {
   try {
     // Initialize Telegram WebApp
     const webApp = window.Telegram.WebApp;
+
+    // Сообщаем о готовности
     webApp.ready();
+
+    // Диагностическая информация
+    console.log('Версия:', webApp.version);
+    console.log('Платформа:', webApp.platform);
+    console.log('Высота до expand:', webApp.viewportHeight);
+
+    const expandApp = () => {
+      if (!webApp.isExpanded) {
+        console.log('Пытаюсь развернуть...');
+        webApp.expand();
+      } else {
+        console.log('Уже развернуто!');
+      }
+
+      setTimeout(() => {
+        console.log('Высота после expand:', webApp.viewportHeight);
+        console.log('isExpanded:', webApp.isExpanded);
+      }, 100);
+    };
+
+    // На мобильных платформах немного ждем
+    if (webApp.platform === 'ios' || webApp.platform === 'android') {
+      setTimeout(expandApp, 50);
+    } else {
+      expandApp();
+    }
+
+    // Отслеживаем изменение viewport
+    webApp.onEvent('viewportChanged', () => {
+      console.log('Viewport изменен!');
+      console.log('Новая высота:', webApp.viewportHeight);
+      console.log('Стабильная высота:', webApp.viewportStableHeight);
+      console.log('isExpanded сейчас:', webApp.isExpanded);
+    });
 
     // Set theme colors
     webApp.setHeaderColor('#1a1a2e');
     webApp.setBackgroundColor('#0f0f23');
-    
+
     return webApp;
   } catch (error) {
     console.error('Failed to initialize Telegram SDK:', error);
