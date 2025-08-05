@@ -37,6 +37,11 @@ export const initTelegramSDK = () => {
       setTimeout(() => {
         console.log('Высота после expand:', webApp.viewportHeight);
         console.log('isExpanded:', webApp.isExpanded);
+
+        if (!webApp.isFullscreen) {
+          console.log('Запрашиваю fullscreen...');
+          webApp.requestFullscreen();
+        }
       }, 100);
     };
 
@@ -46,6 +51,16 @@ export const initTelegramSDK = () => {
     } else {
       expandApp();
     }
+
+    // Отслеживаем изменение fullscreen
+    webApp.onEvent('fullscreen_changed', () => {
+      console.log('Fullscreen изменен:', webApp.isFullscreen);
+      document.body.classList.toggle('fullscreen', webApp.isFullscreen);
+    });
+
+    webApp.onEvent('fullscreen_failed', (params) => {
+      console.error('Fullscreen не удался:', params.error);
+    });
 
     // Отслеживаем изменение viewport
     webApp.onEvent('viewportChanged', () => {
@@ -144,5 +159,28 @@ export const mockTelegramWebApp = () => {
         }
       }
     };
+  }
+};
+
+export const checkFullscreen = () => {
+  const tg = window.Telegram?.WebApp;
+  if (!tg) return;
+
+  console.log('=== FULLSCREEN ДИАГНОСТИКА ===');
+  console.log('isExpanded:', tg.isExpanded);
+  console.log('isFullscreen:', tg.isFullscreen);
+  console.log('viewportHeight:', tg.viewportHeight);
+  console.log('viewportStableHeight:', tg.viewportStableHeight);
+
+  if (!tg.isFullscreen) {
+    console.log('Пытаюсь войти в fullscreen...');
+    tg.requestFullscreen();
+    setTimeout(() => {
+      console.log('=== ПОСЛЕ FULLSCREEN ===');
+      console.log('isFullscreen теперь:', tg.isFullscreen);
+      console.log('viewportHeight теперь:', tg.viewportHeight);
+    }, 500);
+  } else {
+    console.log('Уже в fullscreen режиме');
   }
 };
