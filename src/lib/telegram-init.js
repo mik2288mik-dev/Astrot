@@ -18,10 +18,7 @@ export const initTelegramSDK = () => {
     // Initialize Telegram WebApp
     const webApp = window.Telegram.WebApp;
     webApp.ready();
-    
-    // Enable fullscreen mode
-    webApp.expand();
-    
+
     // Set theme colors
     webApp.setHeaderColor('#1a1a2e');
     webApp.setBackgroundColor('#0f0f23');

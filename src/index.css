@@ -5,19 +5,15 @@
 /* Telegram Web App Fullscreen Styles */
 html, body, #root {
   width: 100%;
-  height: 100vh;
-  height: var(--tg-viewport-height, 100vh);
+  min-height: 100vh;
+  min-height: var(--tg-viewport-height, 100vh);
   margin: 0;
   padding: 0;
-  overflow: hidden;
+  overflow-x: hidden;
+  overflow-y: auto;
   background: #0f0f23;
 }
 
-/* Hide scrollbars but keep functionality */
-::-webkit-scrollbar {
-  width: 0px;
-  background: transparent;
-}
 
 /* Cosmic Animations */
 @keyframes twinkle {
