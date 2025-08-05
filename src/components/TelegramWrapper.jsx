@@ -26,7 +26,7 @@ export default function TelegramWrapper({ children }) {
     return (
       <div className="cosmic-bg min-h-screen flex items-center justify-center">
         <div className="text-center">
-          <div className="text-6xl mb-4 animate-spin">🌟</div>
+          <div className="text-6xl mb-4 animate-spin">*</div>
           <div className="text-cyan-100 text-lg">Инициализация космоса...</div>
         </div>
       </div>
@@ -38,7 +38,7 @@ export default function TelegramWrapper({ children }) {
     return (
       <div className="cosmic-bg min-h-screen flex items-center justify-center">
         <div className="text-center p-6">
-          <div className="text-6xl mb-4">😿</div>
+          <div className="text-6xl mb-4">:(</div>
           <div className="text-red-300 text-lg mb-2">Космическая ошибка!</div>
           <div className="text-red-200 text-sm">
             Попробуйте перезагрузить страницу

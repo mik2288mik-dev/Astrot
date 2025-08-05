@@ -11,10 +11,10 @@ export default function NatalFormPage({ f7router }) {
   const [currentMessage, setCurrentMessage] = useState('');
 
   const successMessages = [
-    '🌟 Отлично! Звёзды уже начинают выстраиваться!',
-    '✨ Космические данные получены! Готовлю карту...',
-    '🚀 Запускаю астрологические вычисления!',
-    '💫 Вселенная готова раскрыть твои тайны!'
+    'Отлично! Звёзды уже начинают выстраиваться!',
+    'Космические данные получены! Готовлю карту...',
+    'Запускаю астрологические вычисления!',
+    'Вселенная готова раскрыть твои тайны!'
   ];
 
   useEffect(() => {
@@ -34,15 +34,15 @@ export default function NatalFormPage({ f7router }) {
       return false;
     }
     if (!formData.date) {
-      setError('Дата рождения нужна для точных расчётов! 📅');
+      setError('Дата рождения нужна для точных расчётов!');
       return false;
     }
     if (!formData.time) {
-      setError('Время рождения влияет на натальную карту! ⏰');
+      setError('Время рождения влияет на натальную карту!');
       return false;
     }
     if (!formData.city.trim()) {
-      setError('Город рождения важен для космических координат! 🏙️');
+      setError('Город рождения важен для космических координат!');
       return false;
     }
     return true;
@@ -79,8 +79,8 @@ export default function NatalFormPage({ f7router }) {
       <StarField />
       
       <Navbar 
-        title="🌟 Натальная Карта" 
-        left={<Link navbar href="/">⬅️ Назад</Link>}
+        title="Натальная Карта" 
+        left={<Link navbar href="/">Назад</Link>}
         className="glassy border-b border-white/10"
       />
       
@@ -99,7 +99,7 @@ export default function NatalFormPage({ f7router }) {
             {/* Name Input */}
             <div className="neon-input">
               <label className="block text-sm font-medium mb-2 text-cyan-300">
-                ✨ Твоё космическое имя
+                Твоё космическое имя
               </label>
               <input
                 type="text"
@@ -115,7 +115,7 @@ export default function NatalFormPage({ f7router }) {
             {/* Date Input */}
             <div className="neon-input">
               <label className="block text-sm font-medium mb-2 text-cyan-300">
-                🌙 Дата твоего появления на Земле
+                Дата твоего появления на Земле
               </label>
               <input
                 type="date"
@@ -130,7 +130,7 @@ export default function NatalFormPage({ f7router }) {
             {/* Time Input */}
             <div className="neon-input">
               <label className="block text-sm font-medium mb-2 text-cyan-300">
-                ⏰ Точное время рождения
+                Точное время рождения
               </label>
               <input
                 type="time"
@@ -145,7 +145,7 @@ export default function NatalFormPage({ f7router }) {
             {/* City Input */}
             <div className="neon-input">
               <label className="block text-sm font-medium mb-2 text-cyan-300">
-                🏙️ Город твоего рождения
+                Город твоего рождения
               </label>
               <input
                 type="text"
@@ -170,7 +170,7 @@ export default function NatalFormPage({ f7router }) {
                   Создаю твою карту звёзд...
                 </span>
               ) : (
-                '🚀 Построить Натальную Карту'
+                'Построить Натальную Карту'
               )}
             </button>
           </form>
@@ -178,7 +178,7 @@ export default function NatalFormPage({ f7router }) {
           {/* Premium Features Hint */}
           <div className="mt-6 p-4 rounded-xl bg-gradient-to-r from-purple-500/10 to-pink-500/10 border border-purple-400/20">
             <div className="text-center text-purple-300 text-sm">
-              💎 Премиум-функции: детальный анализ, совместимость, прогнозы
+              Премиум-функции: детальный анализ, совместимость, прогнозы
               <br />
               <span className="text-xs text-purple-400">Разблокируй полную силу звёзд!</span>
             </div>

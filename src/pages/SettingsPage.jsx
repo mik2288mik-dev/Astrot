@@ -20,10 +20,10 @@ export default function SettingsPage() {
   };
 
   const tabs = [
-    { id: 'premium', label: '💎 Премиум', icon: '💎' },
-    { id: 'profile', label: '👤 Профиль', icon: '👤' },
-    { id: 'telegram', label: '📱 Telegram', icon: '📱' },
-    { id: 'settings', label: '⚙️ Настройки', icon: '⚙️' }
+    { id: 'premium', label: 'Премиум', icon: null },
+    { id: 'profile', label: 'Профиль', icon: null },
+    { id: 'telegram', label: 'Telegram', icon: null },
+    { id: 'settings', label: 'Настройки', icon: null }
   ];
 
   return (
@@ -31,8 +31,8 @@ export default function SettingsPage() {
       <StarField />
       
       <Navbar 
-        title="🌟 Настройки & Премиум" 
-        left={<Link navbar href="/">⬅️ Назад</Link>}
+        title="Настройки & Премиум" 
+        left={<Link navbar href="/">Назад</Link>}
         className="glassy border-b border-white/10"
       />
 
@@ -49,7 +49,7 @@ export default function SettingsPage() {
                   : 'bg-white/10 text-white/70 hover:bg-white/20'
               }`}
             >
-              {tab.icon} {tab.label}
+              {tab.label}
             </button>
           ))}
         </div>
@@ -66,31 +66,31 @@ export default function SettingsPage() {
         {activeTab === 'profile' && (
           <div className="space-y-4">
             <div className="glassy-enhanced p-6 rounded-xl text-center">
-              <KoteusAstrolog message="🌟 Твой космический профиль готов!" />
+              <KoteusAstrolog message="Твой космический профиль готов!" />
               
               <div className="mt-4 space-y-3">
                 <div className="text-cyan-100">
-                  <span className="text-cyan-300 font-bold">Уровень:</span> {userLevel} 🚀
+                  <span className="text-cyan-300 font-bold">Уровень:</span> {userLevel}
                 </div>
                 <div className="text-cyan-100">
-                  <span className="text-cyan-300 font-bold">Кристаллы:</span> {crystals} 💎
+                  <span className="text-cyan-300 font-bold">Кристаллы:</span> {crystals}
                 </div>
                 <div className="text-cyan-100">
-                  <span className="text-cyan-300 font-bold">Статус:</span> Космический исследователь ⭐
+                  <span className="text-cyan-300 font-bold">Статус:</span> Космический исследователь
                 </div>
               </div>
 
               <div className="mt-6">
-                <h3 className="text-lg font-bold text-purple-300 mb-3">🏆 Достижения</h3>
+                <h3 className="text-lg font-bold text-purple-300 mb-3">Достижения</h3>
                 <div className="grid grid-cols-3 gap-2">
                   <div className="bg-yellow-500/20 p-2 rounded-lg text-yellow-300 text-xs">
-                    🥇 Первая карта
+                    Первая карта
                   </div>
                   <div className="bg-purple-500/20 p-2 rounded-lg text-purple-300 text-xs">
-                    💎 Сборщик кристаллов
+                    Сборщик кристаллов
                   </div>
                   <div className="bg-cyan-500/20 p-2 rounded-lg text-cyan-300 text-xs">
-                    🌟 Звёздный путешественник
+                    Звёздный путешественник
                   </div>
                 </div>
               </div>
@@ -102,7 +102,7 @@ export default function SettingsPage() {
           <div className="space-y-4">
             <div className="glassy-enhanced p-6 rounded-xl">
               <h2 className="text-xl font-bold text-blue-300 mb-4 text-center">
-                📱 Telegram Integration
+                Telegram Integration
               </h2>
               
               <div className="space-y-4">
@@ -138,7 +138,7 @@ export default function SettingsPage() {
               </div>
 
               <div className="mt-6 p-4 bg-gradient-to-r from-blue-500/10 to-indigo-500/10 rounded-lg border border-blue-400/30">
-                <h3 className="text-blue-300 font-bold mb-2">🚀 Эксклюзивные функции</h3>
+                <h3 className="text-blue-300 font-bold mb-2">Эксклюзивные функции</h3>
                 <ul className="text-blue-100 text-sm space-y-1">
                   <li>• Ежедневные персональные прогнозы</li>
                   <li>• Уведомления о важных астро-событиях</li>
@@ -154,7 +154,7 @@ export default function SettingsPage() {
           <div className="space-y-4">
             <div className="glassy-enhanced p-6 rounded-xl">
               <h2 className="text-xl font-bold text-cyan-300 mb-4 text-center">
-                ⚙️ Настройки приложения
+                Настройки приложения
               </h2>
               
               <div className="space-y-4">
@@ -191,17 +191,13 @@ export default function SettingsPage() {
                 <hr className="border-white/20 my-4" />
 
                 <div className="space-y-3">
-                  <button className="w-full p-3 text-left bg-white/5 rounded-lg text-white hover:bg-white/10 transition-colors">
-                    📊 Экспорт данных
+                  <button className="w-full p-3 text-left bg-white/5 rounded-lg text-white hover:bg-white/10 transition-colors">Экспорт данных
                   </button>
-                  <button className="w-full p-3 text-left bg-white/5 rounded-lg text-white hover:bg-white/10 transition-colors">
-                    🔄 Очистить кэш
+                  <button className="w-full p-3 text-left bg-white/5 rounded-lg text-white hover:bg-white/10 transition-colors">Очистить кэш
                   </button>
-                  <button className="w-full p-3 text-left bg-white/5 rounded-lg text-white hover:bg-white/10 transition-colors">
-                    📧 Поддержка
+                  <button className="w-full p-3 text-left bg-white/5 rounded-lg text-white hover:bg-white/10 transition-colors">Поддержка
                   </button>
-                  <button className="w-full p-3 text-left bg-red-500/20 rounded-lg text-red-300 hover:bg-red-500/30 transition-colors">
-                    🚪 Выйти из аккаунта
+                  <button className="w-full p-3 text-left bg-red-500/20 rounded-lg text-red-300 hover:bg-red-500/30 transition-colors">Выйти из аккаунта
                   </button>
                 </div>
               </div>
@@ -211,9 +207,7 @@ export default function SettingsPage() {
 
         {/* Floating Action Buttons */}
         <div className="fixed bottom-6 right-6 space-y-3">
-          <button className="w-12 h-12 bg-gradient-to-r from-purple-500 to-pink-500 rounded-full flex items-center justify-center text-xl shadow-lg animate-pulse">
-            💎
-          </button>
+          {/* Removed floating action button with emoji for cleaner premium design */}
         </div>
       </div>
     </Page>

@@ -154,7 +154,7 @@
 
 .cosmic-sparkles::before,
 .cosmic-sparkles::after {
-  content: '✨';
+  content: '*';
   position: absolute;
   font-size: 12px;
   animation: sparkle 2s infinite;

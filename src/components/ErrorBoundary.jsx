@@ -22,7 +22,7 @@ class ErrorBoundary extends React.Component {
       return (
         <div className="cosmic-bg min-h-screen flex items-center justify-center p-4">
           <div className="text-center max-w-md mx-auto">
-            <div className="text-8xl mb-6 animate-bounce">😿</div>
+            <div className="text-8xl mb-6 animate-bounce">:(</div>
             <h1 className="text-2xl font-bold text-red-300 mb-4">
               Космическая ошибка!
             </h1>
@@ -34,7 +34,7 @@ class ErrorBoundary extends React.Component {
               onClick={() => window.location.reload()}
               className="neon-btn"
             >
-              🔄 Перезагрузить приложение
+              Перезагрузить приложение
             </button>
             
             {/* Development error details */}
