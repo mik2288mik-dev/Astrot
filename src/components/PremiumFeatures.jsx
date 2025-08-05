@@ -3,28 +3,28 @@ import React, { useState } from 'react';
 const premiumFeatures = [
   {
     id: 'detailed_analysis',
-    title: '🔮 Детальный Анализ',
+    title: 'Детальный Анализ',
     description: 'Глубокий анализ всех планет, домов и аспектов',
     price: '199₽',
     popular: false
   },
   {
     id: 'compatibility',
-    title: '💕 Совместимость',
+    title: 'Совместимость',
     description: 'Анализ совместимости с партнером или другом',
     price: '299₽',
     popular: true
   },
   {
     id: 'predictions',
-    title: '🌙 Прогнозы',
+    title: 'Прогнозы',
     description: 'Персональные прогнозы на месяц, год',
     price: '399₽',
     popular: false
   },
   {
     id: 'premium_full',
-    title: '⭐ Премиум Полный',
+    title: 'Премиум Полный',
     description: 'Все функции + эксклюзивный контент',
     price: '799₽/мес',
     popular: true,
@@ -34,22 +34,22 @@ const premiumFeatures = [
 
 const gameFeatures = [
   {
-    title: '🎯 Ежедневные Квесты',
+    title: 'Ежедневные Квесты',
     description: 'Выполняй астрологические задания',
     reward: '+10 космических кристаллов'
   },
   {
-    title: '🏆 Рейтинг Предсказателей',
+    title: 'Рейтинг Предсказателей',
     description: 'Соревнуйся с другими астрологами',
     reward: 'Эксклюзивные титулы'
   },
   {
-    title: '💎 Космические Кристаллы',
+    title: 'Космические Кристаллы',
     description: 'Собирай кристаллы за активность',
     reward: 'Обменивай на премиум функции'
   },
   {
-    title: '🌟 Достижения',
+    title: 'Достижения',
     description: 'Разблокируй уникальные достижения',
     reward: 'Особые космические аватары'
   }
@@ -79,9 +79,9 @@ export default function PremiumFeatures({ onPurchase, userLevel = 0, crystals = 
       {/* User Progress */}
       <div className="glassy-enhanced p-4 rounded-xl">
         <div className="flex items-center justify-between mb-3">
-          <h3 className="text-cyan-300 font-bold">🚀 Твой Прогресс</h3>
+          <h3 className="text-cyan-300 font-bold">Твой Прогресс</h3>
           <div className="text-cyan-100 text-sm">
-            Уровень {userLevel} • {crystals} 💎
+            Уровень {userLevel} • {crystals} Кристаллы
           </div>
         </div>
         
@@ -101,7 +101,7 @@ export default function PremiumFeatures({ onPurchase, userLevel = 0, crystals = 
       {/* Premium Features */}
       <div className="space-y-4">
         <h2 className="text-2xl font-bold text-center text-purple-300 mb-6">
-          💎 Премиум Функции
+          Премиум Функции
         </h2>
         
         {premiumFeatures.map((feature) => (
@@ -115,7 +115,7 @@ export default function PremiumFeatures({ onPurchase, userLevel = 0, crystals = 
           >
             {feature.popular && (
               <div className="bg-gradient-to-r from-purple-500 to-pink-500 text-white text-xs px-2 py-1 rounded-full inline-block mb-2">
-                🔥 Популярное
+                Популярное
               </div>
             )}
             
@@ -145,7 +145,7 @@ export default function PremiumFeatures({ onPurchase, userLevel = 0, crystals = 
       {/* Game Features */}
       <div className="space-y-4">
         <h2 className="text-2xl font-bold text-center text-cyan-300 mb-6">
-          🎮 Игровые Элементы
+          Игровые Элементы
         </h2>
         
         {gameFeatures.map((game, index) => (
@@ -172,7 +172,7 @@ export default function PremiumFeatures({ onPurchase, userLevel = 0, crystals = 
               ✕
             </button>
             
-            <div className="text-4xl mb-4">💳</div>
+            <div className="text-4xl mb-4">*</div>
             <h2 className="text-xl font-bold text-cyan-100 mb-3">
               {selectedFeature.title}
             </h2>
@@ -189,21 +189,21 @@ export default function PremiumFeatures({ onPurchase, userLevel = 0, crystals = 
                 onClick={() => processPayment('card')}
                 className="neon-btn w-full"
               >
-                💳 Банковская карта
+                Банковская карта
               </button>
               
               <button 
                 onClick={() => processPayment('yookassa')}
                 className="bg-gradient-to-r from-green-500 to-emerald-500 text-white py-3 px-4 rounded-full w-full font-medium"
               >
-                💰 ЮKassa
+                ЮKassa
               </button>
               
               <button 
                 onClick={() => processPayment('telegram')}
                 className="bg-gradient-to-r from-blue-500 to-indigo-500 text-white py-3 px-4 rounded-full w-full font-medium"
               >
-                📱 Telegram Stars
+                Telegram Stars
               </button>
               
               {crystals >= 100 && (
@@ -211,7 +211,7 @@ export default function PremiumFeatures({ onPurchase, userLevel = 0, crystals = 
                   onClick={() => processPayment('crystals')}
                   className="bg-gradient-to-r from-purple-500 to-pink-500 text-white py-3 px-4 rounded-full w-full font-medium"
                 >
-                  💎 Космические кристаллы ({Math.min(crystals, 200)})
+                  Космические кристаллы ({Math.min(crystals, 200)})
                 </button>
               )}
             </div>
@@ -226,7 +226,7 @@ export default function PremiumFeatures({ onPurchase, userLevel = 0, crystals = 
       {/* Special Offers */}
       <div className="glassy-enhanced p-4 rounded-xl border border-yellow-400/30">
         <h3 className="text-yellow-300 font-bold mb-2 flex items-center">
-          ⚡ Ограниченное предложение
+          Ограниченное предложение
           <span className="ml-2 bg-red-500 text-white text-xs px-2 py-1 rounded-full animate-pulse">
             -50%
           </span>
@@ -235,7 +235,7 @@ export default function PremiumFeatures({ onPurchase, userLevel = 0, crystals = 
           Первые 100 пользователей получают все премиум-функции на год всего за 999₽!
         </p>
         <button className="bg-gradient-to-r from-yellow-500 to-orange-500 text-black font-bold py-2 px-4 rounded-full w-full">
-          🔥 Забрать скидку
+          Забрать скидку
         </button>
       </div>
     </div>

@@ -19,8 +19,8 @@ export default function MainPage() {
       <StarField />
       
       <Navbar 
-        title="🌟 ASTROT - Космическая Астрология" 
-        right={<Link navbar href="/settings/">⚙️</Link>}
+        title="ASTROT - Космическая Астрология" 
+        right={<Link navbar href="/settings/">Настройки</Link>}
         className="glassy border-b border-white/10"
       />
       
@@ -31,12 +31,12 @@ export default function MainPage() {
           
           {/* Main CTA Button */}
           <Button href="/natal-form/" className="neon-btn mt-6 text-lg py-4">
-            🚀 Построить Натальную Карту
+            Построить Натальную Карту
           </Button>
           
           {/* Free features */}
           <div className="mt-6 text-cyan-200 text-sm">
-            ✨ Бесплатно: базовая натальная карта
+            Бесплатно: базовая натальная карта
           </div>
         </Block>
 
@@ -44,7 +44,7 @@ export default function MainPage() {
         <div className="grid grid-cols-1 gap-4 px-6 mt-8 max-w-md mx-auto">
           {/* Premium Features Card */}
           <div className="glassy p-4 rounded-xl border border-purple-400/30">
-            <h3 className="text-purple-300 font-bold mb-2">💎 Премиум Возможности</h3>
+            <h3 className="text-purple-300 font-bold mb-2">Премиум Возможности</h3>
             <ul className="text-cyan-100 text-sm space-y-1 text-left">
               <li>• Детальный анализ планет</li>
               <li>• Совместимость партнёров</li>
@@ -58,7 +58,7 @@ export default function MainPage() {
 
           {/* Game Features */}
           <div className="glassy p-4 rounded-xl border border-cyan-400/30">
-            <h3 className="text-cyan-300 font-bold mb-2">🎮 Космические Игры</h3>
+            <h3 className="text-cyan-300 font-bold mb-2">Космические Игры</h3>
             <ul className="text-cyan-100 text-sm space-y-1 text-left">
               <li>• Ежедневные астро-квесты</li>
               <li>• Сбор космических кристаллов</li>
@@ -82,9 +82,9 @@ export default function MainPage() {
                 ✕
               </button>
               
-              <div className="text-4xl mb-4">🌟</div>
+              <div className="text-4xl mb-4">*</div>
               <h2 className="text-xl font-bold text-cyan-100 mb-3">
-                Специальное предложение!
+                Специальное предложение
               </h2>
               <p className="text-cyan-200 text-sm mb-4">
                 Первая неделя Премиума бесплатно! 
@@ -92,7 +92,7 @@ export default function MainPage() {
               </p>
               
               <button className="neon-btn w-full mb-3">
-                🎁 Активировать бесплатную неделю
+                Активировать бесплатную неделю
               </button>
               
               <button 
@@ -108,7 +108,7 @@ export default function MainPage() {
         {/* Telegram Auth Integration */}
         <div className="mt-8 px-6">
           <div className="glassy p-4 rounded-xl border border-blue-400/30 max-w-sm mx-auto">
-            <h3 className="text-blue-300 font-bold mb-2">🚀 Telegram Integration</h3>
+            <h3 className="text-blue-300 font-bold mb-2">Telegram Integration</h3>
             <p className="text-blue-100 text-sm mb-3">
               Войди через Telegram и получи персональные уведомления о космических событиях!
             </p>
