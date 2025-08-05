@@ -9,6 +9,22 @@ export default function MainPage() {
   const [loading, setLoading] = useState(true);
   const [modal, setModal] = useState<string | null>(null);
 
+  // ==== DEBUG RENDER LOGS ====
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const renderCount = ((window as any).mainPageRenderCount =
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    ((window as any).mainPageRenderCount || 0) + 1);
+  console.log('🔄 MainPage RENDER:', {
+    timestamp: new Date().toISOString(),
+    renderCount,
+  });
+
+  // Log component mount/unmount
+  useEffect(() => {
+    console.log('📱 MainPage MOUNTED');
+    return () => console.log('💀 MainPage UNMOUNTED');
+  }, []);
+
   useEffect(() => {
     const timer = setTimeout(() => setLoading(false), 3000);
     return () => clearTimeout(timer);
