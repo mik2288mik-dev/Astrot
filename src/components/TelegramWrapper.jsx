@@ -1,23 +1,29 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useRef } from 'react';
 import { mockTelegramWebApp, isTelegramWebApp, initTelegramSDK } from '../lib/telegram-init';
 
 export default function TelegramWrapper({ children }) {
   const [isInitialized, setIsInitialized] = useState(false);
   const [error, setError] = useState(null);
+  const cleanupRef = useRef(null);
 
   useEffect(() => {
+    console.log('🎯 Запускаем инициализацию App');
     try {
       // Initialize mock Telegram WebApp for development
       if (!isTelegramWebApp()) {
         mockTelegramWebApp();
       }
-      
+
       // Initialize Telegram SDK
-      const webApp = initTelegramSDK();
-      if (webApp) {
+      const result = initTelegramSDK();
+      if (result) {
         console.log('Telegram WebApp initialized successfully');
+        window.telegramInitialized = true;
+        if (typeof result === 'function') {
+          cleanupRef.current = result;
+        }
       }
-      
+
       setIsInitialized(true);
     } catch (err) {
       console.error('Failed to initialize Telegram wrapper:', err);
@@ -25,6 +31,12 @@ export default function TelegramWrapper({ children }) {
       // Still set as initialized to prevent infinite loading
       setIsInitialized(true);
     }
+
+    return () => {
+      if (cleanupRef.current) {
+        cleanupRef.current();
+      }
+    };
   }, []);
 
   // Show loading state while initializing
