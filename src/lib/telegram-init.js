@@ -16,10 +16,34 @@ export const initTelegramSDK = () => {
 
   try {
     // Initialize Telegram WebApp
-    window.Telegram.WebApp.ready();
-    return window.Telegram.WebApp;
+    const webApp = window.Telegram.WebApp;
+    webApp.ready();
+    
+    // Enable fullscreen mode
+    webApp.expand();
+    
+    // Set theme colors
+    webApp.setHeaderColor('#1a1a2e');
+    webApp.setBackgroundColor('#0f0f23');
+    
+    return webApp;
   } catch (error) {
     console.error('Failed to initialize Telegram SDK:', error);
+    return null;
+  }
+};
+
+// Get user info from Telegram
+export const getTelegramUser = () => {
+  if (!isTelegramWebApp()) {
+    return null;
+  }
+
+  try {
+    const webApp = window.Telegram.WebApp;
+    return webApp.initDataUnsafe?.user || null;
+  } catch (error) {
+    console.error('Failed to get Telegram user:', error);
     return null;
   }
 };
@@ -34,6 +58,8 @@ export const mockTelegramWebApp = () => {
         ready: () => {},
         close: () => {},
         expand: () => {},
+        setHeaderColor: (color) => {},
+        setBackgroundColor: (color) => {},
         MainButton: {
           text: '',
           show: () => {},
@@ -51,16 +77,32 @@ export const mockTelegramWebApp = () => {
         showAlert: () => {},
         showConfirm: () => {},
         initData: '',
-        initDataUnsafe: {},
+        initDataUnsafe: {
+          user: {
+            id: 123456789,
+            first_name: 'Космический',
+            last_name: 'Пользователь',
+            username: 'cosmic_user',
+            language_code: 'ru',
+            photo_url: 'https://via.placeholder.com/150/1a1a2e/ffffff?text=*'
+          }
+        },
         version: '6.0',
         platform: 'unknown',
-        colorScheme: 'light',
-        themeParams: {},
+        colorScheme: 'dark',
+        themeParams: {
+          bg_color: '#0f0f23',
+          text_color: '#ffffff',
+          hint_color: '#888888',
+          link_color: '#00ffff',
+          button_color: '#1a1a2e',
+          button_text_color: '#ffffff'
+        },
         isExpanded: false,
         viewportHeight: window.innerHeight,
         viewportStableHeight: window.innerHeight,
-        headerColor: '#ffffff',
-        backgroundColor: '#ffffff',
+        headerColor: '#1a1a2e',
+        backgroundColor: '#0f0f23',
         BackButton: {
           show: () => {},
           hide: () => {},

@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { mockTelegramWebApp, isTelegramWebApp } from '../lib/telegram-init';
+import { mockTelegramWebApp, isTelegramWebApp, initTelegramSDK } from '../lib/telegram-init';
 
 export default function TelegramWrapper({ children }) {
   const [isInitialized, setIsInitialized] = useState(false);
@@ -10,6 +10,12 @@ export default function TelegramWrapper({ children }) {
       // Initialize mock Telegram WebApp for development
       if (!isTelegramWebApp()) {
         mockTelegramWebApp();
+      }
+      
+      // Initialize Telegram SDK
+      const webApp = initTelegramSDK();
+      if (webApp) {
+        console.log('Telegram WebApp initialized successfully');
       }
       
       setIsInitialized(true);

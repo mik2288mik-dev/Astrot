@@ -2,15 +2,16 @@ import React, { useState, useEffect } from 'react';
 import { Page, Navbar, Block, Button, Link } from 'konsta/react';
 import StarField from '../components/StarField';
 import KoteusAstrolog from '../components/KoteusAstrolog';
+import TelegramUserInfo from '../components/TelegramUserInfo';
 
 export default function MainPage() {
   const [showPremiumOffer, setShowPremiumOffer] = useState(false);
 
   useEffect(() => {
-    // Show premium offer after 3 seconds
+    // Show premium offer after 5 seconds
     const timer = setTimeout(() => {
       setShowPremiumOffer(true);
-    }, 3000);
+    }, 5000);
     return () => clearTimeout(timer);
   }, []);
 
@@ -24,9 +25,12 @@ export default function MainPage() {
         className="glassy border-b border-white/10"
       />
       
-      <div className="relative z-10 pt-8">
+      <div className="relative z-10 pt-8 px-4">
+        {/* Telegram User Info */}
+        <TelegramUserInfo />
+        
         {/* Main Hero Section */}
-        <Block strong className="mt-8 glassy-enhanced max-w-sm mx-auto">
+        <Block strong className="mt-4 glassy-enhanced max-w-sm mx-auto">
           <KoteusAstrolog isAnimating={true} />
           
           {/* Main CTA Button */}
@@ -35,13 +39,13 @@ export default function MainPage() {
           </Button>
           
           {/* Free features */}
-          <div className="mt-6 text-cyan-200 text-sm">
+          <div className="mt-4 text-cyan-200 text-sm">
             Бесплатно: базовая натальная карта
           </div>
         </Block>
 
         {/* Feature Cards */}
-        <div className="grid grid-cols-1 gap-4 px-6 mt-8 max-w-md mx-auto">
+        <div className="grid grid-cols-1 gap-4 mt-6 max-w-md mx-auto">
           {/* Premium Features Card */}
           <div className="glassy p-4 rounded-xl border border-purple-400/30">
             <h3 className="text-purple-300 font-bold mb-2">Премиум Возможности</h3>
@@ -104,19 +108,6 @@ export default function MainPage() {
             </div>
           </div>
         )}
-
-        {/* Telegram Auth Integration */}
-        <div className="mt-8 px-6">
-          <div className="glassy p-4 rounded-xl border border-blue-400/30 max-w-sm mx-auto">
-            <h3 className="text-blue-300 font-bold mb-2">Telegram Integration</h3>
-            <p className="text-blue-100 text-sm mb-3">
-              Войди через Telegram и получи персональные уведомления о космических событиях!
-            </p>
-            <button className="bg-gradient-to-r from-blue-500 to-indigo-500 text-white py-2 px-4 rounded-full text-sm w-full font-medium">
-              Войти через Telegram
-            </button>
-          </div>
-        </div>
 
         {/* Cosmic Decorations */}
         <div className="absolute top-20 left-6 w-8 h-8 rounded-full bg-purple-400 opacity-30 animate-pulse"></div>
