@@ -3,6 +3,8 @@ import { Page, Navbar, Block, Button, Link } from 'konsta/react';
 import StarField from '../components/StarField';
 import KoteusAstrolog from '../components/KoteusAstrolog';
 import TelegramUserInfo from '../components/TelegramUserInfo';
+import FullscreenButton from '../components/FullscreenButton';
+import FullscreenStatus from '../components/FullscreenStatus';
 
 export default function MainPage() {
   const [showPremiumOffer, setShowPremiumOffer] = useState(false);
@@ -18,6 +20,10 @@ export default function MainPage() {
   return (
     <Page className="cosmic-bg relative overflow-hidden text-center min-h-screen">
       <StarField />
+      
+      {/* Fullscreen Controls */}
+      <FullscreenButton />
+      <FullscreenStatus />
       
       <Navbar 
         title="ASTROT - Космическая Астрология" 

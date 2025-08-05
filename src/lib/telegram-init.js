@@ -17,14 +17,25 @@ export const initTelegramSDK = () => {
   try {
     // Initialize Telegram WebApp
     const webApp = window.Telegram.WebApp;
+    
+    // Call ready() first
     webApp.ready();
     
-    // Enable fullscreen mode
-    webApp.expand();
-    
-    // Set theme colors
+    // Set theme colors before expanding
     webApp.setHeaderColor('#1a1a2e');
     webApp.setBackgroundColor('#0f0f23');
+    
+    // Enable fullscreen mode with delay to ensure proper initialization
+    setTimeout(() => {
+      try {
+        if (!webApp.isExpanded) {
+          webApp.expand();
+          console.log('Telegram WebApp expanded to fullscreen');
+        }
+      } catch (expandError) {
+        console.error('Failed to expand Telegram WebApp:', expandError);
+      }
+    }, 100);
     
     return webApp;
   } catch (error) {
@@ -48,6 +59,26 @@ export const getTelegramUser = () => {
   }
 };
 
+// Force expand to fullscreen
+export const forceExpand = () => {
+  if (!isTelegramWebApp()) {
+    return false;
+  }
+
+  try {
+    const webApp = window.Telegram.WebApp;
+    if (!webApp.isExpanded) {
+      webApp.expand();
+      console.log('Forced expand to fullscreen');
+      return true;
+    }
+    return false;
+  } catch (error) {
+    console.error('Failed to force expand:', error);
+    return false;
+  }
+};
+
 // Mock Telegram WebApp for development
 export const mockTelegramWebApp = () => {
   if (typeof window === 'undefined') return;
@@ -55,11 +86,23 @@ export const mockTelegramWebApp = () => {
   if (!window.Telegram) {
     window.Telegram = {
       WebApp: {
-        ready: () => {},
-        close: () => {},
-        expand: () => {},
-        setHeaderColor: (color) => {},
-        setBackgroundColor: (color) => {},
+        ready: () => {
+          console.log('Mock Telegram WebApp ready');
+        },
+        close: () => {
+          console.log('Mock Telegram WebApp close');
+        },
+        expand: () => {
+          console.log('Mock Telegram WebApp expand');
+          // Simulate expansion
+          window.Telegram.WebApp.isExpanded = true;
+        },
+        setHeaderColor: (color) => {
+          console.log('Mock Telegram WebApp setHeaderColor:', color);
+        },
+        setBackgroundColor: (color) => {
+          console.log('Mock Telegram WebApp setBackgroundColor:', color);
+        },
         MainButton: {
           text: '',
           show: () => {},

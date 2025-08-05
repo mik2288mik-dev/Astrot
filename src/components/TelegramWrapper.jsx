@@ -1,9 +1,10 @@
 import React, { useEffect, useState } from 'react';
-import { mockTelegramWebApp, isTelegramWebApp, initTelegramSDK } from '../lib/telegram-init';
+import { mockTelegramWebApp, isTelegramWebApp, initTelegramSDK, forceExpand } from '../lib/telegram-init';
 
 export default function TelegramWrapper({ children }) {
   const [isInitialized, setIsInitialized] = useState(false);
   const [error, setError] = useState(null);
+  const [webApp, setWebApp] = useState(null);
 
   useEffect(() => {
     try {
@@ -13,9 +14,16 @@ export default function TelegramWrapper({ children }) {
       }
       
       // Initialize Telegram SDK
-      const webApp = initTelegramSDK();
-      if (webApp) {
+      const app = initTelegramSDK();
+      setWebApp(app);
+      
+      if (app) {
         console.log('Telegram WebApp initialized successfully');
+        
+        // Force expand after a delay to ensure proper initialization
+        setTimeout(() => {
+          forceExpand();
+        }, 500);
       }
       
       setIsInitialized(true);
@@ -26,6 +34,30 @@ export default function TelegramWrapper({ children }) {
       setIsInitialized(true);
     }
   }, []);
+
+  // Additional effect to handle fullscreen expansion
+  useEffect(() => {
+    if (webApp && isTelegramWebApp()) {
+      // Try to expand again after component mount
+      const expandTimer = setTimeout(() => {
+        forceExpand();
+      }, 1000);
+
+      // Also try on window focus (when user returns to app)
+      const handleFocus = () => {
+        setTimeout(() => {
+          forceExpand();
+        }, 100);
+      };
+
+      window.addEventListener('focus', handleFocus);
+      
+      return () => {
+        clearTimeout(expandTimer);
+        window.removeEventListener('focus', handleFocus);
+      };
+    }
+  }, [webApp]);
 
   // Show loading state while initializing
   if (!isInitialized) {
