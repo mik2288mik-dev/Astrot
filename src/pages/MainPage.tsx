@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { Page, Popup } from 'konsta/react';
 import StarField from '../components/StarField';
 import MagicCat from '../components/MagicCat';
@@ -10,18 +10,21 @@ export default function MainPage() {
   const [modal, setModal] = useState<string | null>(null);
 
   // ==== DEBUG RENDER LOGS ====
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const renderCount = ((window as any).mainPageRenderCount =
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    ((window as any).mainPageRenderCount || 0) + 1);
+  const renderCount = useRef(0);
+  const [isMounted, setIsMounted] = useState(false);
+
+  renderCount.current++;
+
   console.log('🔄 MainPage RENDER:', {
+    renderCount: renderCount.current,
     timestamp: new Date().toISOString(),
-    renderCount,
+    isMounted,
   });
 
   // Log component mount/unmount
   useEffect(() => {
     console.log('📱 MainPage MOUNTED');
+    setIsMounted(true);
     return () => console.log('💀 MainPage UNMOUNTED');
   }, []);
 
@@ -55,7 +58,7 @@ export default function MainPage() {
   ];
 
   return (
-    <Page className="cosmic-bg relative overflow-hidden text-center h-screen">
+    <Page className="cosmic-bg relative text-center min-h-screen overflow-y-auto">
       <StarField />
       {loading ? (
         <SplashScreen />
@@ -89,6 +92,9 @@ export default function MainPage() {
                 <span className="menu-title">{item.title}</span>
               </div>
             ))}
+          </div>
+          <div className="debug-info text-xs mt-2 text-white/50">
+            <small>Renders: {renderCount.current}</small>
           </div>
         </div>
       )}
