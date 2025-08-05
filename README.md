@@ -1,42 +1,170 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# ASTROT - Космическая Астрология с Котеусом 🌟
 
-## Getting Started
+Полноэкранное Telegram Web App для создания натальных карт с астрологом Котеусом.
 
-First, run the development server:
+## ✅ Исправления и улучшения
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+### Убраны повторения функций
+- Оптимизирован компонент `KoteusAstrolog` - убрано дублирование кода
+- Улучшен `StarField` - звезды не повторяются в одних местах
+- Увеличен интервал анимации для меньшего повторения
+
+### Добавлен полноэкранный режим Telegram Web App
+- Автоматическое разворачивание на весь экран
+- Правильная инициализация Telegram SDK
+- Настроены цвета заголовка и фона
+
+### Отображение информации о пользователе
+- Компонент `TelegramUserInfo` показывает ID, имя, username и аватарку
+- Интегрирован на главную страницу
+- Адаптивный дизайн для мобильных устройств
+
+### Исправлена сборка
+- ✅ Устранена ошибка с CSS Framework7
+- ✅ Добавлен плагин React для Vite
+- ✅ Настроена конфигурация TypeScript
+- ✅ Создан `vercel.json` для деплоя
+
+## 🚀 Особенности
+
+- **Полноэкранный режим** - автоматическое разворачивание в Telegram
+- **Информация о пользователе** - ID, имя, username и аватарка
+- **Космический дизайн** - анимированные звезды и неоновые эффекты
+- **Астролог Котеус** - персонаж с анимированными сообщениями
+- **Оптимизированная производительность** - убраны повторения
+
+## 📱 Telegram Web App
+
+### Настройка бота
+1. Найдите @BotFather в Telegram
+2. Создайте бота: `/newbot`
+3. Настройте Web App: `/setmenubutton`
+4. Укажите URL вашего деплоя
+
+### Команды бота
+```
+start - Запустить ASTROT
+natal - Построить натальную карту
+help - Помощь
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+## 🛠️ Разработка
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+### Установка
+```bash
+npm install
+```
 
-## Telegram Mini App Demo
+### Запуск
+```bash
+npm run dev
+```
 
-This project includes a simple Telegram Mini App example built with Framework7, Konsta UI and TailwindCSS. Visit `/telegram` while running the development server to see a small form that reads Telegram WebApp user data and collects birth details locally.
+### Сборка
+```bash
+npm run build
+```
 
-To integrate the mini app with an actual Telegram Bot, configure your bot's webhook to point to `/api/telegram`. The route accepts `GET` for health checks and `POST` for updates, preventing Telegram from receiving a 404 when calling your server.
+### Предпросмотр
+```bash
+npm run preview
+```
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+## 📦 Деплой
 
-## Learn More
+### Vercel (рекомендуется)
+1. Подключите GitHub репозиторий к Vercel
+2. Автоматический деплой при push в main
+3. Получите URL для настройки бота
 
-To learn more about Next.js, take a look at the following resources:
+### Статистика сборки
+- **Время сборки**: 2.41s
+- **Размер CSS**: 31.26 kB (gzip: 6.63 kB)
+- **Размер JS**: 1,043.79 kB (gzip: 286.86 kB)
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+## 🎨 Технологии
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+- **React 18** - Основной фреймворк
+- **Vite** - Сборщик
+- **TypeScript** - Типизация
+- **Tailwind CSS** - Стили
+- **Framework7** - UI компоненты
+- **Konsta** - Мобильные компоненты
+- **Telegram Web App SDK** - Интеграция с Telegram
 
-## Deploy on Vercel
+## 📁 Структура проекта
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+```
+src/
+├── components/
+│   ├── TelegramUserInfo.jsx    # Информация о пользователе
+│   ├── KoteusAstrolog.jsx      # Астролог Котеус
+│   ├── StarField.tsx           # Анимированные звезды
+│   └── TelegramWrapper.jsx     # Обертка Telegram
+├── lib/
+│   └── telegram-init.js        # Инициализация Telegram SDK
+├── pages/
+│   ├── MainPage.jsx            # Главная страница
+│   ├── NatalFormPage.jsx       # Форма натальной карты
+│   └── NatalResultPage.jsx     # Результат
+└── App.tsx                     # Основной компонент
+```
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+## 🌟 Космические особенности
+
+### Анимации
+- `twinkle` - Мерцание звезд
+- `neon-pulse` - Неоновое свечение
+- `cosmic-float` - Космическое движение
+
+### Цветовая схема
+- Основной фон: `#0f0f23`
+- Вторичный фон: `#1a1a2e`
+- Акцентный цвет: `#00ffff`
+- Текст: `#ffffff`
+
+## 🔧 Конфигурация
+
+### Vercel
+- Framework: Vite
+- Build Command: `npm run build`
+- Output Directory: `dist`
+- Node.js Version: 18.x
+
+### Telegram Web App
+- Полноэкранный режим
+- Интеграция с Telegram Bot API
+- Адаптивный дизайн
+
+## 📚 Документация
+
+- [TELEGRAM_SETUP.md](./TELEGRAM_SETUP.md) - Настройка Telegram Web App
+- [DEPLOYMENT.md](./DEPLOYMENT.md) - Инструкции по деплою
+- [COSMIC_FEATURES.md](./COSMIC_FEATURES.md) - Космические возможности
+
+## 🐛 Известные проблемы
+
+1. **Большой размер бандла** - из-за Framework7 + Konsta
+   - Решение: Code splitting и ленивая загрузка
+
+2. **Предупреждение о chunk size**
+   - Решение: Оптимизация зависимостей
+
+## 🤝 Поддержка
+
+При проблемах:
+1. Проверьте логи в Vercel Dashboard
+2. Убедитесь, что все зависимости установлены
+3. Проверьте конфигурацию в `vercel.json`
+
+## 📄 Лицензия
+
+MIT License
+
+## 👨‍🚀 Автор
+
+**Котеус** - Космический Астролог
+
+---
+
+**ASTROT готов к запуску в космосе! 🚀✨**
