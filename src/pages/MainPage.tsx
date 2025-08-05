@@ -5,27 +5,32 @@ import MagicCat from '../components/MagicCat';
 import SplashScreen from '../components/SplashScreen';
 import TelegramUserInfo from '../components/TelegramUserInfo';
 
+let mainPageMounted = false;
+
 export default function MainPage() {
+  if (mainPageMounted) {
+    console.error('🚨 MainPage уже смонтирован!');
+    return null;
+  }
+
   const [loading, setLoading] = useState(true);
   const [modal, setModal] = useState<string | null>(null);
 
-  // ==== DEBUG RENDER LOGS ====
   const renderCount = useRef(0);
-  const [isMounted, setIsMounted] = useState(false);
-
   renderCount.current++;
 
-  console.log('🔄 MainPage RENDER:', {
-    renderCount: renderCount.current,
-    timestamp: new Date().toISOString(),
-    isMounted,
-  });
+  console.log('🔄 MainPage RENDER:', renderCount.current);
 
-  // Log component mount/unmount
   useEffect(() => {
-    console.log('📱 MainPage MOUNTED');
-    setIsMounted(true);
-    return () => console.log('💀 MainPage UNMOUNTED');
+    if (mainPageMounted) return;
+
+    mainPageMounted = true;
+    console.log('📱 MainPage MOUNTED (единственный раз)');
+
+    return () => {
+      mainPageMounted = false;
+      console.log('💀 MainPage UNMOUNTED');
+    };
   }, []);
 
   useEffect(() => {
