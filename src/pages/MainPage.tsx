@@ -14,6 +14,19 @@ export default function MainPage() {
     return () => clearTimeout(timer);
   }, []);
 
+  const enterFullscreen = () => {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const tg = (window as any).Telegram?.WebApp;
+    if (tg && !tg.isFullscreen) {
+      tg.requestFullscreen();
+    }
+  };
+
+  const exitFullscreen = () => {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    (window as any).Telegram?.WebApp?.exitFullscreen();
+  };
+
   const menu = [
     { name: 'natal', icon: '🔮', title: 'Натальная карта' },
     { name: 'tarot', icon: '🎴', title: 'Таро' },
@@ -38,6 +51,14 @@ export default function MainPage() {
           <p className="text-white/90 mb-2">Твой магический проводник в космос 🌟</p>
           <MagicCat />
           <TelegramUserInfo />
+          <div className="flex justify-center gap-2 mb-4">
+            <button id="fullscreenBtn" className="neon-btn" onClick={enterFullscreen}>
+              Полный экран
+            </button>
+            <button id="exitFullscreenBtn" className="neon-btn" onClick={exitFullscreen}>
+              Выйти из полного экрана
+            </button>
+          </div>
           <div className="koteus-message">
             Мяу! Я Котеус - твой космический проводник! Погладь меня и выбери, что тебя интересует! ✨
           </div>

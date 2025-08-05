@@ -33,6 +33,10 @@
           setTimeout(() => {
             console.log('Высота после expand:', tg.viewportHeight);
             console.log('isExpanded:', tg.isExpanded);
+            if (!tg.isFullscreen) {
+              console.log('Запрашиваю fullscreen...');
+              tg.requestFullscreen();
+            }
           }, 100);
         };
 
@@ -42,6 +46,15 @@
         } else {
           expandApp();
         }
+
+        tg.onEvent('fullscreen_changed', function () {
+          console.log('Fullscreen изменен:', tg.isFullscreen);
+          document.body.classList.toggle('fullscreen', tg.isFullscreen);
+        });
+
+        tg.onEvent('fullscreen_failed', function (params) {
+          console.error('Fullscreen не удался:', params.error);
+        });
 
         // Отслеживаем изменение viewport
         tg.onEvent('viewportChanged', function () {
@@ -55,7 +68,7 @@
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/framework7@8.0.0/css/framework7-bundle.css">
   </head>
   <body>
-    <div id="root"></div>
+    <div id="root" class="app-container"></div>
     <script type="module" src="/src/main.tsx"></script>
   </body>
 </html>
