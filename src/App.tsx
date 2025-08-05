@@ -6,7 +6,6 @@ import TelegramWrapper from './components/TelegramWrapper';
 import ErrorBoundary from './components/ErrorBoundary';
 import Framework7 from 'framework7/lite-bundle';
 import Framework7React from 'framework7-react';
-import 'framework7/framework7-bundle.css';
 
 // Register Framework7 React plugin (required for Framework7 components to work correctly)
 Framework7.use(Framework7React);
