@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 
 const welcomeMessages = [
   'Привет! Я Котеус-Астролог, твой космический проводник!',
@@ -20,27 +20,38 @@ export default function KoteusAstrolog({ message, error, isAnimating = false }) 
   const [currentMessage, setCurrentMessage] = useState('');
   const [avatarClass, setAvatarClass] = useState('');
 
+  const getRandomMessage = useCallback((messages) => {
+    return messages[Math.floor(Math.random() * messages.length)];
+  }, []);
+
   useEffect(() => {
     if (error) {
-      setCurrentMessage(errorMessages[Math.floor(Math.random() * errorMessages.length)]);
+      setCurrentMessage(getRandomMessage(errorMessages));
       setAvatarClass('animate-shake');
     } else if (message) {
       setCurrentMessage(message);
       setAvatarClass('animate-pulse');
     } else {
-      setCurrentMessage(welcomeMessages[Math.floor(Math.random() * welcomeMessages.length)]);
+      setCurrentMessage(getRandomMessage(welcomeMessages));
       setAvatarClass('animate-bounce');
     }
-  }, [error, message]);
+  }, [error, message, getRandomMessage]);
 
   useEffect(() => {
     if (isAnimating) {
       const interval = setInterval(() => {
-        setCurrentMessage(welcomeMessages[Math.floor(Math.random() * welcomeMessages.length)]);
-      }, 3000);
+        setCurrentMessage(getRandomMessage(welcomeMessages));
+      }, 4000); // Увеличил интервал для меньшего повторения
       return () => clearInterval(interval);
     }
-  }, [isAnimating]);
+  }, [isAnimating, getRandomMessage]);
+
+  const isError = Boolean(error);
+  const messageStyle = isError 
+    ? 'bg-gradient-to-r from-red-500/20 to-pink-500/20 border-red-400/30' 
+    : 'bg-gradient-to-r from-purple-500/20 to-cyan-500/20 border-cyan-400/30';
+  const textStyle = isError ? 'text-red-300' : 'text-cyan-100';
+  const energyColor = isError ? 'bg-red-400' : 'bg-cyan-400';
 
   return (
     <div className="flex flex-col items-center space-y-4 mb-6 p-6 glassy-enhanced">
@@ -59,23 +70,13 @@ export default function KoteusAstrolog({ message, error, isAnimating = false }) 
       </div>
 
       {/* Message Bubble */}
-      <div className={`relative max-w-sm text-center p-4 rounded-2xl ${
-        error ? 'bg-gradient-to-r from-red-500/20 to-pink-500/20 border-red-400/30' : 
-        'bg-gradient-to-r from-purple-500/20 to-cyan-500/20 border-cyan-400/30'
-      } border backdrop-blur-md`}>
-        <div className={`text-lg font-medium ${
-          error ? 'text-red-300' : 'text-cyan-100'
-        } drop-shadow-lg`}>
+      <div className={`relative max-w-sm text-center p-4 rounded-2xl ${messageStyle} border backdrop-blur-md`}>
+        <div className={`text-lg font-medium ${textStyle} drop-shadow-lg`}>
           {currentMessage}
         </div>
         
         {/* Speech bubble tail */}
-        <div className={`absolute -bottom-2 left-1/2 transform -translate-x-1/2 w-4 h-4 rotate-45 ${
-          error ? 'bg-gradient-to-r from-red-500/20 to-pink-500/20' : 
-          'bg-gradient-to-r from-purple-500/20 to-cyan-500/20'
-        } border-r border-b ${
-          error ? 'border-red-400/30' : 'border-cyan-400/30'
-        }`}></div>
+        <div className={`absolute -bottom-2 left-1/2 transform -translate-x-1/2 w-4 h-4 rotate-45 ${messageStyle} border-r border-b`}></div>
       </div>
 
       {/* Cosmic energy indicator */}
@@ -83,9 +84,7 @@ export default function KoteusAstrolog({ message, error, isAnimating = false }) 
         {[...Array(5)].map((_, i) => (
           <div
             key={i}
-            className={`w-2 h-2 rounded-full ${
-              error ? 'bg-red-400' : 'bg-cyan-400'
-            } animate-pulse`}
+            className={`w-2 h-2 rounded-full ${energyColor} animate-pulse`}
             style={{ animationDelay: `${i * 0.2}s` }}
           ></div>
         ))}
