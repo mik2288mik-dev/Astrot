@@ -1,4 +1,4 @@
-import MainPage from './pages/MainPage.jsx';
+import MainPage from './pages/MainPage.tsx';
 import NatalFormPage from './pages/NatalFormPage.jsx';
 import NatalResultPage from './pages/NatalResultPage.jsx';
 import SettingsPage from './pages/SettingsPage.jsx';
