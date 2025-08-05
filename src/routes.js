@@ -1,6 +1,7 @@
 import MainPage from './pages/MainPage.jsx';
 import NatalFormPage from './pages/NatalFormPage.jsx';
 import NatalResultPage from './pages/NatalResultPage.jsx';
+import SettingsPage from './pages/SettingsPage.jsx';
 
 const routes = [
   {
@@ -14,6 +15,10 @@ const routes = [
   {
     path: '/natal-result/',
     component: NatalResultPage,
+  },
+  {
+    path: '/settings/',
+    component: SettingsPage,
   },
 ];
 

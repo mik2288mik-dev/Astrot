@@ -1,7 +1,7 @@
 /* eslint-disable react/prop-types */
 import React, { useState } from 'react';
 import { Page, Navbar, List, ListInput, Button } from 'konsta/react';
-import KoteusAstrolog from '../components/KoteusAstrolog.jsx';
+import Koteus from '../components/Koteus';
 
 export default function NatalFormPage({ f7router }) {
   const [formData, setFormData] = useState({ name: '', date: '', time: '', city: '' });
@@ -24,7 +24,7 @@ export default function NatalFormPage({ f7router }) {
   return (
     <Page className="p-4">
       <Navbar title="Форма" />
-      <KoteusAstrolog error={error} />
+      <Koteus error={error} />
       <form onSubmit={handleSubmit} className="space-y-4">
         <List className="neon-input">
           <ListInput
