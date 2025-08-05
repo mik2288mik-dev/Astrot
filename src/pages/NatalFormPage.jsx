@@ -1,10 +1,9 @@
+/* eslint-disable react/prop-types */
 import React, { useState } from 'react';
 import { Page, Navbar, List, ListInput, Button } from 'konsta/react';
-import { useRouter } from 'framework7-react';
 import KoteusAstrolog from '../components/KoteusAstrolog.jsx';
 
-export default function NatalFormPage() {
-  const router = useRouter();
+export default function NatalFormPage({ f7router }) {
   const [formData, setFormData] = useState({ name: '', date: '', time: '', city: '' });
   const [error, setError] = useState('');
 
@@ -19,7 +18,7 @@ export default function NatalFormPage() {
       return;
     }
     setError('');
-    router.navigate('/natal-result/', { props: { data: formData } });
+    f7router.navigate('/natal-result/', { props: { data: formData } });
   };
 
   return (

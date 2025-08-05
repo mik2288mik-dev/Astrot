@@ -1,5 +1,6 @@
 import React from 'react';
-import { App as KonstaApp, View } from 'konsta/react';
+import { App as KonstaApp } from 'konsta/react';
+import { View } from 'framework7-react';
 import routes from './routes.js';
 
 export default function App() {
