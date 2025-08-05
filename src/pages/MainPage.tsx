@@ -26,22 +26,22 @@ export default function MainPage() {
   ];
 
   return (
-    <Page className="cosmic-bg relative overflow-hidden text-center min-h-screen">
+    <Page className="cosmic-bg relative overflow-hidden text-center h-screen">
       <StarField />
       {loading ? (
         <SplashScreen />
       ) : (
-        <div className="relative z-10 pt-8 px-4">
-          <TelegramUserInfo />
-          <h1 className="text-4xl font-bold bg-gradient-to-r from-yellow-300 to-orange-400 bg-clip-text text-transparent mb-2">
+        <div className="relative z-10 pt-4 px-4">
+          <h1 className="text-4xl font-bold bg-gradient-to-r from-yellow-300 to-orange-400 bg-clip-text text-transparent mb-1">
             ASTROT
           </h1>
-          <p className="text-white/90 mb-4">Твой магический проводник в космос 🌟</p>
+          <p className="text-white/90 mb-2">Твой магический проводник в космос 🌟</p>
           <MagicCat />
+          <TelegramUserInfo />
           <div className="koteus-message">
             Мяу! Я Котеус - твой космический проводник! Погладь меня и выбери, что тебя интересует! ✨
           </div>
-          <div className="grid grid-cols-2 gap-4 mt-6 max-w-md mx-auto">
+          <div className="grid grid-cols-2 gap-4 mt-4 max-w-md mx-auto">
             {menu.map((item) => (
               <div
                 key={item.name}
