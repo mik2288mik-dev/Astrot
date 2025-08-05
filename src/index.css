@@ -3,16 +3,14 @@
 @tailwind utilities;
 
 /* Telegram Web App Fullscreen Styles */
-html, body {
+html, body, #root {
+  width: 100%;
   height: 100vh;
-  overflow-x: hidden;
+  height: var(--tg-viewport-height, 100vh);
+  margin: 0;
+  padding: 0;
+  overflow: hidden;
   background: #0f0f23;
-}
-
-/* Ensure fullscreen mode works properly */
-#root {
-  height: 100vh;
-  width: 100vw;
 }
 
 /* Hide scrollbars but keep functionality */
