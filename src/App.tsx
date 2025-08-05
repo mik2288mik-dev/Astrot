@@ -2,6 +2,8 @@ import React, { useEffect, useState } from 'react';
 import { App as KonstaApp } from 'konsta/react';
 import { App as F7App, View } from 'framework7-react';
 import routes from './routes.js';
+import TelegramWrapper from './components/TelegramWrapper';
+import ErrorBoundary from './components/ErrorBoundary';
 
 export default function App() {
   const [dark, setDark] = useState(false);
@@ -16,10 +18,14 @@ export default function App() {
   }, []);
 
   return (
-    <KonstaApp theme="ios" dark={dark}>
-      <F7App theme="ios" routes={routes}>
-        <View main url="/" />
-      </F7App>
-    </KonstaApp>
+    <ErrorBoundary>
+      <TelegramWrapper>
+        <KonstaApp theme="ios" dark={dark}>
+          <F7App theme="ios" routes={routes}>
+            <View main url="/" />
+          </F7App>
+        </KonstaApp>
+      </TelegramWrapper>
+    </ErrorBoundary>
   );
 }
