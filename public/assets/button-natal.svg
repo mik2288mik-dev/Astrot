@@ -1,0 +1,13 @@
+<svg width="150" height="60" viewBox="0 0 150 60" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="natalGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#8b5cf6;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#7c3aed;stop-opacity:1" />
+    </linearGradient>
+  </defs>
+  <rect width="150" height="60" rx="15" fill="url(#natalGrad)" stroke="#6d28d9" stroke-width="2"/>
+  <circle cx="30" cy="30" r="12" fill="none" stroke="white" stroke-width="2"/>
+  <circle cx="30" cy="30" r="8" fill="none" stroke="white" stroke-width="1"/>
+  <circle cx="30" cy="30" r="4" fill="none" stroke="white" stroke-width="1"/>
+  <text x="55" y="37" font-family="Arial, sans-serif" font-size="14" font-weight="bold" fill="white">Натальная карта</text>
+</svg>
