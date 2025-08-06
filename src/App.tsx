@@ -1,50 +1,73 @@
 import React, { useEffect, useState } from 'react';
-import { App as KonstaApp } from 'konsta/react';
-import { App as F7App, View } from 'framework7-react';
-import routes from './routes.tsx';
-import ErrorBoundary from './components/ErrorBoundary';
-import Framework7 from 'framework7/lite-bundle';
-import Framework7React from 'framework7-react';
+import MainPage from './pages/MainPage';
 import { useTelegramWebApp } from './hooks/useTelegramWebApp';
 
-declare global {
-  interface Window {
-    APP_INSTANCE_EXISTS?: boolean;
-  }
-}
-
-// Register Framework7 React plugin (required for Framework7 components to work correctly)
-Framework7.use(Framework7React);
-
 export default function App() {
-  if (window.APP_INSTANCE_EXISTS) {
-    console.error('🚨 App уже запущен! Блокируем дублирование');
-    return <div />;
-  }
-  window.APP_INSTANCE_EXISTS = true;
+  const [isReady, setIsReady] = useState(false);
 
   console.log('🎯 APP COMPONENT RENDER');
 
-  const [dark, setDark] = useState(false);
+  useEffect(() => {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const w = window as any;
+    if (w.APP_COMPONENT_MOUNTED) {
+      console.log('⚠️ App компонент уже смонтирован');
+      return;
+    }
+
+    w.APP_COMPONENT_MOUNTED = true;
+    setIsReady(true);
+
+    return () => {
+      w.APP_COMPONENT_MOUNTED = false;
+    };
+  }, []);
 
   useTelegramWebApp();
 
+  // Мониторинг состояния каждые 3 секунды
   useEffect(() => {
-    const saved = localStorage.getItem('theme') === 'dark';
-    setDark(saved);
-    document.documentElement.classList.toggle('dark', saved);
-    const handler = (e: Event) => setDark((e as CustomEvent<boolean>).detail);
-    window.addEventListener('themechange', handler);
-    return () => window.removeEventListener('themechange', handler);
+    const interval = setInterval(() => {
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      const w = window as any;
+      console.log('📊 App State:', {
+        appMounted: w.APP_COMPONENT_MOUNTED,
+        mainPageMounted: w.mainPageMountedGlobally,
+        timestamp: new Date().toISOString(),
+      });
+    }, 3000);
+
+    return () => clearInterval(interval);
   }, []);
 
-  return (
-    <ErrorBoundary>
-      <KonstaApp theme="ios" dark={dark}>
-        <F7App theme="ios" routes={routes}>
-          <View main url="/" />
-        </F7App>
-      </KonstaApp>
-    </ErrorBoundary>
-  );
+  // Проверяем DOM на дубликаты
+  useEffect(() => {
+    const checkDuplicates = () => {
+      const mainPages = document.querySelectorAll('.main-page');
+      const roots = document.querySelectorAll('#root > *');
+
+      if (mainPages.length > 1) {
+        console.error('🚨 НАЙДЕНО ДУБЛИКАТОВ MainPage:', mainPages.length);
+        for (let i = 1; i < mainPages.length; i++) {
+          mainPages[i].remove();
+          console.log('🗑 Удален дублированный MainPage');
+        }
+      }
+
+      console.log('✅ DOM проверка:', {
+        mainPages: mainPages.length,
+        rootChildren: roots.length,
+      });
+    };
+
+    const timer = setTimeout(checkDuplicates, 1000);
+    return () => clearTimeout(timer);
+  }, []);
+
+  if (!isReady) {
+    return <div className="loading">Инициализация...</div>;
+  }
+
+  return <MainPage />;
 }
+
