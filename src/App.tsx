@@ -19,7 +19,7 @@ Framework7.use(Framework7React);
 export default function App() {
   if (window.APP_INSTANCE_EXISTS) {
     console.error('🚨 App уже запущен! Блокируем дублирование');
-    return null;
+    return <div />;
   }
   window.APP_INSTANCE_EXISTS = true;
 

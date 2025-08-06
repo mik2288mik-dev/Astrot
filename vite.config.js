@@ -3,10 +3,13 @@ import react from '@vitejs/plugin-react';
 
 export default defineConfig({
   plugins: [react()],
+  base: './',
   build: {
+    outDir: 'dist',
     rollupOptions: {
-      input: 'src/main.tsx',
-      external: [],
+      input: {
+        main: './index.html',
+      },
     },
   },
   optimizeDeps: {
