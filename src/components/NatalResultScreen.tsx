@@ -9,6 +9,32 @@ interface NatalResultScreenProps {
 const NatalResultScreen: React.FC<NatalResultScreenProps> = ({ result, onBack }) => {
   const [activeTab, setActiveTab] = useState<'chart' | 'interpretation'>('chart');
   const [selectedPlanet, setSelectedPlanet] = useState<string | null>(null);
+  const [aiText, setAiText] = useState<string>("");
+  useEffect(() => {
+    const fetchAI = async () => {
+      try {
+        const response = await fetch('https://api.openai.com/v1/chat/completions', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${import.meta.env.VITE_OPENAI_API_KEY}`
+          },
+          body: JSON.stringify({
+            model: 'gpt-4o-mini',
+            messages: [
+              { role: 'system', content: 'Ты — астролог…' },
+              { role: 'user', content: `Моя натальная карта: ${JSON.stringify(result)}` }
+            ]
+          })
+        });
+        const ai = await response.json();
+        setAiText(ai.choices?.[0]?.message?.content || '');
+      } catch (err) {
+        console.error('AI request failed', err);
+      }
+    };
+    fetchAI();
+  }, [result]);
 
   // Простая SVG натальная карта
   const NatalChart: React.FC = () => {
@@ -319,6 +345,14 @@ const NatalResultScreen: React.FC<NatalResultScreenProps> = ({ result, onBack })
                   {result.interpretation.health}
                 </p>
               </div>
+              {/* AI интерпретация */}
+              {aiText && (
+                <div className="bg-white bg-opacity-10 backdrop-blur-sm rounded-xl p-6">
+                  <h3 className="text-white font-bold text-lg mb-3">🤖 AI</h3>
+                  <p className="text-blue-100 text-sm leading-relaxed">{aiText}</p>
+                </div>
+              )}
+
             </div>
           )}
         </div>

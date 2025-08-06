@@ -79,7 +79,7 @@ const LoadingScreen: React.FC<LoadingScreenProps> = ({ onLoadingComplete }) => {
         </div>
       </div>
 
-      <style jsx>{`
+      <style>{`
         @keyframes loadingProgress {
           0% { width: 0%; }
           100% { width: 100%; }

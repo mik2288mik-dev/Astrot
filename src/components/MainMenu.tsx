@@ -8,7 +8,7 @@ interface MainMenuProps {
 
 const MainMenu: React.FC<MainMenuProps> = ({ onNavigate }) => {
   const [currentCatPose, setCurrentCatPose] = useState(1);
-  const [user, setUser] = useState<any>(null);
+  const [user, setUser] = useState<{ first_name?: string; last_name?: string; id?: number; photo_url?: string } | null>(null);
 
   useEffect(() => {
     // Получение информации о пользователе из Telegram
@@ -26,26 +26,9 @@ const MainMenu: React.FC<MainMenuProps> = ({ onNavigate }) => {
     return () => clearInterval(catInterval);
   }, []);
 
-  const handlePremiumClick = async () => {
-    if (user?.id) {
-      try {
-        const result = await monetizationService.initiatePremiumPayment(user.id);
-        if (result.success) {
-          // Обновить UI или показать успешное сообщение
-          console.log('Премиум успешно приобретен!');
-        } else {
-          console.log('Ошибка при покупке премиума:', result.error);
-        }
-      } catch (error) {
-        console.error('Ошибка при покупке премиума:', error);
-        // Для демонстрации показываем popup с информацией о премиуме
-        monetizationService.showPremiumInfo();
-      }
-    } else {
-      // Если нет доступа к Telegram, показываем информацию о премиуме
-      monetizationService.showPremiumInfo();
-    }
-  };
+  const handlePremiumClick = () => {
+  monetizationService.openPremiumPayment(100);
+};
 
   const MenuButton: React.FC<{ 
     imageSrc: string; 

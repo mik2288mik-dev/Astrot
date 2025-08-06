@@ -1,9 +1,9 @@
 import React, { useState } from 'react';
-import { apiService, NatalData } from '../services/ApiService';
+import { apiService, NatalData, NatalResult } from '../services/ApiService';
 import '../types/telegram';
 
 interface NatalFormProps {
-  onResult: (result: any) => void;
+  onResult: (result: NatalResult) => void;
   onBack: () => void;
 }
 
