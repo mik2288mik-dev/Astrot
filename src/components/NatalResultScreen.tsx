@@ -215,7 +215,7 @@ const NatalResultScreen: React.FC<NatalResultScreenProps> = ({ result, onBack })
     <div 
       className="min-h-screen flex flex-col relative overflow-hidden"
       style={{
-        backgroundImage: 'url(/assets/bg-main.svg)',
+        backgroundImage: 'url(/assets/bg-main.png)',
         backgroundSize: 'cover',
         backgroundPosition: 'center',
         backgroundRepeat: 'no-repeat'

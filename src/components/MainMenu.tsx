@@ -82,7 +82,7 @@ const MainMenu: React.FC<MainMenuProps> = ({ onNavigate }) => {
     <div 
       className="min-h-screen flex flex-col items-center justify-start relative overflow-hidden px-4 py-8"
       style={{
-        backgroundImage: 'url(/assets/bg-main.svg)',
+        backgroundImage: 'url(/assets/bg-main.png)',
         backgroundSize: 'cover',
         backgroundPosition: 'center',
         backgroundRepeat: 'no-repeat'
@@ -125,7 +125,7 @@ const MainMenu: React.FC<MainMenuProps> = ({ onNavigate }) => {
         {/* Анимированный кот */}
         <div className="mb-8 transform transition-all duration-1000 hover:scale-110">
           <img 
-            src={`/assets/cat-pose-${currentCatPose}.svg`}
+            src={`/assets/cat-pose-${currentCatPose}.png`}
             alt={`Cat Pose ${currentCatPose}`}
             className="w-32 h-32 mx-auto animate-bounce"
             style={{
@@ -140,7 +140,7 @@ const MainMenu: React.FC<MainMenuProps> = ({ onNavigate }) => {
           
           {/* Кнопка натальной карты */}
           <MenuButton
-            imageSrc="/assets/button-natal.svg"
+            imageSrc="/assets/button-natal.png"
             onClick={() => onNavigate('natal')}
             alt="Натальная карта"
             className="col-span-2"
@@ -148,28 +148,28 @@ const MainMenu: React.FC<MainMenuProps> = ({ onNavigate }) => {
 
           {/* Кнопка гороскопа */}
           <MenuButton
-            imageSrc="/assets/button-horoscope.svg"
+            imageSrc="/assets/button-horoscope.png"
             onClick={() => onNavigate('horoscope')}
             alt="Гороскоп"
           />
 
           {/* Кнопка игр */}
           <MenuButton
-            imageSrc="/assets/button-games.svg"
+            imageSrc="/assets/button-games.png"
             onClick={() => onNavigate('games')}
             alt="Игры"
           />
 
           {/* Кнопка профиля */}
           <MenuButton
-            imageSrc="/assets/button-profile.svg"
+            imageSrc="/assets/button-profile.png"
             onClick={() => onNavigate('profile')}
             alt="Профиль"
           />
 
           {/* Кнопка премиума */}
           <MenuButton
-            imageSrc="/assets/button-premium.svg"
+            imageSrc="/assets/button-premium.png"
             onClick={handlePremiumClick}
             alt="Премиум"
           />

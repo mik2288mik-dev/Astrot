@@ -5,6 +5,11 @@ import './index.css';
 
 console.log('🏁 MAIN.TSX EXECUTION START');
 
+if (window.Telegram?.WebApp) {
+  window.Telegram.WebApp.ready();
+  window.Telegram.WebApp.expand();
+}
+
 const root = ReactDOM.createRoot(document.getElementById('root') as HTMLElement);
 
 // ❌ БЕЗ React.StrictMode!
