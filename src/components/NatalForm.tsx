@@ -1,38 +1,53 @@
-import React from 'react';
+import React, { useState } from 'react';
+import { ApiService } from '../lib/ApiService';
 
 interface NatalFormProps {
-  t: {
-    name: string;
-    birthDate: string;
-    birthPlace: string;
-    submit: string;
-  };
-  onSubmit: () => void;
+  onResult: (data: unknown) => void;
 }
 
-export default function NatalForm({ t, onSubmit }: NatalFormProps) {
-  const handleSubmit = (e: React.FormEvent) => {
+export default function NatalForm({ onResult }: NatalFormProps) {
+  const [name, setName] = useState('');
+  const [date, setDate] = useState('');
+  const [time, setTime] = useState('');
+  const [city, setCity] = useState('');
+
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    onSubmit();
+    const payload = { name, date, time, city };
+    const res = await ApiService.postNatal(payload);
+    console.log(res);
+    onResult(res);
   };
 
   return (
     <form onSubmit={handleSubmit} className="flex flex-col gap-4 p-4 max-w-sm mx-auto">
       <input
         type="text"
-        placeholder={t.name}
+        placeholder="Имя"
+        value={name}
+        onChange={(e) => setName(e.target.value)}
         className="rounded p-2 text-black"
         required
       />
       <input
         type="date"
-        placeholder={t.birthDate}
+        value={date}
+        onChange={(e) => setDate(e.target.value)}
+        className="rounded p-2 text-black"
+        required
+      />
+      <input
+        type="time"
+        value={time}
+        onChange={(e) => setTime(e.target.value)}
         className="rounded p-2 text-black"
         required
       />
       <input
         type="text"
-        placeholder={t.birthPlace}
+        placeholder="Город рождения"
+        value={city}
+        onChange={(e) => setCity(e.target.value)}
         className="rounded p-2 text-black"
         required
       />
@@ -40,7 +55,7 @@ export default function NatalForm({ t, onSubmit }: NatalFormProps) {
         type="submit"
         className="bg-purple-500 hover:bg-purple-600 text-white font-semibold py-2 rounded"
       >
-        {t.submit}
+        Показать натальную карту
       </button>
     </form>
   );
