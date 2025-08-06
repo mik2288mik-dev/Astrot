@@ -1,0 +1,30 @@
+<svg width="120" height="120" viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
+  <!-- Cat body -->
+  <ellipse cx="60" cy="80" rx="25" ry="20" fill="#fbbf24"/>
+  <!-- Cat head -->
+  <circle cx="60" cy="50" r="22" fill="#fbbf24"/>
+  <!-- Cat ears -->
+  <polygon points="45,35 50,20 55,35" fill="#fbbf24"/>
+  <polygon points="65,35 70,20 75,35" fill="#fbbf24"/>
+  <!-- Inner ears -->
+  <polygon points="47,32 50,25 53,32" fill="#f59e0b"/>
+  <polygon points="67,32 70,25 73,32" fill="#f59e0b"/>
+  <!-- Eyes (sleepy) -->
+  <line x1="48" y1="45" x2="56" y2="45" stroke="#000" stroke-width="2"/>
+  <line x1="64" y1="45" x2="72" y2="45" stroke="#000" stroke-width="2"/>
+  <!-- Nose -->
+  <polygon points="60,52 58,55 62,55" fill="#ec4899"/>
+  <!-- Mouth (content) -->
+  <path d="M 57 58 Q 60 60 63 58" stroke="#000" stroke-width="1" fill="none"/>
+  <!-- Whiskers -->
+  <line x1="35" y1="48" x2="48" y2="50" stroke="#000" stroke-width="1"/>
+  <line x1="35" y1="52" x2="48" y2="52" stroke="#000" stroke-width="1"/>
+  <line x1="72" y1="50" x2="85" y2="48" stroke="#000" stroke-width="1"/>
+  <line x1="72" y1="52" x2="85" y2="52" stroke="#000" stroke-width="1"/>
+  <!-- Tail (relaxed) -->
+  <path d="M 85 75 Q 88 85 82 88" stroke="#fbbf24" stroke-width="8" fill="none"/>
+  <!-- Z's for sleeping -->
+  <text x="90" y="35" font-family="Arial" font-size="12" fill="#666">Z</text>
+  <text x="95" y="28" font-family="Arial" font-size="10" fill="#999">z</text>
+  <text x="100" y="22" font-family="Arial" font-size="8" fill="#ccc">z</text>
+</svg>
