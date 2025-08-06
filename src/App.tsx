@@ -66,7 +66,7 @@ export default function App() {
       <div 
         className="min-h-screen flex flex-col items-center justify-center relative overflow-hidden px-4"
         style={{
-          backgroundImage: 'url(/assets/bg-main.svg)',
+          backgroundImage: 'url(/assets/bg-main.png)',
           backgroundSize: 'cover',
           backgroundPosition: 'center',
           backgroundRepeat: 'no-repeat'

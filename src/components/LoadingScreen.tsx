@@ -25,7 +25,7 @@ const LoadingScreen: React.FC<LoadingScreenProps> = ({ onLoadingComplete }) => {
     <div 
       className="min-h-screen flex flex-col items-center justify-center relative overflow-hidden"
       style={{
-        backgroundImage: 'url(/assets/bg-loading.svg)',
+        backgroundImage: 'url(/assets/bg-loading.png)',
         backgroundSize: 'cover',
         backgroundPosition: 'center',
         backgroundRepeat: 'no-repeat'
@@ -39,7 +39,7 @@ const LoadingScreen: React.FC<LoadingScreenProps> = ({ onLoadingComplete }) => {
         {/* Спиннер */}
         <div className="mb-8">
           <img 
-            src="/assets/spinner.svg" 
+            src="/assets/spinner.png" 
             alt="Loading..." 
             className="w-16 h-16 animate-spin"
             style={{
