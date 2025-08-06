@@ -82,7 +82,21 @@ class ApiService {
         throw new Error(`HTTP error! status: ${response.status}`);
       }
 
-      const result = await response.json();
+      const result: NatalResult = await response.json();
+
+      // 🔮 Дополнительная интерпретация через OpenAI (если доступен ключ)
+      if (import.meta.env.VITE_OPENAI_API_KEY) {
+        try {
+          const interpretation = await this.getInterpretationFromOpenAI(result);
+          result.interpretation = {
+            ...result.interpretation,
+            summary: interpretation,
+          } as any;
+        } catch (openAiErr) {
+          console.warn('OpenAI interpretation failed:', openAiErr);
+        }
+      }
+
       return result;
     } catch (error) {
       console.error('Error posting natal data:', error);
@@ -113,6 +127,38 @@ class ApiService {
       // Заглушка для демонстрации
       return this.getMockHoroscopeResult(data);
     }
+  }
+
+  private async getInterpretationFromOpenAI(result: NatalResult): Promise<string> {
+    const systemPrompt = `You are an experienced astrologer. Compose a concise, inspiring interpretation of the following natal chart data in Russian. Avoid repeating the data; focus on meaning and advice.`;
+
+    const userContent = `Имя: ${result.name}\nДата рождения: ${result.birthData.date}\nВремя: ${result.birthData.time}\nГород: ${result.birthData.city}\n\nПланеты:\n${result.planets.map(p => `${p.name} в ${p.sign} (${p.degree}°, дом ${p.house})`).join('\n')}\n\nАспекты:\n${result.aspects.map(a => `${a.planet1} ${a.aspect} ${a.planet2} (орб ${a.orb}°)`).join('\n')}`;
+
+    const body = {
+      model: 'gpt-3.5-turbo',
+      messages: [
+        { role: 'system', content: systemPrompt },
+        { role: 'user', content: userContent }
+      ],
+      temperature: 0.8,
+      max_tokens: 512,
+    };
+
+    const response = await fetch('https://api.openai.com/v1/chat/completions', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${import.meta.env.VITE_OPENAI_API_KEY}`,
+      },
+      body: JSON.stringify(body),
+    });
+
+    if (!response.ok) {
+      throw new Error(`OpenAI HTTP error ${response.status}`);
+    }
+
+    const data = await response.json();
+    return data.choices?.[0]?.message?.content?.trim() || '';
   }
 
   private getMockNatalResult(data: NatalData): NatalResult {

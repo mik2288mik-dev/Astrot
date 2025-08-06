@@ -140,7 +140,7 @@ const MainMenu: React.FC<MainMenuProps> = ({ onNavigate }) => {
           
           {/* Кнопка натальной карты */}
           <MenuButton
-            imageSrc="/assets/button-natal.png"
+            imageSrc="/assets/button_natal.png"
             onClick={() => onNavigate('natal')}
             alt="Натальная карта"
             className="col-span-2"
@@ -148,28 +148,28 @@ const MainMenu: React.FC<MainMenuProps> = ({ onNavigate }) => {
 
           {/* Кнопка гороскопа */}
           <MenuButton
-            imageSrc="/assets/button-horoscope.png"
+            imageSrc="/assets/button_horoscope.png"
             onClick={() => onNavigate('horoscope')}
             alt="Гороскоп"
           />
 
           {/* Кнопка игр */}
           <MenuButton
-            imageSrc="/assets/button-games.png"
+            imageSrc="/assets/button_games.png"
             onClick={() => onNavigate('games')}
             alt="Игры"
           />
 
           {/* Кнопка профиля */}
           <MenuButton
-            imageSrc="/assets/button-profile.png"
+            imageSrc="/assets/button_profile.png"
             onClick={() => onNavigate('profile')}
             alt="Профиль"
           />
 
           {/* Кнопка премиума */}
           <MenuButton
-            imageSrc="/assets/button-premium.png"
+            imageSrc="/assets/button_premium.png"
             onClick={handlePremiumClick}
             alt="Премиум"
           />
