@@ -5,31 +5,32 @@ import MagicCat from '../components/MagicCat';
 import SplashScreen from '../components/SplashScreen';
 import TelegramUserInfo from '../components/TelegramUserInfo';
 
-let mainPageMounted = false;
-
 export default function MainPage() {
-  if (mainPageMounted) {
-    console.error('🚨 MainPage уже смонтирован!');
-    return null;
-  }
-
   const [loading, setLoading] = useState(true);
   const [modal, setModal] = useState<string | null>(null);
 
   const renderCount = useRef(0);
-  renderCount.current++;
+  const [isFirstMount, setIsFirstMount] = useState(false);
 
+  renderCount.current++;
   console.log('🔄 MainPage RENDER:', renderCount.current);
 
   useEffect(() => {
-    if (mainPageMounted) return;
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const w = window as any;
+    if (w.mainPageMountedGlobally) {
+      console.log('⚠️ MainPage уже смонтирован глобально, пропускаем повторное монтирование');
+      return;
+    }
 
-    mainPageMounted = true;
+    w.mainPageMountedGlobally = true;
+    setIsFirstMount(true);
+
     console.log('📱 MainPage MOUNTED (единственный раз)');
 
     return () => {
-      mainPageMounted = false;
       console.log('💀 MainPage UNMOUNTED');
+      w.mainPageMountedGlobally = false;
     };
   }, []);
 
@@ -37,6 +38,12 @@ export default function MainPage() {
     const timer = setTimeout(() => setLoading(false), 3000);
     return () => clearTimeout(timer);
   }, []);
+
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  if ((window as any).mainPageMountedGlobally && !isFirstMount) {
+    console.log('🚫 Блокируем повторный рендер MainPage');
+    return null;
+  }
 
   const enterFullscreen = () => {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -63,7 +70,7 @@ export default function MainPage() {
   ];
 
   return (
-    <Page className="cosmic-bg relative text-center min-h-screen overflow-y-auto">
+    <Page className="main-page cosmic-bg relative text-center min-h-screen overflow-y-auto">
       <StarField />
       {loading ? (
         <SplashScreen />

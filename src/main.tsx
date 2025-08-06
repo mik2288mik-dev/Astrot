@@ -5,18 +5,16 @@ import './index.css';
 
 console.log('🏁 MAIN.TSX EXECUTION START');
 
-ReactDOM.createRoot(document.getElementById('root') as HTMLElement).render(
-  <App />
-);
+const root = ReactDOM.createRoot(document.getElementById('root') as HTMLElement);
 
-setInterval(() => {
-  const apps = document.querySelectorAll('#root > *');
-  const mainPages = document.querySelectorAll('.main-page');
+// ❌ БЕЗ React.StrictMode!
+root.render(<App />);
 
-  if (apps.length > 1 || mainPages.length > 1) {
-    console.error('🚨 НАЙДЕНЫ ДУБЛИКАТЫ В DOM!', {
-      apps: apps.length,
-      mainPages: mainPages.length,
-    });
-  }
-}, 2000);
+// Очистка при выходе
+window.addEventListener('beforeunload', () => {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  (window as any).APP_COMPONENT_MOUNTED = false;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  (window as any).mainPageMountedGlobally = false;
+  console.log('🧹 Глобальная очистка при выходе');
+});
