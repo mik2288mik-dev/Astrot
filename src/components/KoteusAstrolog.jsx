@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useCallback } from 'react';
+import catAvatar from '../assets/cat-pose-1.png';
 
 const welcomeMessages = [
   'Привет! Я Котеус-Астролог, твой космический проводник!',
@@ -59,7 +60,7 @@ export default function KoteusAstrolog({ message, error, isAnimating = false }) 
       <div className={`relative ${avatarClass}`}>
         <div className="w-20 h-20 rounded-full bg-gradient-to-br from-purple-600 via-blue-600 to-cyan-400 p-1">
           <div className="w-full h-full rounded-full bg-gradient-to-br from-purple-800 to-blue-900 flex items-center justify-center text-4xl relative overflow-hidden">
-            *
+            <img src={catAvatar} alt="Cosmic Cat" className="w-full h-full object-cover" />
             {/* Cosmic sparkles */}
             <div className="absolute inset-0 cosmic-sparkles"></div>
           </div>
