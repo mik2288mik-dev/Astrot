@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { NatalResult } from '../services/ApiService';
+import backgroundStars from '../assets/background-stars.png';
 
 interface NatalResultScreenProps {
   result: NatalResult;
@@ -238,10 +239,10 @@ const NatalResultScreen: React.FC<NatalResultScreenProps> = ({ result, onBack })
   );
 
   return (
-    <div 
+    <div
       className="min-h-screen flex flex-col relative overflow-hidden"
       style={{
-        backgroundImage: 'url(/assets/bg-main.png)',
+        backgroundImage: `url(${backgroundStars})`,
         backgroundSize: 'cover',
         backgroundPosition: 'center',
         backgroundRepeat: 'no-repeat'
