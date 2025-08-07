@@ -200,7 +200,7 @@ const NatalForm: React.FC<NatalFormProps> = ({ onResult, onBack }) => {
               <button
                 type="submit"
                 disabled={isLoading}
-                className="flex-2 py-3 px-6 bg-gradient-to-r from-purple-500 to-pink-500 text-white rounded-lg font-medium transition-all duration-200 hover:from-purple-600 hover:to-pink-600 active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center"
+                className="flex-2 py-3 px-6 bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500 text-white rounded-lg font-medium transition-all duration-200 hover:from-indigo-600 hover:via-purple-600 hover:to-pink-600 active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center"
               >
                 {isLoading ? (
                   <>

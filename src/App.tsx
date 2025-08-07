@@ -8,7 +8,20 @@ import './types/telegram';
 import backgroundStars from './assets/background-stars.png';
 
 // Типы экранов
-type Screen = 'loading' | 'menu' | 'natal' | 'result' | 'horoscope' | 'games' | 'profile';
+type Screen =
+  | 'loading'
+  | 'menu'
+  | 'natal'
+  | 'result'
+  | 'horoscope'
+  | 'tarot1'
+  | 'tarot2'
+  | 'ai1'
+  | 'ai2'
+  | 'shop'
+  | 'subscription'
+  | 'games'
+  | 'profile';
 
 export default function App() {
   const [screen, setScreen] = useState<Screen>('loading');
@@ -120,10 +133,64 @@ export default function App() {
 
     case 'horoscope':
       return (
-        <SimpleScreen 
-          title="Гороскоп" 
-          icon="⭐" 
-          onBack={handleBackToMenu} 
+        <SimpleScreen
+          title="Гороскоп"
+          icon="⭐"
+          onBack={handleBackToMenu}
+        />
+      );
+
+    case 'tarot1':
+      return (
+        <SimpleScreen
+          title="Таро"
+          icon="🃏"
+          onBack={handleBackToMenu}
+        />
+      );
+
+    case 'tarot2':
+      return (
+        <SimpleScreen
+          title="Таро"
+          icon="🔮"
+          onBack={handleBackToMenu}
+        />
+      );
+
+    case 'ai1':
+      return (
+        <SimpleScreen
+          title="ИИ-Астролог"
+          icon="🤖"
+          onBack={handleBackToMenu}
+        />
+      );
+
+    case 'ai2':
+      return (
+        <SimpleScreen
+          title="ИИ-Астролог"
+          icon="🤖"
+          onBack={handleBackToMenu}
+        />
+      );
+
+    case 'shop':
+      return (
+        <SimpleScreen
+          title="Магазин"
+          icon="🛍️"
+          onBack={handleBackToMenu}
+        />
+      );
+
+    case 'subscription':
+      return (
+        <SimpleScreen
+          title="Подписка"
+          icon="💎"
+          onBack={handleBackToMenu}
         />
       );
 
