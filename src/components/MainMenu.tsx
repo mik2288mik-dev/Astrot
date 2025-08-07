@@ -2,11 +2,24 @@ import React, { useState, useEffect } from 'react';
 import { monetizationService } from '../services/Monetization';
 import '../types/telegram';
 
+// Assets
+import bgMain from '../assets/bg-main.png';
+import buttonNatal from '../assets/button-natal.png';
+import buttonHoroscope from '../assets/button-horoscope.png';
+import buttonGames from '../assets/button-games.png';
+import buttonProfile from '../assets/button-profile.png';
+import buttonPremium from '../assets/button-premium.png';
+import catPose1 from '../assets/cat-pose-1.png';
+import catPose2 from '../assets/cat-pose-2.png';
+import catPose3 from '../assets/cat-pose-3.png';
+import catPose4 from '../assets/cat-pose-4.png';
+
 interface MainMenuProps {
   onNavigate: (screen: string) => void;
 }
 
 const MainMenu: React.FC<MainMenuProps> = ({ onNavigate }) => {
+  const catPoses = [catPose1, catPose2, catPose3, catPose4];
   const [currentCatPose, setCurrentCatPose] = useState(1);
   const [user, setUser] = useState<{ first_name?: string; last_name?: string; id?: number; photo_url?: string } | null>(null);
 
@@ -65,7 +78,7 @@ const MainMenu: React.FC<MainMenuProps> = ({ onNavigate }) => {
     <div 
       className="min-h-screen flex flex-col items-center justify-start relative overflow-hidden px-4 py-8"
       style={{
-        backgroundImage: 'url(/assets/bg-main.png)',
+        backgroundImage: `url(${bgMain})`,
         backgroundSize: 'cover',
         backgroundPosition: 'center',
         backgroundRepeat: 'no-repeat'
@@ -107,8 +120,8 @@ const MainMenu: React.FC<MainMenuProps> = ({ onNavigate }) => {
 
         {/* Анимированный кот */}
         <div className="mb-8 transform transition-all duration-1000 hover:scale-110">
-          <img 
-            src={`/assets/cat-pose-${currentCatPose}.png`}
+          <img
+            src={catPoses[currentCatPose - 1]}
             alt={`Cat Pose ${currentCatPose}`}
             className="w-32 h-32 mx-auto animate-bounce"
             style={{
@@ -123,7 +136,7 @@ const MainMenu: React.FC<MainMenuProps> = ({ onNavigate }) => {
           
           {/* Кнопка натальной карты */}
           <MenuButton
-            imageSrc="/assets/button-natal.png"
+            imageSrc={buttonNatal}
             onClick={() => onNavigate('natal')}
             alt="Натальная карта"
             className="col-span-2"
@@ -131,28 +144,28 @@ const MainMenu: React.FC<MainMenuProps> = ({ onNavigate }) => {
 
           {/* Кнопка гороскопа */}
           <MenuButton
-            imageSrc="/assets/button-horoscope.png"
+            imageSrc={buttonHoroscope}
             onClick={() => onNavigate('horoscope')}
             alt="Гороскоп"
           />
 
           {/* Кнопка игр */}
           <MenuButton
-            imageSrc="/assets/button-games.png"
+            imageSrc={buttonGames}
             onClick={() => onNavigate('games')}
             alt="Игры"
           />
 
           {/* Кнопка профиля */}
           <MenuButton
-            imageSrc="/assets/button-profile.png"
+            imageSrc={buttonProfile}
             onClick={() => onNavigate('profile')}
             alt="Профиль"
           />
 
           {/* Кнопка премиума */}
           <MenuButton
-            imageSrc="/assets/button-premium.png"
+            imageSrc={buttonPremium}
             onClick={handlePremiumClick}
             alt="Премиум"
           />
