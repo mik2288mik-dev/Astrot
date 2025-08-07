@@ -6,8 +6,23 @@ import './index.css';
 console.log('🏁 MAIN.TSX EXECUTION START');
 
 if (window.Telegram?.WebApp) {
-  window.Telegram.WebApp.ready();
-  window.Telegram.WebApp.expand();
+  const tg = window.Telegram.WebApp;
+  tg.ready();
+  tg.expand();
+  if (!tg.isFullscreen) {
+    try {
+      tg.requestFullscreen();
+    } catch (err) {
+      console.warn('Failed to enter Telegram fullscreen:', err);
+    }
+  }
+} else {
+  const docEl = document.documentElement as HTMLElement;
+  if (docEl.requestFullscreen) {
+    docEl.requestFullscreen().catch(err => {
+      console.warn('Failed to enter browser fullscreen:', err);
+    });
+  }
 }
 
 const root = ReactDOM.createRoot(document.getElementById('root') as HTMLElement);
