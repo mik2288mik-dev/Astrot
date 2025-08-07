@@ -5,6 +5,7 @@ import NatalForm from './components/NatalForm';
 import NatalResultScreen from './components/NatalResultScreen';
 import { NatalResult } from './services/ApiService';
 import './types/telegram';
+import backgroundStars from './assets/background-stars.png';
 
 // Типы экранов
 type Screen = 'loading' | 'menu' | 'natal' | 'result' | 'horoscope' | 'games' | 'profile';
@@ -63,10 +64,10 @@ export default function App() {
   // Простые заглушки для остальных экранов
   const SimpleScreen: React.FC<{ title: string; icon: string; onBack: () => void }> = 
     ({ title, icon, onBack }) => (
-      <div 
+      <div
         className="min-h-screen flex flex-col items-center justify-center relative overflow-hidden px-4"
         style={{
-          backgroundImage: 'url(/assets/bg-main.png)',
+          backgroundImage: `url(${backgroundStars})`,
           backgroundSize: 'cover',
           backgroundPosition: 'center',
           backgroundRepeat: 'no-repeat'

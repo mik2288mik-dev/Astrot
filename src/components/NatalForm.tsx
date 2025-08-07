@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { apiService, NatalData, NatalResult } from '../services/ApiService';
 import '../types/telegram';
+import backgroundStars from '../assets/background-stars.png';
 
 interface NatalFormProps {
   onResult: (result: NatalResult) => void;
@@ -116,10 +117,10 @@ const NatalForm: React.FC<NatalFormProps> = ({ onResult, onBack }) => {
   );
 
   return (
-    <div 
+    <div
       className="min-h-screen flex flex-col relative overflow-hidden px-4 py-8"
       style={{
-        backgroundImage: 'url(/assets/bg-main.png)',
+        backgroundImage: `url(${backgroundStars})`,
         backgroundSize: 'cover',
         backgroundPosition: 'center',
         backgroundRepeat: 'no-repeat'
