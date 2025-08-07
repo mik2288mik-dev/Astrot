@@ -8,11 +8,12 @@ import catPose2 from '../assets/cat-pose-2.png';
 import catPose3 from '../assets/cat-pose-3.png';
 import catPose4 from '../assets/cat-pose-4.png';
 import backgroundStars from '../assets/background-stars.png';
-import buttonNatal from '../assets/button-natal.png';
-import buttonHoroscope from '../assets/button-horoscope.png';
-import buttonGames from '../assets/button-games.png';
-import buttonProfile from '../assets/button-profile.png';
-import buttonPremium from '../assets/button-premium.png';
+import buttonStandard from '../assets/button_standart.png';
+import iconZodiac from '../assets/icon_zodiac_chart.png';
+import iconStarCluster from '../assets/icon_star_cluster.png';
+import iconStar from '../assets/icon_star2.png';
+import iconCoin from '../assets/icon_coin.png';
+import catPlain from '../assets/cat_plain.png';
 
 interface MainMenuProps {
   onNavigate: (screen: string) => void;
@@ -40,27 +41,35 @@ const MainMenu: React.FC<MainMenuProps> = ({ onNavigate }) => {
   }, []);
 
   const handlePremiumClick = () => {
-  monetizationService.openPremiumPayment(100);
-};
+    monetizationService.openPremiumPayment(100);
+  };
 
-  const MenuButton: React.FC<{ 
-    imageSrc: string; 
-    onClick: () => void; 
-    alt: string;
+  const MenuButton: React.FC<{
+    iconSrc: string;
+    label: string;
+    onClick: () => void;
     className?: string;
-  }> = ({ imageSrc, onClick, alt, className = "" }) => (
-    <button 
+  }> = ({ iconSrc, label, onClick, className = "" }) => (
+    <button
       onClick={onClick}
-      className={`transform transition-all duration-200 hover:scale-105 active:scale-95 ${className}`}
+      className={`relative transform transition-all duration-200 hover:scale-105 active:scale-95 ${className}`}
       style={{
         filter: 'drop-shadow(0 4px 8px rgba(0, 0, 0, 0.2))'
       }}
     >
-      <img 
-        src={imageSrc} 
-        alt={alt}
+      <img
+        src={buttonStandard}
+        alt={label}
         className="w-full h-auto max-w-[150px]"
       />
+      <img
+        src={iconSrc}
+        alt=""
+        className="absolute top-3 left-1/2 -translate-x-1/2 w-8 h-8"
+      />
+      <span className="absolute bottom-3 left-1/2 -translate-x-1/2 text-white text-sm font-medium whitespace-nowrap">
+        {label}
+      </span>
     </button>
   );
 
@@ -136,38 +145,38 @@ const MainMenu: React.FC<MainMenuProps> = ({ onNavigate }) => {
           
           {/* Кнопка натальной карты */}
           <MenuButton
-            imageSrc={buttonNatal}
+            iconSrc={iconZodiac}
+            label="Натальная карта"
             onClick={() => onNavigate('natal')}
-            alt="Натальная карта"
             className="col-span-2"
           />
 
           {/* Кнопка гороскопа */}
           <MenuButton
-            imageSrc={buttonHoroscope}
+            iconSrc={iconStarCluster}
+            label="Гороскоп"
             onClick={() => onNavigate('horoscope')}
-            alt="Гороскоп"
           />
 
           {/* Кнопка игр */}
           <MenuButton
-            imageSrc={buttonGames}
+            iconSrc={iconStar}
+            label="Игры"
             onClick={() => onNavigate('games')}
-            alt="Игры"
           />
 
           {/* Кнопка профиля */}
           <MenuButton
-            imageSrc={buttonProfile}
+            iconSrc={catPlain}
+            label="Профиль"
             onClick={() => onNavigate('profile')}
-            alt="Профиль"
           />
 
           {/* Кнопка премиума */}
           <MenuButton
-            imageSrc={buttonPremium}
+            iconSrc={iconCoin}
+            label="Премиум"
             onClick={handlePremiumClick}
-            alt="Премиум"
           />
         </div>
 
