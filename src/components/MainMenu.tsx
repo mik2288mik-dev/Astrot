@@ -3,16 +3,18 @@ import { monetizationService } from '../services/Monetization';
 import '../types/telegram';
 
 // Assets
-import bgMain from '../assets/bg-main.png';
-import buttonNatal from '../assets/button-natal.png';
-import buttonHoroscope from '../assets/button-horoscope.png';
-import buttonGames from '../assets/button-games.png';
-import buttonProfile from '../assets/button-profile.png';
-import buttonPremium from '../assets/button-premium.png';
 import catPose1 from '../assets/cat-pose-1.png';
 import catPose2 from '../assets/cat-pose-2.png';
 import catPose3 from '../assets/cat-pose-3.png';
 import catPose4 from '../assets/cat-pose-4.png';
+
+// Assets from public directory
+const bgMain = '/assets/bg-main.png';
+const buttonNatal = '/assets/button-natal.png';
+const buttonHoroscope = '/assets/button-horoscope.png';
+const buttonGames = '/assets/button-games.png';
+const buttonProfile = '/assets/button-profile.png';
+const buttonPremium = '/assets/button-premium.png';
 
 interface MainMenuProps {
   onNavigate: (screen: string) => void;
