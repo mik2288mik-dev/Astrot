@@ -1,0 +1,138 @@
+[
+  {
+    "id": "cat_wand",
+    "file": "cat_wand.png",
+    "width": 512,
+    "height": 512,
+    "desc": "Кот стоит, жезл-звезда в правой лапе, лёгкое жёлтое свечение.",
+    "usage": "Основной персонаж, экран загрузки / главный экран."
+  },
+  {
+    "id": "cat_phone",
+    "file": "cat_phone.png",
+    "width": 512,
+    "height": 512,
+    "desc": "Кот держит смартфон, на экране жёлтая звезда.",
+    "usage": "Экран ИИ-Астролог, приветственная подсказка."
+  },
+  {
+    "id": "cat_wink",
+    "file": "cat_wink.png",
+    "width": 512,
+    "height": 512,
+    "desc": "Кот подмигивает, лапка у уха.",
+    "usage": "UI-реакция на подсказки, советы."
+  },
+  {
+    "id": "cat_joy",
+    "file": "cat_joy.png",
+    "width": 512,
+    "height": 512,
+    "desc": "Кот с поднятыми лапами, улыбается.",
+    "usage": "Положительный результат, успех / завершение расчёта."
+  },
+  {
+    "id": "cat_idle",
+    "file": "cat_idle.png",
+    "width": 512,
+    "height": 512,
+    "desc": "Кот стоит нейтрально.",
+    "usage": "Пустые состояния, placeholder-экран."
+  },
+  {
+    "id": "cat_lick",
+    "file": "cat_lick.png",
+    "width": 512,
+    "height": 512,
+    "desc": "Кот сидит, высунул язык, хочет облизать.",
+    "usage": "Шуточные подсказки, геймификация."
+  },
+  {
+    "id": "star_premium",
+    "file": "star_premium.png",
+    "width": 512,
+    "height": 512,
+    "desc": "Пятиконечная золотая звезда с мягким свечением.",
+    "usage": "Метка премиум-функций, VIP-значок."
+  },
+  {
+    "id": "coin_moon",
+    "file": "coin_moon.png",
+    "width": 512,
+    "height": 512,
+    "desc": "Золотая монета с полумесяцем.",
+    "usage": "Валюта в магазине приложения."
+  },
+  {
+    "id": "stardust_cluster",
+    "file": "stardust_cluster.png",
+    "width": 512,
+    "height": 512,
+    "desc": "Облако рассыпанных звёзд; сиренево-голубой туман.",
+    "usage": "Фоновые частицы, украшение карт."
+  },
+  {
+    "id": "stardust_swirl",
+    "file": "stardust_swirl.png",
+    "width": 512,
+    "height": 512,
+    "desc": "Изогнутый шлейф звёздной пыли.",
+    "usage": "Анимационный трек, переходы между экранами."
+  },
+  {
+    "id": "zodiac_wheel_cat",
+    "file": "zodiac_wheel_cat.png",
+    "width": 512,
+    "height": 512,
+    "desc": "Круг 12 знаков, синее свечение, кошачьи ушки.",
+    "usage": "Экран Таро-анализ (игровая версия)."
+  },
+  {
+    "id": "zodiac_wheel",
+    "file": "zodiac_wheel.png",
+    "width": 512,
+    "height": 512,
+    "desc": "Тот же круг без ушек.",
+    "usage": "Классический расчёт натальной карты."
+  },
+  {
+    "id": "btn_regular",
+    "file": "btn_regular.png",
+    "width": 260,
+    "height": 88,
+    "desc": "Овальная кнопка средней длины (пустая).",
+    "usage": ""
+  },
+  {
+    "id": "btn_wide",
+    "file": "btn_narrow.png",
+    "width": 380,
+    "height": 88,
+    "desc": "Длинная овальная кнопка (пустая).",
+    "usage": ""
+  },
+  {
+    "id": "btn_short",
+    "file": "btn_short.png",
+    "width": 240,
+    "height": 88,
+    "desc": "Короткая овальная кнопка (пустая).",
+    "usage": ""
+  },
+  {
+    "id": "btn_mini",
+    "file": "btn_mini.png",
+    "width": 160,
+    "height": 88,
+    "desc": "Самая маленькая овальная кнопка.",
+    "usage": ""
+  },
+  {
+    "id": "input_field",
+    "file": "input_field.png",
+    "width": 540,
+    "height": 120,
+    "desc": "Поле ввода (внутреннее вдавливание).",
+    "usage": ""
+  }
+]
