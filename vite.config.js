@@ -13,7 +13,7 @@ export default defineConfig({
     },
   },
   optimizeDeps: {
-    include: ['framework7', 'framework7-react', 'konsta'],
+    include: ['framework7', 'framework7-react'],
   },
   server: {
     host: true,
