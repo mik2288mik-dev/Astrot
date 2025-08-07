@@ -1,8 +1,9 @@
 /* eslint-disable react/prop-types */
 import React, { useState, useEffect } from 'react';
-import { Page, Navbar, List, ListInput, Button, Link } from 'konsta/react';
+import { Page, Navbar, Link } from 'konsta/react';
 import KoteusAstrolog from '../components/KoteusAstrolog';
 import StarField from '../components/StarField';
+import { apiService } from '../services/ApiService';
 
 export default function NatalFormPage({ f7router }) {
   const [formData, setFormData] = useState({ name: '', date: '', time: '', city: '' });
@@ -57,21 +58,25 @@ export default function NatalFormPage({ f7router }) {
 
     setIsSubmitting(true);
     setError('');
-    
-    // Show success message
+
     const randomMessage = successMessages[Math.floor(Math.random() * successMessages.length)];
     setCurrentMessage(randomMessage);
-    
-    // Simulate cosmic calculation delay
-    setTimeout(() => {
-      f7router.navigate('/natal-result/', { 
-        props: { 
-          data: formData,
-          timestamp: Date.now() // For unique chart generation
-        } 
+
+    try {
+      const result = await apiService.postNatal({
+        ...formData,
+        telegramId: window.Telegram?.WebApp?.initDataUnsafe?.user?.id ?? 12345,
       });
+
+      f7router.navigate('/natal-result/', {
+        props: { result },
+      });
+    } catch (err) {
+      console.error('Natal form submit error:', err);
+      setError('Не удалось получить данные. Попробуй ещё раз!');
+    } finally {
       setIsSubmitting(false);
-    }, 2000);
+    }
   };
 
   return (

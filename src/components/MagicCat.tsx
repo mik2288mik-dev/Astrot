@@ -20,7 +20,7 @@ export default function MagicCat() {
 
   return (
     <>
-      <div className="koteus-container" onClick={petKoteus}>
+      <div className="koteus-container animate-float" onClick={petKoteus}>
         <div className="wizard-hat" />
         <div className="koteus">
           <div className="koteus-ears">

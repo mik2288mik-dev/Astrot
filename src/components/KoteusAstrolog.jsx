@@ -19,7 +19,7 @@ const errorMessages = [
 
 export default function KoteusAstrolog({ message, error, isAnimating = false }) {
   const [currentMessage, setCurrentMessage] = useState('');
-  const [avatarClass, setAvatarClass] = useState('');
+  const [avatarClass, setAvatarClass] = useState('animate-float');
 
   const getRandomMessage = useCallback((messages) => {
     return messages[Math.floor(Math.random() * messages.length)];
@@ -34,7 +34,7 @@ export default function KoteusAstrolog({ message, error, isAnimating = false }) 
       setAvatarClass('animate-pulse');
     } else {
       setCurrentMessage(getRandomMessage(welcomeMessages));
-      setAvatarClass('animate-bounce');
+      setAvatarClass('animate-float');
     }
   }, [error, message, getRandomMessage]);
 

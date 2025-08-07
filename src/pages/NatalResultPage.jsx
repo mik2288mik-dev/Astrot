@@ -1,26 +1,8 @@
 /* eslint-disable react/prop-types */
-import React, { useEffect, useState } from 'react';
+import React from 'react';
 import { Page, Navbar, Block } from 'konsta/react';
 
-export default function NatalResultPage({ data }) {
-  const [result, setResult] = useState(null);
-
-  useEffect(() => {
-    async function fetchNatal() {
-      // Здесь в будущем можно вызвать внешний API, передав данные формы.
-      // Пример:
-      // const response = await fetch('YOUR_API_URL', {
-      //   method: 'POST',
-      //   headers: { 'Content-Type': 'application/json' },
-      //   body: JSON.stringify(data),
-      // });
-      // const json = await response.json();
-      // setResult(json);
-      setResult(null);
-    }
-    fetchNatal();
-  }, [data]);
-
+export default function NatalResultPage({ result }) {
   return (
     <Page>
       <Navbar title="Результат" />
