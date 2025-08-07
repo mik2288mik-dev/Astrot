@@ -1,6 +1,10 @@
 import React, { useEffect } from 'react';
 import '../types/telegram';
 
+// Импорт ассетов из src/assets
+import bgLoading from '../assets/bg-loading.png';
+import spinner from '../assets/spinner.png';
+
 interface LoadingScreenProps {
   onLoadingComplete: () => void;
 }
@@ -8,10 +12,8 @@ interface LoadingScreenProps {
 const LoadingScreen: React.FC<LoadingScreenProps> = ({ onLoadingComplete }) => {
   useEffect(() => {
     // Инициализация Telegram WebApp
-    if (window.Telegram?.WebApp) {
-      window.Telegram.WebApp.ready();
-      window.Telegram.WebApp.expand();
-    }
+    window.Telegram?.WebApp?.ready();
+    window.Telegram?.WebApp?.expand();
 
     // Таймер загрузки
     const timer = setTimeout(() => {
@@ -25,7 +27,7 @@ const LoadingScreen: React.FC<LoadingScreenProps> = ({ onLoadingComplete }) => {
     <div 
       className="min-h-screen flex flex-col items-center justify-center relative overflow-hidden"
       style={{
-        backgroundImage: 'url(/assets/bg-loading.png)',
+        backgroundImage: `url(${bgLoading})`,
         backgroundSize: 'cover',
         backgroundPosition: 'center',
         backgroundRepeat: 'no-repeat'
@@ -39,7 +41,7 @@ const LoadingScreen: React.FC<LoadingScreenProps> = ({ onLoadingComplete }) => {
         {/* Спиннер */}
         <div className="mb-8">
           <img 
-            src="/assets/spinner.png" 
+            src={spinner}
             alt="Loading..." 
             className="w-16 h-16 animate-spin"
             style={{
@@ -67,14 +69,12 @@ const LoadingScreen: React.FC<LoadingScreenProps> = ({ onLoadingComplete }) => {
         <div className="absolute bottom-40 right-1/4 w-2 h-2 bg-cyan-200 rounded-full animate-ping opacity-30"></div>
       </div>
 
-      {/* Прогресс-бар (опциональный) */}
+      {/* Прогресс-бар */}
       <div className="absolute bottom-16 left-8 right-8 z-10">
         <div className="w-full bg-white bg-opacity-20 rounded-full h-1 overflow-hidden">
           <div 
             className="h-full bg-gradient-to-r from-blue-400 to-purple-500 rounded-full animate-pulse"
-            style={{
-              animation: 'loadingProgress 1.5s ease-in-out forwards'
-            }}
+            style={{ animation: 'loadingProgress 1.5s ease-in-out forwards' }}
           ></div>
         </div>
       </div>
