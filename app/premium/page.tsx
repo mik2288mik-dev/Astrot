@@ -1,21 +1,26 @@
-import { BottomNav } from '@/components/BottomNav';
+import { Screen } from '@/components/Screen';
+import { RouteTransition } from '@/components/RouteTransition';
+import { Tap } from '@/components/Tap';
 
 export default function PremiumPage() {
   return (
-    <div className="px-4 py-6 max-w-lg mx-auto">
-      <h1 className="text-2xl font-semibold">Подписка</h1>
-      <div className="mt-4 grid gap-3">
-        <div className="glass p-5">
-          <h2 className="text-lg font-medium">Free</h2>
-          <p className="opacity-80 text-sm mt-1">Неполная карта, советы.</p>
+    <Screen bg="subscription">
+      <RouteTransition routeKey="premium">
+        <div>
+          <h1 className="typ-h1">Подписка</h1>
+          <div className="mt-4 grid gap-3">
+            <div className="glass p-6 rounded-lg">
+              <h2 className="typ-title">Free</h2>
+              <p className="typ-body text-on/80 mt-1">Неполная карта, советы.</p>
+            </div>
+            <div className="glass p-6 rounded-lg border border-gold/30">
+              <h2 className="typ-title text-gold">Deepsoul+</h2>
+              <p className="typ-body text-on/80 mt-1">Полная карта, транзиты, совместимость, ИИ, Таро.</p>
+              <Tap className="mt-3 w-full h-12 rounded-md pastel-gradient text-[#0A0A12] font-semibold shadow-card focus:outline-none focus-visible:shadow-focus">Оформить Premium</Tap>
+            </div>
+          </div>
         </div>
-        <div className="glass p-5">
-          <h2 className="text-lg font-medium">Deepsoul+</h2>
-          <p className="opacity-80 text-sm mt-1">Полная карта, транзиты, совместимость, ИИ, Таро.</p>
-          <button className="mt-3 w-full py-3 rounded-2xl bg-gradient-to-r from-nebula-500 to-cosmic-600 shadow-glass">Оформить Premium</button>
-        </div>
-      </div>
-      <BottomNav />
-    </div>
+      </RouteTransition>
+    </Screen>
   );
 }
