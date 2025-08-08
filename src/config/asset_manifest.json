@@ -1,0 +1,30 @@
+{
+  "backgrounds": {
+    "loading": "/assets/backgrounds/loading.png",
+    "home": "/assets/backgrounds/home.png",
+    "functions": "/assets/backgrounds/functions.png",
+    "subscription": "/assets/backgrounds/subscription.png",
+    "profile": "/assets/backgrounds/profile.png",
+    "ai_chat": "/assets/backgrounds/ai_chat_background.png",
+    "horoscope": "/assets/backgrounds/horoscope_background.png",
+    "tarot": "/assets/backgrounds/tarot_background.png",
+    "dating": "/assets/backgrounds/dating_background.png",
+    "store": "/assets/backgrounds/store_background.png"
+  },
+  "icons": {
+    "home": "/assets/icons/icon_home.png",
+    "functions": "/assets/icons/icon_functions.png",
+    "subscription": "/assets/icons/icon_subscription.png",
+    "profile": "/assets/icons/icon_profile.png",
+    "natal_chart": "/assets/icons/icon_natal_chart.png",
+    "horoscope": "/assets/icons/icon_horoscope.png",
+    "ai_chat": "/assets/icons/icon_ai_chat.png",
+    "tarot": "/assets/icons/icon_tarot.png",
+    "compatibility": "/assets/icons/icon_compatibility.png",
+    "store": "/assets/icons/icon_store.png",
+    "info": "/assets/icons/icon_info.png",
+    "notifications": "/assets/icons/icon_notifications.png",
+    "journal": "/assets/icons/icon_journal.png",
+    "settings": "/assets/icons/icon_settings.png"
+  }
+}
