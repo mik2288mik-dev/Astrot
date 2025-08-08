@@ -1,4 +1,6 @@
-import { BottomNav } from '@/components/BottomNav';
+import { Screen } from '@/components/Screen';
+import { RouteTransition } from '@/components/RouteTransition';
+import { Tap } from '@/components/Tap';
 
 const features = [
   { name: 'Полная карта', emoji: '🪐' },
@@ -11,17 +13,23 @@ const features = [
 
 export default function FeaturesPage() {
   return (
-    <div className="px-4 py-6 max-w-lg mx-auto">
-      <h1 className="text-2xl font-semibold">Функции</h1>
-      <div className="mt-4 grid grid-cols-2 gap-3">
-        {features.map((f) => (
-          <button key={f.name} className="glass p-5 flex items-center gap-3">
-            <span className="text-2xl">{f.emoji}</span>
-            <span className="text-left">{f.name}</span>
-          </button>
-        ))}
-      </div>
-      <BottomNav />
-    </div>
+    <Screen bg="functions">
+      <RouteTransition routeKey="features">
+        <div>
+          <h1 className="typ-h1">Функции</h1>
+          <div className="mt-4 grid grid-cols-2 gap-3">
+            {features.map((f) => (
+              <Tap
+                key={f.name}
+                className="glass h-[168px] w-full rounded-lg p-4 flex flex-col items-start justify-end gap-2 focus:outline-none focus-visible:shadow-focus"
+              >
+                <span className="text-[36px] leading-none">{f.emoji}</span>
+                <span className="typ-body text-left">{f.name}</span>
+              </Tap>
+            ))}
+          </div>
+        </div>
+      </RouteTransition>
+    </Screen>
   );
 }
