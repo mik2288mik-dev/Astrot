@@ -20,6 +20,7 @@ export function Screen({ bg, children }: { bg: BackgroundKey; children: ReactNod
         className="absolute inset-0 -z-10 scrim"
         style={{ backgroundImage: `url(${src})`, backgroundSize: 'cover', backgroundPosition: 'center' }}
       />
+      <div aria-hidden className="absolute inset-0 -z-10" style={{ background: 'linear-gradient(180deg, rgba(178,141,255,0.10), rgba(96,214,255,0.08))' }} />
       {children}
     </div>
   );

@@ -1,12 +1,7 @@
 "use client";
 
-import { TelegramInit } from './telegram-init';
+import { TelegramProvider } from './telegram-context';
 
 export function Providers({ children }: { children: React.ReactNode }) {
-  return (
-    <>
-      <TelegramInit />
-      {children}
-    </>
-  );
+  return <TelegramProvider>{children}</TelegramProvider>;
 }

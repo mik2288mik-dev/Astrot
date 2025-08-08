@@ -15,7 +15,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       <body className="min-h-dvh flex flex-col">
         <main className="flex-1 pb-20">
           <Providers>
-            <div className="px-4 py-6 max-w-lg mx-auto">{children}</div>
+            <div className="px-4 pt-6 pb-4 max-w-lg mx-auto">{children}</div>
           </Providers>
         </main>
         <BottomNav />
