@@ -1,0 +1,29 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --tg-bg: 17 18 31; /* deep space */
+  --glass-bg: 255 255 255 / 0.06;
+  --glass-stroke: 255 255 255 / 0.14;
+}
+
+html, body, #__next {
+  height: 100%;
+}
+
+body {
+  @apply bg-[rgb(var(--tg-bg))] text-white antialiased;
+  background-image: theme('backgroundImage.cosmic-gradient'), theme('backgroundImage.nebula-gradient');
+  background-attachment: fixed;
+}
+
+.glass {
+  background: rgb(var(--glass-bg));
+  border: 1px solid rgb(var(--glass-stroke));
+  @apply backdrop-blur-md rounded-2xl shadow-glass;
+}
+
+.safe-bottom {
+  padding-bottom: env(safe-area-inset-bottom);
+}
