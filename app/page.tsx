@@ -1,14 +1,20 @@
+"use client";
+
 import { Screen } from '@/components/Screen';
 import { RouteTransition } from '@/components/RouteTransition';
 import { Tap } from '@/components/Tap';
+import { useTelegram } from '@/app/telegram-context';
 
 export default function HomePage() {
+  const { user } = useTelegram();
+  const firstName = user?.first_name;
+
   return (
     <Screen bg="home">
       <RouteTransition routeKey="home">
         <div>
           <section className="glass p-6">
-            <h1 className="typ-h1">Твой космос</h1>
+            <h1 className="typ-h1">{firstName ? `${firstName}, твой космос` : 'Твой космос'}</h1>
             <p className="mt-2 typ-body text-on/90">Быстрый доступ к последней натальной карте. Нажми, чтобы открыть полную версию.</p>
             <div className="mt-4 h-40 rounded-xl bg-surface flex items-center justify-center text-on/70">
               Превью вашей карты
