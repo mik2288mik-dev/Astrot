@@ -50,8 +50,21 @@ export function TelegramProvider({ children }: { children: React.ReactNode }) {
       tg.setHeaderColor(header);
       tg.setBackgroundColor(bg);
 
-      // Push theme to CSS variables for glass contrast
+      // Platform-aware top spacing tokens
+      const platform: string = tg.platform || '';
       const root = document.documentElement;
+      if (platform === 'ios') {
+        root.style.setProperty('--top-bar-min', '72px');
+        root.style.setProperty('--top-gap', '24px');
+      } else if (platform === 'android') {
+        root.style.setProperty('--top-bar-min', '64px');
+        root.style.setProperty('--top-gap', '20px');
+      } else {
+        root.style.setProperty('--top-bar-min', '64px');
+        root.style.setProperty('--top-gap', '20px');
+      }
+
+      // Push theme to CSS variables for glass contrast
       root.style.setProperty('--glass-bg', '255 255 255 / 0.65');
       root.style.setProperty('--glass-stroke', '17 24 39 / 0.08');
 
