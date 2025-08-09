@@ -24,8 +24,8 @@ body {
   background-image: theme('backgroundImage.cosmic-gradient'), theme('backgroundImage.nebula-gradient');
   background-attachment: fixed;
   font-family: theme('fontFamily.sans');
-  background-size: 200% 200%;
-  animation: bg-pan 24s ease-in-out infinite alternate;
+  background-size: 240% 240%;
+  animation: bg-pan 28s ease-in-out infinite alternate;
 }
 
 .glass {
@@ -57,6 +57,11 @@ body {
 .typ-title { @apply font-display; font-size: 18px; line-height: 24px; font-weight: 600; }
 .typ-body { font-size: 16px; line-height: 22px; font-weight: 500; }
 .typ-caption { font-size: 13px; line-height: 18px; font-weight: 500; }
+
+@screen md {
+  .typ-h1 { font-size: 34px; line-height: 40px; }
+  .typ-h2 { font-size: 26px; line-height: 32px; }
+}
 
 /* Pastel gradient utility */
 .pastel-gradient {
