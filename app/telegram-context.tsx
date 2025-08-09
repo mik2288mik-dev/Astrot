@@ -27,18 +27,23 @@ export function TelegramProvider({ children }: { children: React.ReactNode }) {
       const tg = (window as any)?.Telegram?.WebApp;
       if (!tg) return;
 
-      // Initialize and expand to fullscreen immediately
       tg.ready();
       tg.expand();
 
-      // Harmonize colors with app design
-      tg.setHeaderColor('#0f172a');
-      tg.setBackgroundColor('#0f172a');
+      // Apply Telegram theme params if present
+      const tp = tg.themeParams || {};
+      const header = tp.header_color || '#FFF4E6';
+      const bg = tp.bg_color || '#FFF7F4';
+      tg.setHeaderColor(header);
+      tg.setBackgroundColor(bg);
 
-      // Haptics ping on init
+      // Push theme to CSS variables for glass contrast
+      const root = document.documentElement;
+      root.style.setProperty('--glass-bg', '255 255 255 / 0.65');
+      root.style.setProperty('--glass-stroke', '17 24 39 / 0.08');
+
       tg.HapticFeedback?.impactOccurred?.('light');
 
-      // Get user from initDataUnsafe
       const initUser = tg.initDataUnsafe?.user as TelegramUser | undefined;
       if (initUser) setUser(initUser);
 

@@ -2,11 +2,11 @@
 
 import manifest from '@/src/config/asset_manifest.json';
 import { ReactNode, useMemo } from 'react';
+import Image from 'next/image';
 
 type BackgroundKey = keyof typeof manifest.backgrounds;
 
 function resolvePublicPath(path: string): string {
-  // Manifest uses /public/... but Next serves from /...
   return path.startsWith('/public') ? path.replace('/public', '') : path;
 }
 
@@ -15,12 +15,11 @@ export function Screen({ bg, children }: { bg: BackgroundKey; children: ReactNod
 
   return (
     <div className="relative">
-      <div
-        aria-hidden
-        className="absolute inset-0 -z-10 scrim"
-        style={{ backgroundImage: `url(${src})`, backgroundSize: 'cover', backgroundPosition: 'center' }}
-      />
-      <div aria-hidden className="absolute inset-0 -z-10" style={{ background: 'linear-gradient(180deg, rgba(178,141,255,0.10), rgba(96,214,255,0.08))' }} />
+      <div className="absolute inset-0 -z-10">
+        <Image src={src} alt="" aria-hidden fill sizes="100vw" className="object-cover" priority={bg === 'home'} />
+        <div aria-hidden className="scrim absolute inset-0" />
+      </div>
+      <div aria-hidden className="absolute inset-0 -z-10" style={{ background: 'linear-gradient(180deg, rgba(230,214,255,0.10), rgba(198,230,245,0.08))' }} />
       {children}
     </div>
   );
