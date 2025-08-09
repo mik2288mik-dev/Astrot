@@ -5,6 +5,7 @@ import { RouteTransition } from '@/components/RouteTransition';
 import { Tap } from '@/components/Tap';
 import { useTelegram } from '@/app/telegram-context';
 import { useState } from 'react';
+import { impactLight, selectionChanged } from '@/lib/haptics';
 
 export default function NatalFormPage() {
   const { user } = useTelegram();
@@ -39,6 +40,7 @@ export default function NatalFormPage() {
       if (cachedRaw) {
         const cached = JSON.parse(cachedRaw);
         setResult(cached);
+        impactLight();
         return;
       }
       const payload = { name, birthDate: date, birthTime: time, timeUnknown, place, language: 'ru', idempotencyKey: key };
@@ -47,8 +49,10 @@ export default function NatalFormPage() {
       if (!res.ok || !json.ok) throw new Error(json?.error?.message || 'Ошибка');
       setResult(json.data);
       sessionStorage.setItem(key, JSON.stringify(json.data));
+      impactLight();
     } catch (e: any) {
       setError(e.message || 'Ошибка');
+      selectionChanged();
     } finally {
       setLoading(false);
     }
