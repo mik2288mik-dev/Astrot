@@ -20,8 +20,8 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       <head>
         <Script src="https://telegram.org/js/telegram-web-app.js" strategy="beforeInteractive" />
       </head>
-      <body className="min-h-dvh flex flex-col">
-        <main className="flex-1 pb-20">
+      <body className="min-h-dvh h-dvh flex flex-col">
+        <main className="flex-1 h-full pb-20">
           <Providers>
             <div className="px-4 pt-6 pb-4 max-w-lg mx-auto">{children}</div>
           </Providers>

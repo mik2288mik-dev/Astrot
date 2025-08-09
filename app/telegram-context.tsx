@@ -30,6 +30,19 @@ export function TelegramProvider({ children }: { children: React.ReactNode }) {
       tg.ready();
       tg.expand();
 
+      // Try to enter fullscreen on supported platforms
+      try {
+        tg.requestFullscreen?.();
+      } catch {
+        // ignore
+      }
+      // Prevent vertical swipes collapsing the viewport when supported
+      try {
+        tg.disableVerticalSwipes?.();
+      } catch {
+        // ignore
+      }
+
       // Apply Telegram theme params if present
       const tp = tg.themeParams || {};
       const header = tp.header_color || '#FFF4E6';
