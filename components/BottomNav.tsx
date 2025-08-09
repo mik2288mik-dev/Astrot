@@ -19,7 +19,7 @@ const tabs = [
 ];
 
 export function BottomNav() {
-  const pathname = usePathname();
+  const pathname = usePathname() || '';
 
   return (
     <nav className="fixed bottom-0 left-0 right-0 safe-bottom">
@@ -27,7 +27,7 @@ export function BottomNav() {
         <div className="glass h-16 rounded-xl px-2 flex items-center justify-between">
           {tabs.map(({ href, label, iconKey }) => {
             const isActive = pathname === href || (href !== '/' && pathname.startsWith(href));
-            const src = resolvePublicPath(manifest.icons[iconKey]);
+            const src = resolvePublicPath((manifest as any).icons[iconKey]);
             return (
               <Link
                 key={href}
