@@ -15,8 +15,7 @@ const tabs = [
   { href: '/', label: 'Главная', iconKey: 'home' as const },
   { href: '/natal', label: 'Карта', iconKey: 'natal_chart' as const },
   { href: '/premium', label: 'Премиум', iconKey: 'subscription' as const },
-  { href: '/compatibility', label: 'Совместимость', iconKey: 'compatibility' as const },
-  { href: '/journal', label: 'Дневник', iconKey: 'journal' as const },
+  { href: '/settings', label: 'Настройки', iconKey: 'settings' as const },
 ];
 
 export function BottomNav() {

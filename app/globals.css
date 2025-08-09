@@ -24,8 +24,8 @@ body {
   background-image: theme('backgroundImage.cosmic-gradient'), theme('backgroundImage.nebula-gradient');
   background-attachment: fixed;
   font-family: theme('fontFamily.sans');
-  background-size: 240% 240%;
-  animation: bg-pan 28s ease-in-out infinite alternate;
+  background-size: 200% 200%;
+  animation: bg-pan 32s ease-in-out infinite alternate;
 }
 
 .glass {
@@ -52,9 +52,9 @@ body {
 }
 
 /* Typography */
-.typ-h1 { @apply font-display; font-size: 28px; line-height: 34px; font-weight: 700; }
-.typ-h2 { @apply font-display; font-size: 22px; line-height: 28px; font-weight: 600; }
-.typ-title { @apply font-display; font-size: 18px; line-height: 24px; font-weight: 600; }
+.typ-h1 { @apply font-sans; font-size: 28px; line-height: 34px; font-weight: 700; }
+.typ-h2 { @apply font-sans; font-size: 22px; line-height: 28px; font-weight: 600; }
+.typ-title { @apply font-sans; font-size: 18px; line-height: 24px; font-weight: 600; }
 .typ-body { font-size: 16px; line-height: 22px; font-weight: 500; }
 .typ-caption { font-size: 13px; line-height: 18px; font-weight: 500; }
 
