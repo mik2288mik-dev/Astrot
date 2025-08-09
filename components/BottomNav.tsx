@@ -12,10 +12,11 @@ function resolvePublicPath(path: string): string {
 }
 
 const tabs = [
-  { href: '/', label: 'Home', iconKey: 'home' as const },
-  { href: '/functions', label: 'Functions', iconKey: 'functions' as const },
-  { href: '/subscription', label: 'Subscription', iconKey: 'subscription' as const },
-  { href: '/profile', label: 'Profile', iconKey: 'profile' as const },
+  { href: '/', label: 'Главная', iconKey: 'home' as const },
+  { href: '/natal', label: 'Карта', iconKey: 'natal_chart' as const },
+  { href: '/premium', label: 'Премиум', iconKey: 'subscription' as const },
+  { href: '/compatibility', label: 'Совместимость', iconKey: 'compatibility' as const },
+  { href: '/journal', label: 'Дневник', iconKey: 'journal' as const },
 ];
 
 export function BottomNav() {
@@ -24,7 +25,7 @@ export function BottomNav() {
   return (
     <nav className="fixed bottom-0 left-0 right-0 safe-bottom">
       <div className="mx-auto max-w-lg px-4 pb-2">
-        <div className="glass h-16 rounded-xl px-2 flex items-center justify-between">
+        <div className="glass h-16 rounded-xl px-1 flex items-center justify-between">
           {tabs.map(({ href, label, iconKey }) => {
             const isActive = pathname === href || (href !== '/' && pathname.startsWith(href));
             const src = resolvePublicPath((manifest as any).icons[iconKey]);
@@ -34,14 +35,15 @@ export function BottomNav() {
                 href={href}
                 onClick={() => impactLight()}
                 className={cn(
-                  'relative flex h-12 w-12 items-center justify-center rounded-xl focus:outline-none focus-visible:ring-2 focus-visible:ring-accent/60 transition-transform',
+                  'relative flex flex-col items-center justify-center h-14 w-14 rounded-xl focus:outline-none focus-visible:ring-2 focus-visible:ring-accent/60 transition-transform',
                   isActive ? 'text-on' : 'text-muted'
                 )}
                 aria-label={label}
               >
-                <div className="relative h-7 w-7">
-                  <Image src={src} alt="" fill sizes="32px" className={cn('object-contain opacity-80', isActive ? 'opacity-100' : '')} />
+                <div className="relative h-6 w-6">
+                  <Image src={src} alt="" fill sizes="24px" className={cn('object-contain opacity-80', isActive ? 'opacity-100' : '')} />
                 </div>
+                <span className={cn('mt-1 text-[11px] leading-none', isActive ? 'text-on' : 'text-muted')}>{label}</span>
                 {isActive && (
                   <span className="pointer-events-none absolute -top-1 h-1.5 w-1.5 rounded-full bg-primary" />
                 )}

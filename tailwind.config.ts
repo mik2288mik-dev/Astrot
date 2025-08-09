@@ -43,7 +43,7 @@ const config: Config = {
         'nebula-gradient': 'radial-gradient(1000px 500px at 100% -20%, rgba(230,214,255,0.45), transparent), radial-gradient(800px 400px at -10% 120%, rgba(198,230,245,0.45), transparent)'
       },
       fontFamily: {
-        sans: ['var(--font-sans)', 'Inter', 'Geist', '-apple-system', 'BlinkMacSystemFont', 'Segoe UI', 'Roboto', 'Helvetica', 'Arial', 'sans-serif'],
+        sans: ['var(--font-geist-sans)', 'Geist Sans', 'var(--font-sans)', 'Inter', 'Geist', '-apple-system', 'BlinkMacSystemFont', 'Segoe UI', 'Roboto', 'Helvetica', 'Arial', 'sans-serif'],
         display: ['var(--font-display)', '"Playfair Display"', 'Georgia', 'serif']
       }
     }

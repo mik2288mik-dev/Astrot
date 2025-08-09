@@ -4,9 +4,9 @@ import { Providers } from './providers';
 import { BottomNav } from '@/components/BottomNav';
 import Script from 'next/script';
 import type { Viewport } from 'next';
-import { Inter, Playfair_Display } from 'next/font/google';
+import { Playfair_Display } from 'next/font/google';
+import { GeistSans } from 'geist/font/sans';
 
-const inter = Inter({ subsets: ['latin', 'cyrillic'], display: 'swap', variable: '--font-sans' });
 const playfair = Playfair_Display({ subsets: ['latin', 'cyrillic'], display: 'swap', variable: '--font-display' });
 
 export const metadata: Metadata = {
@@ -20,7 +20,7 @@ export const viewport: Viewport = {
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="ru" suppressHydrationWarning className={`${inter.variable} ${playfair.variable}`}>
+    <html lang="ru" suppressHydrationWarning className={`${GeistSans.variable} ${playfair.variable}`}>
       <head>
         <Script src="https://telegram.org/js/telegram-web-app.js" strategy="beforeInteractive" />
       </head>
