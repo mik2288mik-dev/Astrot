@@ -37,6 +37,11 @@ body {
   padding-top: env(safe-area-inset-top);
 }
 
+/* Safe-area aware top padding with additional base spacing */
+.safe-top-16 {
+  padding-top: calc(env(safe-area-inset-top) + 16px);
+}
+
 /* Typography */
 .typ-h1 { font-size: 28px; line-height: 34px; font-weight: 700; }
 .typ-h2 { font-size: 22px; line-height: 28px; font-weight: 600; }
