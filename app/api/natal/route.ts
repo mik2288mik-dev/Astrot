@@ -12,5 +12,11 @@ export async function GET() {
 
 export async function POST(req: Request) {
   const body = await req.json().catch(() => ({}));
-  return Response.json({ received: body, message: 'Natal chart request accepted (mock).' });
+  return new Response(
+    JSON.stringify({
+      ok: false,
+      error: { code: 410, message: 'Endpoint moved. Use /api/natal-chart (POST).', details: { received: body } }
+    }),
+    { status: 410, headers: { 'Content-Type': 'application/json' } }
+  );
 }
