@@ -7,6 +7,13 @@ const nextConfig = {
       { protocol: 'https', hostname: 'telegra.ph' },
       { protocol: 'https', hostname: '**.telegram.org' }
     ]
+  },
+  webpack: (config, { isServer }) => {
+    if (isServer) {
+      config.externals = config.externals || [];
+      config.externals.push({ swisseph: 'commonjs swisseph' });
+    }
+    return config;
   }
 };
 

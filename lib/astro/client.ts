@@ -81,7 +81,7 @@ function normalizeAstroResponse(raw: any, params: AstroApiParams): NatalChartDat
   const data: NatalChartData = {
     metadata: {
       name: params.name,
-      birthDateISO: dt.toISO(),
+      birthDateISO: dt.toISO() || params.birthDateISO,
       timezone: params.timezone,
       timeUnknown: false,
       source: 'external'
@@ -159,7 +159,7 @@ function buildMockNatal(params: AstroApiParams, withWarning = false, error?: unk
   return {
     metadata: {
       name: params.name,
-      birthDateISO: dt.toISO(),
+      birthDateISO: dt.toISO() || params.birthDateISO,
       timezone: params.timezone,
       timeUnknown: false,
       source: 'mock',
