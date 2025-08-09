@@ -1,6 +1,6 @@
 import type { NextApiRequest, NextApiResponse } from "next";
-import { computeNatal } from "../../lib/natal";
-import { openai } from "../../lib/openai";
+import { computeNatalChart } from "../../lib/natal";
+import { getOpenAI } from "../../lib/openai";
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
   if (req.method !== "POST") return res.status(405).end();
@@ -11,7 +11,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     if (!active) return res.status(200).json({ error: "premium_required" });
 
     // 2) расчёт карты
-    const chart = await computeNatal(req.body);
+    const chart = await computeNatalChart(req.body);
 
     // 3) дневной гороскоп Aztro по солнечному знаку
     const hz = await fetch(`${getBaseUrl(req)}/api/horoscope`, {
@@ -39,8 +39,9 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 Пиши на языке ru.
 `.trim();
 
+    const openai = getOpenAI();
     const r = await openai.chat.completions.create({
-      model: "gpt-5",
+      model: "gpt-4o-mini",
       messages: [
         { role: "system", content: system },
         { role: "user", content: `Данные натальной карты:\n${chart.summaryText}\n\n${dailyText ? "Дневной гороскоп (Aztro):\n"+dailyText : ""}` }

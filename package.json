@@ -23,9 +23,11 @@
     "openai": "^5.12.2",
     "react": "18.3.1",
     "react-dom": "18.3.1",
-    "swisseph": "^0.5.17",
     "tz-lookup": "^6.1.25",
     "zod": "^3.23.8"
+  },
+  "optionalDependencies": {
+    "swisseph": "^0.5.17"
   },
   "devDependencies": {
     "@types/luxon": "^3.7.1",
