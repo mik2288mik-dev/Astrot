@@ -3,6 +3,7 @@
 import { Screen } from '@/components/Screen';
 import { RouteTransition } from '@/components/RouteTransition';
 import { useTelegram } from '@/app/telegram-context';
+import Link from 'next/link';
 
 export default function SettingsPage() {
   const { user } = useTelegram();
@@ -10,7 +11,6 @@ export default function SettingsPage() {
   const username = user?.username ? `@${user.username}` : '@username';
   const photo = user?.photo_url;
   const id = user?.id ? `ID: ${user.id}` : undefined;
-  const lang = user?.language_code ? `Язык: ${user.language_code}` : undefined;
 
   return (
     <Screen bg="profile">
@@ -23,22 +23,22 @@ export default function SettingsPage() {
                 // eslint-disable-next-line @next/next/no-img-element
                 <img src={photo} alt={fullName} className="h-12 w-12 rounded-full object-cover" />
               ) : (
-                <div className="h-12 w-12 rounded-full bg-white/10" />
+                <div className="h-12 w-12 rounded-full bg-white" />
               )}
               <div>
                 <div className="font-medium">{fullName}</div>
                 <div className="typ-caption text-on/70">{username}</div>
-                {(id || lang) && (
-                  <div className="typ-caption text-on/50 mt-0.5">{[id, lang].filter(Boolean).join(' · ')}</div>
-                )}
+                {id && <div className="typ-caption text-on/50 mt-0.5">{id}</div>}
               </div>
             </div>
             <div className="mt-4 grid gap-2">
-              <button className="bg-white/5 rounded-md p-3 text-left focus:outline-none focus-visible:shadow-focus">Изменить дату рождения</button>
-              <button className="bg-white/5 rounded-md p-3 text-left focus:outline-none focus-visible:shadow-focus">Изменить место рождения</button>
-              <button className="bg-white/5 rounded-md p-3 text-left focus:outline-none focus-visible:shadow-focus">Поделиться картой</button>
+              <Link href="#" className="bg-white/70 rounded-md p-3 text-left focus:outline-none focus-visible:shadow-focus">Notifications</Link>
+              <Link href="#" className="bg-white/70 rounded-md p-3 text-left focus:outline-none focus-visible:shadow-focus">Privacy</Link>
+              <Link href="#" className="bg-white/70 rounded-md p-3 text-left focus:outline-none focus-visible:shadow-focus">Help</Link>
             </div>
           </div>
+
+          <button className="mt-6 w-full h-12 rounded-xl bg-gold/90 text-[#0A0A12] font-semibold shadow-card focus:outline-none focus-visible:shadow-focus">Log Out</button>
         </div>
       </RouteTransition>
     </Screen>
