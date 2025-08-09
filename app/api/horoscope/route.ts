@@ -2,6 +2,8 @@ import { NextRequest } from 'next/server';
 import { LRUCache } from 'lru-cache';
 import { horoscopeSchema } from '@/lib/validation';
 
+export const runtime = 'nodejs';
+
 const cache = new LRUCache<string, any>({ max: 200, ttl: 1000 * 60 * 60 });
 
 export async function POST(req: NextRequest) {
