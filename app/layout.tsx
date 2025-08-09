@@ -4,10 +4,9 @@ import { Providers } from './providers';
 import { BottomNav } from '@/components/BottomNav';
 import Script from 'next/script';
 import type { Viewport } from 'next';
-import { Playfair_Display } from 'next/font/google';
-import { GeistSans } from 'geist/font/sans';
+// Restored previous font stack: no runtime font imports
 
-const playfair = Playfair_Display({ subsets: ['latin', 'cyrillic'], display: 'swap', variable: '--font-display' });
+// Playfair import removed to revert to previous font stack
 
 export const metadata: Metadata = {
   title: 'Astrot — Твоя личная астрология',
@@ -20,7 +19,7 @@ export const viewport: Viewport = {
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="ru" suppressHydrationWarning className={`${GeistSans.variable} ${playfair.variable}`}>
+    <html lang="ru" suppressHydrationWarning>
       <head>
         <Script src="https://telegram.org/js/telegram-web-app.js" strategy="beforeInteractive" />
       </head>

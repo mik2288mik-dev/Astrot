@@ -16,7 +16,7 @@ export default function SettingsPage() {
     <Screen bg="profile">
       <RouteTransition routeKey="settings">
         <div>
-          <h1 className="typ-h1">Профиль</h1>
+          <h1 className="typ-h1">Настройки</h1>
           <div className="mt-4 glass p-6 rounded-lg">
             <div className="flex items-center gap-4">
               {photo ? (
