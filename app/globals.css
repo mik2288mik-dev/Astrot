@@ -5,6 +5,8 @@
 :root {
   --glass-bg: 255 255 255 / 0.65;
   --glass-stroke: 17 24 39 / 0.08;
+  --top-bar-min: 56px; /* минимальная высота верхней панели/кнопки */
+  --top-gap: 16px;     /* дополнительный воздух */
 }
 
 html, body, #__next {
@@ -34,7 +36,12 @@ body {
   padding-bottom: env(safe-area-inset-bottom);
 }
 .safe-top {
-  padding-top: env(safe-area-inset-top);
+  padding-top: calc(max(env(safe-area-inset-top), var(--top-bar-min)) + var(--top-gap));
+}
+
+/* Fallback, если env() недоступен */
+@supports not (padding-top: env(safe-area-inset-top)) {
+  .safe-top { padding-top: calc(56px + 16px); }
 }
 
 /* Safe-area aware top padding with additional base spacing */
