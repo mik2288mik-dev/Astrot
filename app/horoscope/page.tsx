@@ -14,9 +14,9 @@ export default function HoroscopePage() {
   return (
     <Screen bg="functions">
       <RouteTransition routeKey="horoscope">
-        <div>
-          <h1 className="typ-h1">Гороскоп</h1>
-          <div className="mt-4 glass p-6 rounded-lg typ-body text-on/90">{text}</div>
+        <div className="glass p-6">
+          <h1 className="typ-h1">Совет дня</h1>
+          <div className="mt-2 typ-body text-on/90">{text}</div>
         </div>
       </RouteTransition>
     </Screen>

@@ -10,12 +10,12 @@ function resolvePublicPath(path: string): string {
 }
 
 const tiles = [
-  { name: 'Natal Chart', key: 'natal_chart', href: '/natal' },
-  { name: 'Horoscope', key: 'horoscope', href: '/horoscope' },
-  { name: 'AI Astrologer', key: 'ai_chat', href: '/ai' },
-  { name: 'Tarot', key: 'tarot', href: '/tarot' },
-  { name: 'Compatibility', key: 'compatibility', href: '/compatibility' },
-  { name: 'Shop', key: 'store', href: '/shop' },
+  { name: 'Натальная карта', key: 'natal_chart', href: '/natal' },
+  { name: 'Совет дня', key: 'horoscope', href: '/horoscope' },
+  { name: 'ИИ-Астролог', key: 'ai_chat', href: '/ai' },
+  { name: 'Таро', key: 'tarot', href: '/tarot' },
+  { name: 'Совместимость', key: 'compatibility', href: '/compatibility' },
+  { name: 'Дневник', key: 'journal', href: '/journal' },
 ];
 
 export default function FeaturesPage() {
@@ -26,7 +26,7 @@ export default function FeaturesPage() {
           <h1 className="typ-h1">Функции</h1>
           <div className="mt-4 grid grid-cols-2 sm:grid-cols-3 gap-3">
             {tiles.map((t) => {
-              const src = resolvePublicPath(manifest.icons[t.key as keyof typeof manifest.icons]);
+              const src = resolvePublicPath((manifest as any).icons[t.key as keyof typeof manifest.icons] || (manifest as any).icons['info']);
               return (
                 <Link key={t.name} href={t.href} className="block focus:outline-none focus-visible:shadow-focus rounded-lg">
                   <Tap className="glass h-[156px] w-full rounded-lg p-4 flex flex-col items-start justify-end gap-3">
