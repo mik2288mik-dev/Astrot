@@ -24,6 +24,8 @@ body {
   background-image: theme('backgroundImage.cosmic-gradient'), theme('backgroundImage.nebula-gradient');
   background-attachment: fixed;
   font-family: theme('fontFamily.sans');
+  background-size: 200% 200%;
+  animation: bg-pan 24s ease-in-out infinite alternate;
 }
 
 .glass {
@@ -72,4 +74,34 @@ body {
 /* Compact rounded input style */
 .input {
   @apply h-[46px] w-full px-3 py-2 rounded-xl bg-surface/90 border border-gray-200/60 shadow-sm placeholder:text-muted/70 text-on focus:outline-none focus-visible:ring-4 focus-visible:ring-accent/40 focus:border-accent transition;
+}
+
+/* Animated gradient background */
+@keyframes bg-pan {
+  0% { background-position: 0% 0%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 100%; }
+}
+
+/* Text gradient animation for headings */
+.text-gradient-soft {
+  background: linear-gradient(90deg, rgba(15,16,32,1), rgba(107,114,128,1), rgba(15,16,32,1));
+  background-size: 200% auto;
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  animation: text-gradient 8s ease-in-out infinite alternate;
+}
+@keyframes text-gradient {
+  0% { background-position: 0% 50%; }
+  100% { background-position: 100% 50%; }
+}
+
+/* Polaroid-like reveal */
+.animate-polaroid {
+  animation: polaroid-in 420ms cubic-bezier(0.2, 0.7, 0.2, 1) both;
+}
+@keyframes polaroid-in {
+  0% { opacity: 0; transform: scale(0.98) translateY(8px); filter: blur(2px); }
+  100% { opacity: 1; transform: scale(1) translateY(0); filter: blur(0); }
 }
