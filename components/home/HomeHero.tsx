@@ -7,7 +7,7 @@ export default function HomeHero() {
       initial={{ opacity: 0, y: 8 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.5 }}
-      className="rounded-2xl bg-white/70 backdrop-blur-md shadow-[0_4px_16px_rgba(30,12,64,0.06)] p-6 text-center"
+      className="rounded-2xl bg-white/70 backdrop-blur-md shadow-[0_8px_24px_rgba(30,12,64,0.12)] p-6 text-center"
     >
       <div className="mx-auto animate-polaroid">
         <Image src="/logo.png" alt="Astrot" width={96} height={96} className="mx-auto w-20 h-auto md:w-24 object-contain" priority />

@@ -23,13 +23,14 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       <head>
         <Script src="https://telegram.org/js/telegram-web-app.js" strategy="beforeInteractive" />
       </head>
-      <body className="min-h-dvh h-dvh flex flex-col safe-top font-sans">
-        <main className="flex-1 h-full pb-20">
+      <body className="min-h-[100svh] flex flex-col safe-top font-sans">
+        <main className="flex-1 min-h-[100svh] pb-[calc(var(--tabbar-h)+env(safe-area-inset-bottom))]">
           <Providers>
             <div className="px-4 pb-4 max-w-lg mx-auto">{children}</div>
           </Providers>
+          {/* Sticky floating tabbar within the scroll container */}
+          <BottomNav />
         </main>
-        <BottomNav />
       </body>
     </html>
   );

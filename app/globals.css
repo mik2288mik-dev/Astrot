@@ -7,6 +7,7 @@
   --glass-stroke: 17 24 39 / 0.08;
   --top-bar-min: 64px; /* минимальная высота верхней панели/кнопки */
   --top-gap: 24px;     /* дополнительный воздух */
+  --tabbar-h: 64px;   /* высота плавающего таббара */
 }
 
 html, body, #__next {
@@ -110,3 +111,23 @@ body {
   0% { opacity: 0; transform: scale(0.98) translateY(8px); filter: blur(2px); }
   100% { opacity: 1; transform: scale(1) translateY(0); filter: blur(0); }
 }
+
+/* Cosmic dust: subtle parallax star layers */
+.cosmic-dust { position: absolute; inset: 0; overflow: hidden; pointer-events: none; }
+.cosmic-dust::before,
+.cosmic-dust::after {
+  content: '';
+  position: absolute;
+  inset: -20% -10%;
+  background-image:
+    radial-gradient(2px 2px at 20% 30%, rgba(255,255,255,0.20) 50%, transparent 51%),
+    radial-gradient(1.5px 1.5px at 70% 60%, rgba(255,255,255,0.16) 50%, transparent 51%),
+    radial-gradient(1.2px 1.2px at 40% 80%, rgba(255,255,255,0.12) 50%, transparent 51%),
+    radial-gradient(1px 1px at 85% 25%, rgba(255,255,255,0.12) 50%, transparent 51%);
+  opacity: .15;
+  transform: translateY(0);
+}
+.cosmic-dust::before { animation: dust-drift 60s linear infinite; }
+.cosmic-dust::after { animation: dust-drift-rev 80s linear infinite; opacity: .12; }
+@keyframes dust-drift { from { transform: translateY(-4%); } to { transform: translateY(4%); } }
+@keyframes dust-drift-rev { from { transform: translateY(4%); } to { transform: translateY(-4%); } }

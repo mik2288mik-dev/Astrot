@@ -20,6 +20,7 @@ export function Screen({ bg, children }: { bg: BackgroundKey; children: ReactNod
         <div aria-hidden className="scrim absolute inset-0" />
       </div>
       <div aria-hidden className="absolute inset-0 -z-10" style={{ background: 'linear-gradient(180deg, rgba(230,214,255,0.10), rgba(198,230,245,0.08))' }} />
+      <div aria-hidden className="cosmic-dust -z-10" />
       {children}
     </div>
   );
