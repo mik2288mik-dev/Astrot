@@ -1,7 +1,7 @@
 import type { Metadata } from 'next';
 import './globals.css';
 import { Providers } from './providers';
-import { BottomNav } from '@/components/BottomNav';
+import { BottomBar } from '@/components/BottomBar';
 import Script from 'next/script';
 import type { Viewport } from 'next';
 // Restored previous font stack: no runtime font imports
@@ -28,8 +28,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           <Providers>
             <div className="px-4 pb-4 max-w-lg mx-auto">{children}</div>
           </Providers>
-          {/* Sticky floating tabbar within the scroll container */}
-          <BottomNav />
+          <BottomBar />
         </main>
       </body>
     </html>
