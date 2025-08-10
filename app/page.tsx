@@ -8,6 +8,7 @@ import { motion } from 'framer-motion';
 import HomeHero from '@/components/home/HomeHero';
 import HomeActions from '@/components/home/HomeActions';
 import HomeAdvice from '@/components/home/HomeAdvice';
+import HomePreview from '@/components/home/HomePreview';
 
 // Features moved into HomeActions component
 
@@ -18,6 +19,7 @@ export default function HomePage() {
         <div className="space-y-8">
           <HomeHero />
           <HomeActions />
+          <HomePreview />
           <HomeAdvice />
 
           <motion.section

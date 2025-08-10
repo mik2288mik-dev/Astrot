@@ -21,7 +21,7 @@ export default function SettingsPage() {
             <Image src="/logo.png" alt="" width={18} height={18} className="opacity-70 grayscale" />
             Настройки
           </h1>
-          <div className="mt-4 glass p-6 rounded-lg">
+          <div className="mt-4 glass p-6 rounded-2xl">
             <div className="flex items-center gap-4">
               {photo ? (
                 // eslint-disable-next-line @next/next/no-img-element
@@ -30,19 +30,19 @@ export default function SettingsPage() {
                 <div className="h-12 w-12 rounded-full bg-white" />
               )}
               <div>
-                <div className="font-medium">{fullName}</div>
+                <div className="font-semibold">{fullName}</div>
                 <div className="typ-caption text-on/70">{username}</div>
                 {id && <div className="typ-caption text-on/50 mt-0.5">{id}</div>}
               </div>
             </div>
             <div className="mt-4 grid gap-2">
-              <Link href="#" className="bg-white/70 rounded-md p-3 text-left focus:outline-none focus-visible:shadow-focus">Notifications</Link>
-              <Link href="#" className="bg-white/70 rounded-md p-3 text-left focus:outline-none focus-visible:shadow-focus">Privacy</Link>
-              <Link href="#" className="bg-white/70 rounded-md p-3 text-left focus:outline-none focus-visible:shadow-focus">Help</Link>
+              <Link href="#" className="bg-white/70 hover:bg-white/80 rounded-2xl p-3 text-left focus:outline-none focus-visible:shadow-focus">Уведомления</Link>
+              <Link href="#" className="bg-white/70 hover:bg-white/80 rounded-2xl p-3 text-left focus:outline-none focus-visible:shadow-focus">Приватность</Link>
+              <Link href="#" className="bg-white/70 hover:bg-white/80 rounded-2xl p-3 text-left focus:outline-none focus-visible:shadow-focus">Помощь</Link>
             </div>
           </div>
 
-          <button className="mt-6 w-full h-12 rounded-xl bg-gold/90 text-[#0A0A12] font-semibold shadow-card focus:outline-none focus-visible:shadow-focus">Log Out</button>
+          <button className="mt-6 w-full h-12 rounded-full text-white bg-grad-accent shadow-[0_8px_24px_rgba(161,107,254,0.35)] font-semibold focus:outline-none focus-visible:shadow-focus">Выйти</button>
         </div>
       </RouteTransition>
     </Screen>

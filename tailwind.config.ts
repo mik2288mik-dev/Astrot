@@ -54,7 +54,7 @@ const config: Config = {
         'grad-accent': 'linear-gradient(90deg, #A16BFE 0%, #F09EC8 100%)',
       },
       fontFamily: {
-        sans: ['var(--font-geist-sans)', 'Geist Sans', 'var(--font-sans)', 'Inter', 'Geist', '-apple-system', 'BlinkMacSystemFont', 'Segoe UI', 'Roboto', 'Helvetica', 'Arial', 'sans-serif'],
+        sans: ['ui-sans-serif', '-apple-system', 'BlinkMacSystemFont', '"Segoe UI"', 'Roboto', 'Helvetica', 'Arial', 'sans-serif'],
         display: ['var(--font-display)', '"Playfair Display"', 'Georgia', 'serif']
       }
     }

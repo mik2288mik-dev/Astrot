@@ -8,7 +8,7 @@ export default function HomeAdvice() {
       transition={{ duration: 0.5, delay: 0.1 }}
     >
       <div className="rounded-2xl p-[1px] bg-grad-soft">
-        <div className="rounded-2xl bg-white/70 backdrop-blur-md shadow-[0_4px_16px_rgba(30,12,64,0.06)] p-5">
+        <div className="rounded-2xl bg-white/70 backdrop-blur-md shadow-[0_8px_24px_rgba(30,12,64,0.12)] p-5">
           <h2 className="typ-title">Совет дня</h2>
           <p className="mt-2 typ-body text-on/90">
             Слушай интуицию и действуй мягко: сегодня звёздная погода благоволит вдумчивым шагам и искренним намерениям.
