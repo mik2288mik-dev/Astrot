@@ -21,6 +21,14 @@ const config: Config = {
         muted: '#6B7280',
         primary: '#E6D6FF',
         accent: '#C6E6F5',
+        // Added brand tokens
+        'ink-900': '#1B1B1F',
+        'moon-50': '#FFF8FD',
+        'rose-100': '#F7E6F3',
+        'rose-200': '#F1D6EB',
+        'orb-300': '#E6D6FF',
+        'nebula-500': '#A16BFE',
+        'dawn-500': '#F09EC8',
       },
       borderRadius: {
         sm: '8px',
@@ -40,7 +48,10 @@ const config: Config = {
       },
       backgroundImage: {
         'cosmic-gradient': 'linear-gradient(135deg, #FFF4E6 0%, #FFD1DC 50%, #E6D6FF 100%)',
-        'nebula-gradient': 'radial-gradient(1000px 500px at 100% -20%, rgba(230,214,255,0.45), transparent), radial-gradient(800px 400px at -10% 120%, rgba(198,230,245,0.45), transparent)'
+        'nebula-gradient': 'radial-gradient(1000px 500px at 100% -20%, rgba(230,214,255,0.45), transparent), radial-gradient(800px 400px at -10% 120%, rgba(198,230,245,0.45), transparent)',
+        // Added utilities per spec
+        'grad-soft': 'linear-gradient(135deg, #F7E6F3 0%, #E6D6FF 55%, #F1D6EB 100%)',
+        'grad-accent': 'linear-gradient(90deg, #A16BFE 0%, #F09EC8 100%)',
       },
       fontFamily: {
         sans: ['var(--font-geist-sans)', 'Geist Sans', 'var(--font-sans)', 'Inter', 'Geist', '-apple-system', 'BlinkMacSystemFont', 'Segoe UI', 'Roboto', 'Helvetica', 'Arial', 'sans-serif'],

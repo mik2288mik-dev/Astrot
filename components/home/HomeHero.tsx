@@ -7,12 +7,12 @@ export default function HomeHero() {
       initial={{ opacity: 0, y: 8 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.5 }}
-      className="glass p-6 rounded-2xl text-center"
+      className="rounded-2xl bg-white/70 backdrop-blur-md shadow-[0_4px_16px_rgba(30,12,64,0.06)] p-6 text-center"
     >
       <div className="mx-auto animate-polaroid">
-        <Image src="/logo.png" alt="Astrot" width={80} height={80} className="mx-auto w-16 h-16 md:w-20 md:h-20 object-contain" priority />
+        <Image src="/logo.png" alt="Astrot" width={96} height={96} className="mx-auto w-20 h-auto md:w-24 object-contain" priority />
       </div>
-      <h1 className="mt-4 typ-h1 text-gradient-soft">Твоя личная астрология</h1>
+      <h1 className="mt-4 typ-h1">Твоя личная астрология</h1>
       <p className="mt-2 typ-body text-on/80 max-w-md mx-auto">
         Премиальный доступ к натальной карте, точным прогнозам и ежедневным инсайтам. Космос — в одном касании.
       </p>

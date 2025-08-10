@@ -3,6 +3,7 @@
 import { Screen } from '@/components/Screen';
 import { RouteTransition } from '@/components/RouteTransition';
 import NatalForm from '@/components/NatalForm';
+import Image from 'next/image';
 
 export default function NatalFormPage() {
   return (
@@ -10,7 +11,10 @@ export default function NatalFormPage() {
       <RouteTransition routeKey="natal-module">
         <div className="min-h-[70dvh] flex items-center justify-center px-4 py-10">
           <div className="glass w-full max-w-xl p-6 sm:p-8 grid gap-4">
-            <h1 className="typ-h1 text-gradient-soft">Полная карта</h1>
+            <h1 className="typ-h1 flex items-center gap-2">
+              <Image src="/logo.png" alt="" width={18} height={18} className="opacity-70 grayscale" />
+              Полная карта
+            </h1>
             <p className="typ-body text-on/80">
               Перед тобой карта, которая отражает твои сильные и слабые стороны, скрытые таланты и жизненные вызовы. Используй её как компас для принятия важных решений.
             </p>

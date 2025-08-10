@@ -2,6 +2,7 @@ import { Screen } from '@/components/Screen';
 import { RouteTransition } from '@/components/RouteTransition';
 import { Tap } from '@/components/Tap';
 import Link from 'next/link';
+import Image from 'next/image';
 
 const benefits = [
   'Полная натальная карта с расширенными интерпретациями',
@@ -19,7 +20,10 @@ export default function PremiumPage() {
       <RouteTransition routeKey="premium">
         <div className="space-y-4">
           <div className="glass p-6">
-            <h1 className="typ-h1">Astrot Premium</h1>
+            <h1 className="typ-h1 flex items-center gap-2">
+              <Image src="/logo.png" alt="" width={18} height={18} className="opacity-70 grayscale" />
+              Astrot Premium
+            </h1>
             <p className="mt-2 typ-body text-on/80">
               Смарт-подписка для тех, кто хочет видеть глубже и действовать увереннее. Всё важное — в одном месте.
             </p>
@@ -33,7 +37,7 @@ export default function PremiumPage() {
               ))}
             </ul>
             <Link href="/subscription">
-              <Tap className="mt-4 w-full h-12 rounded-md pastel-gradient text-[#0A0A12] font-semibold shadow-card focus:outline-none focus-visible:shadow-focus">Оформить подписку</Tap>
+              <Tap className="mt-4 w-full h-12 rounded-xl text-white bg-grad-accent shadow-[0_8px_24px_rgba(161,107,254,0.35)] focus:outline-none focus-visible:shadow-focus">Оформить подписку</Tap>
             </Link>
           </div>
         </div>
