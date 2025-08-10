@@ -107,6 +107,9 @@ export default function NatalForm() {
       if (!res.ok) throw new Error('Ошибка расчета');
       const json = await res.json();
       setChart(json); setDaily(null); setExplain(null);
+      if (typeof window !== 'undefined') {
+        window.dispatchEvent(new CustomEvent('astrot:chart-ready', { detail: json }));
+      }
     } catch (e: any) {
       setError(e.message || 'Ошибка');
     } finally { setLoading(false); }
@@ -141,6 +144,9 @@ export default function NatalForm() {
       }
       if (!res.ok) throw new Error(json?.message || 'Ошибка');
       setChart(json.chart); setDaily(json.daily); setExplain(json.explanation);
+      if (json?.chart && typeof window !== 'undefined') {
+        window.dispatchEvent(new CustomEvent('astrot:chart-ready', { detail: json.chart }));
+      }
     } catch (e: any) { setError(e.message || 'Ошибка'); }
     finally { setLoading(false); }
   }
