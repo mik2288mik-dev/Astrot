@@ -4,6 +4,7 @@ import { Screen } from '@/components/Screen';
 import { RouteTransition } from '@/components/RouteTransition';
 import { useTelegram } from '@/app/telegram-context';
 import Link from 'next/link';
+import Image from 'next/image';
 
 export default function SettingsPage() {
   const { user } = useTelegram();
@@ -16,7 +17,10 @@ export default function SettingsPage() {
     <Screen bg="profile">
       <RouteTransition routeKey="settings">
         <div>
-          <h1 className="typ-h1">Настройки</h1>
+          <h1 className="typ-h1 flex items-center gap-2">
+            <Image src="/logo.png" alt="" width={18} height={18} className="opacity-70 grayscale" />
+            Настройки
+          </h1>
           <div className="mt-4 glass p-6 rounded-lg">
             <div className="flex items-center gap-4">
               {photo ? (

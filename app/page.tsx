@@ -27,7 +27,7 @@ export default function HomePage() {
             className="text-center"
           >
             <Link href="/natal">
-              <Tap className="h-12 px-6 rounded-2xl pastel-gradient text-[#0A0A12] font-semibold shadow-card focus:outline-none focus-visible:shadow-focus">
+              <Tap className="h-12 px-6 rounded-xl text-white bg-grad-accent shadow-[0_8px_24px_rgba(161,107,254,0.35)] focus:outline-none focus-visible:shadow-focus">
                 Открыть полную карту
               </Tap>
             </Link>

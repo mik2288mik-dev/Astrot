@@ -20,10 +20,10 @@ export default function HomeActions() {
       {features.map((f) => (
         <motion.div key={f.href} variants={{ hidden: { opacity: 0, y: 6 }, show: { opacity: 1, y: 0 } }}>
           <Link href={f.href} className="group block">
-            <div className="glass p-4 rounded-2xl shadow-card hover:shadow-glass transition-transform group-hover:scale-[1.02]">
+            <div className="p-4 rounded-2xl bg-white/70 backdrop-blur-md shadow-[0_4px_16px_rgba(30,12,64,0.06)] transition-transform group-hover:scale-[1.02]">
               <div className="flex items-center gap-3">
-                <div className="relative h-8 w-8">
-                  <Image src={f.icon} alt="" fill sizes="32px" className="object-contain" />
+                <div className="relative h-6 w-6 md:h-7 md:w-7">
+                  <Image src={f.icon} alt="" fill sizes="28px" className="object-contain" />
                 </div>
                 <div className="typ-body text-on/90 font-semibold">{f.title}</div>
               </div>
