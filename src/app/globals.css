@@ -22,8 +22,11 @@
   --astrot-surface: 255 255 255;
   --astrot-card-bg: 255 255 255;
   --astrot-border: 0 0 0;
+  /* Alias for compatibility with spec */
+  --astrot-card: var(--astrot-card-bg);
 
   --bottom-nav-height: 64px;
+  --bottom-nav-total: calc(var(--bottom-nav-height) + env(safe-area-inset-bottom));
   --tg-viewport-height: 100svh;
 }
 

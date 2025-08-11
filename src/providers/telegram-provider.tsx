@@ -114,9 +114,6 @@ export function TelegramProvider({ children }: { children: React.ReactNode }) {
     const offViewport = onTelegramEvent('viewportChanged', () => {
       const vh = webApp.viewportHeight ?? window.innerHeight;
       document.documentElement.style.setProperty('--tg-viewport-height', `${vh}px`);
-      try {
-        webApp.expand?.();
-      } catch {}
     });
 
     return () => {

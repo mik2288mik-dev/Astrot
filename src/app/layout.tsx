@@ -31,7 +31,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       <body className="min-h-[var(--tg-viewport-height)] bg-bg text-text font-sans">
         <TelegramProvider>
           <ThemeProvider>
-            <main className="min-h-[var(--tg-viewport-height)] pb-[calc(var(--bottom-nav-height)+env(safe-area-inset-bottom))]">
+            <main className="min-h-[var(--tg-viewport-height)] pb-[var(--bottom-nav-total)]">
               <div className="px-4 pb-4 max-w-lg mx-auto">{children}</div>
             </main>
             <BottomNav />
