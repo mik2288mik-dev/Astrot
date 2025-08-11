@@ -88,7 +88,7 @@ export function TelegramProvider({ children }: { children: React.ReactNode }) {
       return;
     }
 
-    const webApp = initTelegram({ ready: true, expand: true });
+    const webApp = initTelegram({ ready: true, expand: true, enableClosingConfirmation: true });
     if (!webApp) return;
     setTg(webApp);
     const tp = webApp.themeParams ?? {};
@@ -110,6 +110,9 @@ export function TelegramProvider({ children }: { children: React.ReactNode }) {
     const offViewport = onTelegramEvent('viewportChanged', () => {
       const vh = webApp.viewportHeight ?? window.innerHeight;
       document.documentElement.style.setProperty('--tg-viewport-height', `${vh}px`);
+      try {
+        webApp.expand?.();
+      } catch {}
     });
 
     return () => {
