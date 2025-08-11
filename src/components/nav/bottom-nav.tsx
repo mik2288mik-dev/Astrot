@@ -39,7 +39,7 @@ export const BottomNav = memo(function BottomNav() {
           const active = pathname === tab.href;
           return (
             <li key={tab.key} className="flex items-center justify-center">
-              <Link href={tab.href} aria-label={tab.label} className="flex h-full w-full flex-col items-center justify-center text-sm text-hint aria-[current=page]:text-[rgb(var(--astrot-accent))]" aria-current={active ? 'page' : undefined}>
+              <Link href={tab.href} aria-label={tab.label} className="flex h-full w-full flex-col items-center justify-center text-sm text-hint aria-[current=page]:text-[rgb(var(--astrot-accent))]" aria-current={active ? 'page' : undefined} onClick={() => import('@/lib/haptics').then(m => m.impactOccurred('light')).catch(() => {})}>
                 <Icon name={tab.icon} active={active} />
                 <span className={active ? 'text-[rgb(var(--astrot-accent))]' : ''}>{tab.label}</span>
               </Link>
