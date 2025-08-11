@@ -1,0 +1,19 @@
+{
+  "name": "Astrot",
+  "short_name": "Astrot",
+  "start_url": "/",
+  "scope": "/",
+  "display": "fullscreen",
+  "background_color": "#000000",
+  "theme_color": "#000000",
+  "lang": "ru",
+  "dir": "ltr",
+  "icons": [
+    {
+      "src": "/logo.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any"
+    }
+  ]
+}
