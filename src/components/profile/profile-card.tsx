@@ -19,7 +19,7 @@ export function ProfileCard() {
     <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 0.2 }}>
       <div className="bg-astrot-card-bg rounded-xl p-4 flex items-center space-x-4 shadow-card border border-[color:rgb(var(--astrot-border)/0.08)]">
         {userpicUrl ? (
-          <img src={userpicUrl} alt="avatar" className="w-12 h-12 rounded-full border border-[color:rgb(var(--astrot-border)/0.12)]" />
+          <img src={userpicUrl} alt="avatar" className="w-12 h-12 rounded-full object-cover border border-[color:rgb(var(--astrot-border)/0.12)]" />
         ) : (
           <div className="w-12 h-12 rounded-full bg-astrot-surface border border-[color:rgb(var(--astrot-border)/0.12)] flex items-center justify-center text-sm font-semibold">
             {firstName.slice(0, 1)}

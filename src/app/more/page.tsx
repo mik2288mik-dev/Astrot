@@ -6,6 +6,8 @@ import Link from 'next/link';
 import { useTelegram } from '@/providers/telegram-provider';
 import { ProfileCard } from '@/components/profile/profile-card';
 
+const DEBUG_MODE = process.env.NEXT_PUBLIC_DEBUG_MODE === 'true';
+
 export default function Page() {
   const { tg, colorScheme, initDataUnsafe, themeParams } = useTelegram();
   type InitData = { user?: { id?: number; username?: string } } | null;
@@ -19,16 +21,18 @@ export default function Page() {
         <p className="text-sm text-astrot-muted">Перейти в астро‑календарь</p>
         <Link href="/calendar" className="text-link">Открыть</Link>
       </Card>
-      <Card className="py-5">
-        <h2 className="text-lg font-semibold">Telegram Debug</h2>
-        <div className="text-sm space-y-1">
-          <div><span className="text-astrot-muted">isWebApp:</span> {tg ? 'yes' : 'no'}</div>
-          <div><span className="text-astrot-muted">colorScheme:</span> {colorScheme}</div>
-          <div><span className="text-astrot-muted">bg_color:</span> {themeParams?.bg_color ?? '-'}</div>
-          <div><span className="text-astrot-muted">user.id:</span> {user?.id ?? '-'}</div>
-          <div><span className="text-astrot-muted">username:</span> {user?.username ?? '-'}</div>
-        </div>
-      </Card>
+      {DEBUG_MODE && (
+        <Card className="py-5">
+          <h2 className="text-lg font-semibold">Telegram Debug</h2>
+          <div className="text-sm space-y-1">
+            <div><span className="text-astrot-muted">isWebApp:</span> {tg ? 'yes' : 'no'}</div>
+            <div><span className="text-astrot-muted">colorScheme:</span> {colorScheme}</div>
+            <div><span className="text-astrot-muted">bg_color:</span> {themeParams?.bg_color ?? '-'}</div>
+            <div><span className="text-astrot-muted">user.id:</span> {user?.id ?? '-'}</div>
+            <div><span className="text-astrot-muted">username:</span> {user?.username ?? '-'}</div>
+          </div>
+        </Card>
+      )}
     </motion.div>
   );
 }
