@@ -39,6 +39,8 @@ export type TelegramWebApp = {
   viewportHeight?: number;
 };
 
+let cachedTelegramWebApp: TelegramWebApp | null = null;
+
 export function getTelegramWebApp(): TelegramWebApp | null {
   if (typeof window === 'undefined') return null;
   const tg = (window as unknown as { Telegram?: { WebApp?: TelegramWebApp } })?.Telegram?.WebApp;
@@ -55,7 +57,12 @@ export function initTelegram(options?: { ready?: boolean; expand?: boolean; enab
   } catch {
     // ignore
   }
+  cachedTelegramWebApp = tg;
   return tg;
+}
+
+export function getTelegram(): TelegramWebApp | null {
+  return cachedTelegramWebApp ?? getTelegramWebApp();
 }
 
 export function onTelegramEvent(event: 'themeChanged' | 'viewportChanged', handler: () => void) {
