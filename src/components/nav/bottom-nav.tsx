@@ -6,6 +6,9 @@ import { NAV_ITEMS } from '@/config/nav';
 import { memo } from 'react';
 import { motion } from 'framer-motion';
 
+// Define a minimal icon component type to avoid using `any` while matching Tabler icons' props we use
+type IconComponent = (props: { size?: number; stroke?: number; className?: string }) => JSX.Element;
+
 export const BottomNav = memo(function BottomNav() {
   const pathname = usePathname();
   return (
@@ -36,7 +39,7 @@ export const BottomNav = memo(function BottomNav() {
               </li>
             );
           }
-          const IconCmp = tab.icon as any;
+          const IconCmp: IconComponent | null = typeof tab.icon === 'function' ? (tab.icon as IconComponent) : null;
           return (
             <li key={tab.key} className="flex items-center justify-center">
               <Link
@@ -46,7 +49,7 @@ export const BottomNav = memo(function BottomNav() {
                 aria-current={active ? 'page' : undefined}
                 onClick={() => import('@/lib/haptics').then((m) => m.impactOccurred('light')).catch(() => {})}
               >
-                {typeof IconCmp === 'function' ? (
+                {IconCmp ? (
                   <IconCmp size={20} stroke={1.8} className={active ? 'text-[rgb(var(--astrot-accent))]' : 'text-astrot-muted'} />
                 ) : null}
                 <span className={active ? 'text-[rgb(var(--astrot-accent))]' : 'text-astrot-muted'}>{tab.label}</span>
