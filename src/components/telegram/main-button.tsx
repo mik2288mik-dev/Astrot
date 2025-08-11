@@ -24,7 +24,10 @@ export function MainButton({ text, visible = true, disabled = false, onClick }: 
       onClick?.();
     };
     mb.onClick?.(handle);
-    return () => mb.offClick?.(handle);
+    return () => {
+      mb.offClick?.(handle);
+      mb.hide?.();
+    };
   }, [tg, text, visible, disabled, onClick]);
   return null;
 }
