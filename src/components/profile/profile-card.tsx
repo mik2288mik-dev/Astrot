@@ -4,7 +4,7 @@ import { motion } from 'framer-motion';
 import { useTelegram } from '@/providers/telegram-provider';
 
 export function ProfileCard() {
-  const { initDataUnsafe, themeParams } = useTelegram();
+  const { initDataUnsafe } = useTelegram();
   type User = { id?: number; username?: string; first_name?: string; last_name?: string };
   type InitData = { user?: User } | null;
   const init = (initDataUnsafe ?? null) as InitData;
