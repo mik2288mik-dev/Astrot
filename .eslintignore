@@ -1,0 +1,9 @@
+node_modules
+.next
+backup
+.backup_pre_nextjs
+public
+lib
+types
+ephe
+pages

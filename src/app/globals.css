@@ -1,0 +1,40 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --tg-bg-color: 255 255 255;
+  --tg-text-color: 27 27 31;
+  --tg-hint-color: 107 114 128;
+  --tg-link-color: 51 144 255;
+  --tg-button-color: 51 144 255;
+  --tg-button-text-color: 255 255 255;
+
+  --astrot-accent: 161 107 254;
+  --astrot-muted: 107 114 128;
+  --astrot-surface: 255 255 255;
+  --astrot-card-bg: 255 255 255;
+  --astrot-border: 0 0 0;
+
+  --bottom-nav-height: 64px;
+  --tg-viewport-height: 100svh;
+}
+
+html, body {
+  height: 100%;
+}
+
+body {
+  -webkit-tap-highlight-color: transparent;
+  font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+}
+
+* { outline-color: rgb(var(--astrot-accent)); }
+
+.safe-area-b {
+  padding-bottom: calc(env(safe-area-inset-bottom));
+}
+
+.card {
+  @apply bg-astrot-card-bg shadow-card rounded-xl border border-[color:rgb(var(--astrot-border)/0.08)];
+}
