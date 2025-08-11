@@ -10,18 +10,23 @@ export default function Page() {
   const router = useRouter();
   return (
     <motion.div initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.18 }} className="space-y-4">
-      <Card>
+      <Card className="py-5 transition-transform hover:scale-[1.01] active:scale-[0.99]">
         <h2 className="text-lg font-semibold">Ежедневка</h2>
-        <p className="text-sm text-hint">Ваши ежедневные подсказки появятся здесь.</p>
+        <p className="text-sm text-astrot-muted">Ваши ежедневные подсказки появятся здесь.</p>
       </Card>
-      <Card>
+      <Card className="py-5 transition-transform hover:scale-[1.01] active:scale-[0.99]">
         <h2 className="text-lg font-semibold">Ближайшие события</h2>
-        <p className="text-sm text-hint">Скоро тут будут важные астрособытия.</p>
+        <p className="text-sm text-astrot-muted">Скоро тут будут важные астрособытия.</p>
       </Card>
-      <Card>
+      <Card className="py-5 transition-transform hover:scale-[1.01] active:scale-[0.99]">
         <h2 className="text-lg font-semibold">Календарь‑тизер</h2>
-        <p className="text-sm text-hint mb-3">Переход к полному астро‑календарю.</p>
-        <Button onClick={() => { impactOccurred('light'); router.push('/calendar'); }}>Открыть календарь</Button>
+        <p className="text-sm text-astrot-muted mb-3">Переход к полному астро‑календарю.</p>
+        <Button
+          className="bg-[rgb(var(--astrot-accent))] text-white rounded-full px-4 py-2 text-sm font-medium shadow-md hover:bg-opacity-90 transition"
+          onClick={() => { impactOccurred('light'); router.push('/calendar'); }}
+        >
+          Открыть календарь
+        </Button>
       </Card>
     </motion.div>
   );

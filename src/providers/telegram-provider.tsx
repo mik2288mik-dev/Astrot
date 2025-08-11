@@ -28,6 +28,13 @@ function applyThemeToCSS(themeParams: TelegramThemeParams, colorScheme: 'light' 
     '--tg-link-color': themeParams.link_color,
     '--tg-button-color': themeParams.button_color,
     '--tg-button-text-color': themeParams.button_text_color,
+    // Standard Telegram CSS variable names for broader compatibility
+    '--tg-theme-bg-color': themeParams.bg_color,
+    '--tg-theme-text-color': themeParams.text_color,
+    '--tg-theme-hint-color': themeParams.hint_color,
+    '--tg-theme-link-color': themeParams.link_color,
+    '--tg-theme-button-color': themeParams.button_color,
+    '--tg-theme-button-text-color': themeParams.button_text_color,
   };
   Object.entries(map).forEach(([cssVar, value]) => {
     if (value) {
@@ -110,6 +117,16 @@ export function TelegramProvider({ children }: { children: React.ReactNode }) {
       offViewport?.();
     };
   }, []);
+
+  // Ensure Telegram MainButton is hidden by default
+  useEffect(() => {
+    try {
+      tg?.MainButton?.hide?.();
+      tg?.MainButton?.setParams?.({ is_active: false, is_visible: false });
+    } catch {
+      // ignore
+    }
+  }, [tg]);
 
   const value = useMemo(
     () => ({ tg, themeParams, colorScheme, initDataUnsafe: initDataRef.current, isWebApp: !!tg }),

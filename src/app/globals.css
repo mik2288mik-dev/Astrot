@@ -9,6 +9,13 @@
   --tg-link-color: 51 144 255;
   --tg-button-color: 51 144 255;
   --tg-button-text-color: 255 255 255;
+  /* Standard Telegram naming fallbacks */
+  --tg-theme-bg-color: var(--tg-bg-color);
+  --tg-theme-text-color: var(--tg-text-color);
+  --tg-theme-hint-color: var(--tg-hint-color);
+  --tg-theme-link-color: var(--tg-link-color);
+  --tg-theme-button-color: var(--tg-button-color);
+  --tg-theme-button-text-color: var(--tg-button-text-color);
 
   --astrot-accent: 161 107 254;
   --astrot-muted: 107 114 128;

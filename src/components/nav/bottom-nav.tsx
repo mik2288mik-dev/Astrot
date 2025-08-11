@@ -33,13 +33,13 @@ function Icon({ name, active }: { name: string; active: boolean }) {
 export const BottomNav = memo(function BottomNav() {
   const pathname = usePathname();
   return (
-    <nav role="navigation" aria-label="Нижняя навигация" className="fixed bottom-0 left-0 right-0 z-50 bg-astrot-surface/95 backdrop-blur supports-[backdrop-filter]:bg-astrot-surface/85 border-t border-[color:rgb(var(--astrot-border)/0.08)]" style={{ paddingBottom: 'env(safe-area-inset-bottom)' }}>
+    <nav role="navigation" aria-label="Нижняя навигация" className="fixed bottom-0 left-0 right-0 z-50 bg-astrot-surface/95 backdrop-blur supports-[backdrop-filter]:bg-astrot-surface/85 border-t border-[color:rgb(var(--astrot-border)/0.08)] shadow-md" style={{ paddingBottom: 'calc(env(safe-area-inset-bottom) + 8px)' }}>
       <ul className="mx-auto grid max-w-lg grid-cols-4 gap-1 px-2 py-2" style={{ height: 'var(--bottom-nav-height)' }}>
         {BOTTOM_TABS.map((tab) => {
           const active = pathname === tab.href;
           return (
             <li key={tab.key} className="flex items-center justify-center">
-              <Link href={tab.href} aria-label={tab.label} className="flex h-full w-full flex-col items-center justify-center text-sm text-hint aria-[current=page]:text-[rgb(var(--astrot-accent))]" aria-current={active ? 'page' : undefined} onClick={() => import('@/lib/haptics').then(m => m.impactOccurred('light')).catch(() => {})}>
+              <Link href={tab.href} aria-label={tab.label} className="flex h-full w-full flex-col items-center justify-center text-xs text-astrot-muted aria-[current=page]:text-[rgb(var(--astrot-accent))]" aria-current={active ? 'page' : undefined} onClick={() => import('@/lib/haptics').then(m => m.impactOccurred('light')).catch(() => {})}>
                 <Icon name={tab.icon} active={active} />
                 <span className={active ? 'text-[rgb(var(--astrot-accent))]' : ''}>{tab.label}</span>
               </Link>
