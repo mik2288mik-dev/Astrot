@@ -2,33 +2,23 @@ import type { Config } from 'tailwindcss';
 
 const config: Config = {
   content: [
-    './app/**/*.{js,ts,jsx,tsx,mdx}',
-    './components/**/*.{js,ts,jsx,tsx,mdx}',
+    './src/app/**/*.{js,ts,jsx,tsx,mdx}',
+    './src/components/**/*.{js,ts,jsx,tsx,mdx}',
   ],
   theme: {
     extend: {
       colors: {
-        // Pastel palette per spec
-        pink: '#FFD1DC',
-        beige: '#FFF4E6',
-        blue: '#C6E6F5',
-        lavender: '#E6D6FF',
-        gold: '#E7C86E',
-        // Semantic tokens for app
-        bg: '#FFF7F4',
-        surface: '#FFFFFF',
-        on: '#0F1020',
-        muted: '#6B7280',
-        primary: '#E6D6FF',
-        accent: '#C6E6F5',
-        // Added brand tokens
-        'ink-900': '#1B1B1F',
-        'moon-50': '#FFF8FD',
-        'rose-100': '#F7E6F3',
-        'rose-200': '#F1D6EB',
-        'orb-300': '#E6D6FF',
-        'nebula-500': '#A16BFE',
-        'dawn-500': '#F09EC8',
+        bg: 'rgb(var(--tg-bg-color) / <alpha-value>)',
+        text: 'rgb(var(--tg-text-color) / <alpha-value>)',
+        hint: 'rgb(var(--tg-hint-color) / <alpha-value>)',
+        link: 'rgb(var(--tg-link-color) / <alpha-value>)',
+        button: 'rgb(var(--tg-button-color) / <alpha-value>)',
+        'button-text': 'rgb(var(--tg-button-text-color) / <alpha-value>)',
+        'astrot-accent': 'rgb(var(--astrot-accent) / <alpha-value>)',
+        'astrot-muted': 'rgb(var(--astrot-muted) / <alpha-value>)',
+        'astrot-surface': 'rgb(var(--astrot-surface) / <alpha-value>)',
+        'astrot-card-bg': 'rgb(var(--astrot-card-bg) / <alpha-value>)',
+        'astrot-border': 'rgb(var(--astrot-border) / <alpha-value>)'
       },
       borderRadius: {
         sm: '8px',
@@ -39,23 +29,19 @@ const config: Config = {
         '3xl': '2rem'
       },
       boxShadow: {
-        glass: '0 8px 30px rgba(0,0,0,0.06)',
-        card: '0 8px 24px rgba(0,0,0,.08)',
-        focus: '0 0 0 4px rgba(198,230,245,.35)'
-      },
-      backdropBlur: {
-        xs: '2px'
-      },
-      backgroundImage: {
-        'cosmic-gradient': 'linear-gradient(135deg, #FFF4E6 0%, #FFD1DC 50%, #E6D6FF 100%)',
-        'nebula-gradient': 'radial-gradient(1000px 500px at 100% -20%, rgba(230,214,255,0.45), transparent), radial-gradient(800px 400px at -10% 120%, rgba(198,230,245,0.45), transparent)',
-        // Added utilities per spec
-        'grad-soft': 'linear-gradient(135deg, #F7E6F3 0%, #E6D6FF 55%, #F1D6EB 100%)',
-        'grad-accent': 'linear-gradient(90deg, #A16BFE 0%, #F09EC8 100%)',
+        card: '0 8px 24px rgba(0,0,0,.06)'
       },
       fontFamily: {
-        sans: ['ui-sans-serif', '-apple-system', 'BlinkMacSystemFont', '"Segoe UI"', 'Roboto', 'Helvetica', 'Arial', 'sans-serif'],
-        display: ['var(--font-display)', '"Playfair Display"', 'Georgia', 'serif']
+        sans: [
+          'system-ui',
+          '-apple-system',
+          'BlinkMacSystemFont',
+          'Segoe UI',
+          'Roboto',
+          'Helvetica',
+          'Arial',
+          'sans-serif'
+        ],
       }
     }
   },
