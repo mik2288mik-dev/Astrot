@@ -28,10 +28,10 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <link rel="manifest" href="/manifest.webmanifest" />
         <Script src="https://telegram.org/js/telegram-web-app.js" strategy="beforeInteractive" />
       </head>
-      <body className="min-h-[100svh] bg-bg text-text font-sans">
+      <body className="min-h-[var(--tg-viewport-height)] bg-bg text-text font-sans">
         <TelegramProvider>
           <ThemeProvider>
-            <main className="min-h-[100svh] pb-[calc(var(--bottom-nav-height)+env(safe-area-inset-bottom))]">
+            <main className="min-h-[var(--tg-viewport-height)] pb-[calc(var(--bottom-nav-height)+env(safe-area-inset-bottom))]">
               <div className="px-4 pb-4 max-w-lg mx-auto">{children}</div>
             </main>
             <BottomNav />

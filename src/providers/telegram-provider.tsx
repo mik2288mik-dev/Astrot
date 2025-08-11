@@ -97,6 +97,10 @@ export function TelegramProvider({ children }: { children: React.ReactNode }) {
     setColorScheme(cs);
     initDataRef.current = webApp.initDataUnsafe ?? null;
 
+    // Set initial viewport height immediately
+    const initialVh = webApp.viewportHeight ?? window.innerHeight;
+    document.documentElement.style.setProperty('--tg-viewport-height', `${initialVh}px`);
+
     applyThemeToCSS(tp, cs);
 
     const offTheme = onTelegramEvent('themeChanged', () => {
