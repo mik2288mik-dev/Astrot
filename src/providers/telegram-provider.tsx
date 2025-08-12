@@ -14,51 +14,10 @@ export type TelegramContextValue = {
 const TelegramContext = createContext<TelegramContextValue>({
   tg: null,
   themeParams: {},
-  colorScheme: 'light',
+  colorScheme: 'dark',
   initDataUnsafe: null,
   isWebApp: false,
 });
-
-function applyThemeToCSS(themeParams: TelegramThemeParams, colorScheme: 'light' | 'dark') {
-  const root = document.documentElement;
-  const map: Record<string, string | undefined> = {
-    '--tg-bg-color': themeParams.bg_color,
-    '--tg-text-color': themeParams.text_color,
-    '--tg-hint-color': themeParams.hint_color,
-    '--tg-link-color': themeParams.link_color,
-    '--tg-button-color': themeParams.button_color,
-    '--tg-button-text-color': themeParams.button_text_color,
-    // Standard Telegram CSS variable names for broader compatibility
-    '--tg-theme-bg-color': themeParams.bg_color,
-    '--tg-theme-text-color': themeParams.text_color,
-    '--tg-theme-hint-color': themeParams.hint_color,
-    '--tg-theme-link-color': themeParams.link_color,
-    '--tg-theme-button-color': themeParams.button_color,
-    '--tg-theme-button-text-color': themeParams.button_text_color,
-  };
-  Object.entries(map).forEach(([cssVar, value]) => {
-    if (value) {
-      const rgb = hexToRgb(value);
-      if (rgb) root.style.setProperty(cssVar, `${rgb.r} ${rgb.g} ${rgb.b}`);
-    }
-  });
-  const accentHex = themeParams.button_color || (colorScheme === 'dark' ? '#3390ec' : '#3390ec');
-  const mutedHex = themeParams.hint_color || (colorScheme === 'dark' ? '#a8b0b9' : '#6b7280');
-  const surfaceHex = themeParams.secondary_bg_color || (colorScheme === 'dark' ? '#1c1c1e' : '#ffffff');
-  const borderHex = colorScheme === 'dark' ? '#ffffff' : '#000000';
-  (
-    [
-      ['--astrot-accent', accentHex],
-      ['--astrot-muted', mutedHex],
-      ['--astrot-surface', surfaceHex],
-      ['--astrot-card-bg', surfaceHex],
-      ['--astrot-border', borderHex],
-    ] as Array<[string, string]>
-  ).forEach(([cssVar, hex]) => {
-    const rgb = hexToRgb(hex);
-    if (rgb) document.documentElement.style.setProperty(cssVar, `${rgb.r} ${rgb.g} ${rgb.b}`);
-  });
-}
 
 function hexToRgb(hex: string): { r: number; g: number; b: number } | null {
   const normalized = hex.replace('#', '');
@@ -70,20 +29,70 @@ function hexToRgb(hex: string): { r: number; g: number; b: number } | null {
   return { r, g, b };
 }
 
+function applyBrandTheme(colorScheme: 'light' | 'dark') {
+  const root = document.documentElement;
+  root.setAttribute('data-color-scheme', colorScheme);
+
+  const palette = colorScheme === 'dark'
+    ? {
+        bg: '#0E0D1B',
+        surface: '#1A1A2E',
+        accent: '#7C5DFA',
+        muted: '#A1A1B2',
+        text: '#FFFFFF',
+      }
+    : {
+        bg: '#F7F7FB',
+        surface: '#FFFFFF',
+        accent: '#7C5DFA',
+        muted: '#8A8C99',
+        text: '#0E0D1B',
+      };
+
+  const pairs: Array<[string, string]> = [
+    ['--astrot-bg', palette.bg],
+    ['--astrot-surface', palette.surface],
+    ['--astrot-accent', palette.accent],
+    ['--astrot-muted', palette.muted],
+    ['--astrot-text', palette.text],
+  ];
+  pairs.forEach(([cssVar, hex]) => {
+    const rgb = hexToRgb(hex);
+    if (rgb) root.style.setProperty(cssVar, `${rgb.r} ${rgb.g} ${rgb.b}`);
+  });
+
+  // Keep Telegram variables in sync with brand
+  const mapToTg: Record<string, string> = {
+    '--tg-bg-color': 'var(--astrot-bg)',
+    '--tg-text-color': 'var(--astrot-text)',
+    '--tg-hint-color': 'var(--astrot-muted)',
+    '--tg-link-color': 'var(--astrot-accent)',
+    '--tg-button-color': 'var(--astrot-accent)',
+    '--tg-button-text-color': 'var(--astrot-text)',
+    '--tg-theme-bg-color': 'var(--astrot-bg)',
+    '--tg-theme-text-color': 'var(--astrot-text)',
+    '--tg-theme-hint-color': 'var(--astrot-muted)',
+    '--tg-theme-link-color': 'var(--astrot-accent)',
+    '--tg-theme-button-color': 'var(--astrot-accent)',
+    '--tg-theme-button-text-color': 'var(--astrot-text)'
+  };
+  Object.entries(mapToTg).forEach(([cssVar, value]) => root.style.setProperty(cssVar, value));
+}
+
 export function TelegramProvider({ children }: { children: React.ReactNode }) {
   const [tg, setTg] = useState<TelegramWebApp | null>(null);
   const [themeParams, setThemeParams] = useState<TelegramThemeParams>({});
-  const [colorScheme, setColorScheme] = useState<'light' | 'dark'>('light');
+  const [colorScheme, setColorScheme] = useState<'light' | 'dark'>('dark');
   const initDataRef = useRef<unknown>(null);
 
   useEffect(() => {
     const w = typeof window !== 'undefined';
     const isWebApp = !!getTelegramWebApp();
     if (!w || !isWebApp) {
-      applyThemeToCSS({}, 'light');
+      applyBrandTheme('dark');
       setTg(null);
       setThemeParams({});
-      setColorScheme('light');
+      setColorScheme('dark');
       initDataRef.current = null;
       return;
     }
@@ -92,7 +101,7 @@ export function TelegramProvider({ children }: { children: React.ReactNode }) {
     if (!webApp) return;
     setTg(webApp);
     const tp = webApp.themeParams ?? {};
-    const cs = (webApp.colorScheme as 'light' | 'dark') ?? 'light';
+    const cs = (webApp.colorScheme as 'light' | 'dark') ?? 'dark';
     setThemeParams(tp);
     setColorScheme(cs);
     initDataRef.current = webApp.initDataUnsafe ?? null;
@@ -101,14 +110,12 @@ export function TelegramProvider({ children }: { children: React.ReactNode }) {
     const initialVh = webApp.viewportHeight ?? window.innerHeight;
     document.documentElement.style.setProperty('--tg-viewport-height', `${initialVh}px`);
 
-    applyThemeToCSS(tp, cs);
+    applyBrandTheme(cs);
 
     const offTheme = onTelegramEvent('themeChanged', () => {
-      const newTp = webApp.themeParams ?? {};
-      const newCs = (webApp.colorScheme as 'light' | 'dark') ?? 'light';
-      setThemeParams(newTp);
+      const newCs = (webApp.colorScheme as 'light' | 'dark') ?? 'dark';
       setColorScheme(newCs);
-      applyThemeToCSS(newTp, newCs);
+      applyBrandTheme(newCs);
     });
 
     const offViewport = onTelegramEvent('viewportChanged', () => {

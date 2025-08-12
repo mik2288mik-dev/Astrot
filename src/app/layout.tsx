@@ -4,6 +4,9 @@ import { TelegramProvider } from '@/providers/telegram-provider';
 import { ThemeProvider } from '@/providers/theme-provider';
 import { BottomNav } from '@/components/nav/bottom-nav';
 import Script from 'next/script';
+import { Inter } from 'next/font/google';
+
+const inter = Inter({ subsets: ['latin', 'cyrillic'], weight: ['400', '500', '700'], variable: '--font-sans', display: 'swap' });
 
 export const metadata: Metadata = {
   title: 'Astrot — Твоя личная астрология',
@@ -31,7 +34,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           {`(function(){try{var w=window.Telegram&&window.Telegram.WebApp; if(!w) return; w.ready&&w.ready(); w.expand&&w.expand(); var once=function(){try{w.ready&&w.ready(); w.expand&&w.expand();}catch(e){}; window.removeEventListener('click',once); window.removeEventListener('touchstart',once); window.removeEventListener('pointerdown',once);}; window.addEventListener('click',once,{once:true,passive:true}); window.addEventListener('touchstart',once,{once:true,passive:true}); window.addEventListener('pointerdown',once,{once:true,passive:true});}catch(e){}})();`}
         </Script>
       </head>
-      <body className="h-screen min-h-[var(--tg-viewport-height)] bg-bg text-text font-sans overflow-x-hidden">
+      <body className={`${inter.variable} h-screen min-h-[var(--tg-viewport-height)] bg-bg text-text font-sans overflow-x-hidden`}>
         <TelegramProvider>
           <ThemeProvider>
             <main className="min-h-[var(--tg-viewport-height)] pb-[var(--bottom-nav-total)]">
