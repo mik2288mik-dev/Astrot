@@ -37,6 +37,8 @@ export type TelegramWebApp = {
   BackButton?: TelegramBackButton;
   HapticFeedback?: TelegramHapticFeedback;
   viewportHeight?: number;
+  viewportStableHeight?: number;
+  isExpanded?: boolean;
 };
 
 let cachedTelegramWebApp: TelegramWebApp | null = null;
