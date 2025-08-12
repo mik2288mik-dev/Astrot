@@ -118,8 +118,8 @@ export function TelegramProvider({ children }: { children: React.ReactNode }) {
     setColorScheme(cs);
     initDataRef.current = tgInstance.initDataUnsafe ?? null;
 
-    // Set initial viewport height immediately
-    const initialVh = tgInstance.viewportHeight ?? window.innerHeight;
+    // Set initial viewport height immediately (prefer stable)
+    const initialVh = tgInstance.viewportStableHeight ?? tgInstance.viewportHeight ?? window.innerHeight;
     document.documentElement.style.setProperty('--tg-viewport-height', `${initialVh}px`);
 
     applyBrandTheme(cs, tp);
@@ -131,7 +131,7 @@ export function TelegramProvider({ children }: { children: React.ReactNode }) {
     });
 
     const offViewport = onTelegramEvent('viewportChanged', () => {
-      const vh = tgInstance.viewportHeight ?? window.innerHeight;
+      const vh = tgInstance.viewportStableHeight ?? tgInstance.viewportHeight ?? window.innerHeight;
       document.documentElement.style.setProperty('--tg-viewport-height', `${vh}px`);
     });
 

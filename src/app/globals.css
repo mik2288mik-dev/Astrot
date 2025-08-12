@@ -43,10 +43,16 @@
   --astrot-border: 0 0 0;
 }
 
-html, body, #__next {
+html, body {
+  height: var(--tg-viewport-height);
+  min-height: var(--tg-viewport-height);
+  overflow: hidden;
+}
+
+/* App Router doesn't use #__next, keep for pages-router compatibility */
+#__next {
   height: 100%;
   min-height: 100%;
-  overflow: hidden;
 }
 
 body {
