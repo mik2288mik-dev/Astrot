@@ -27,8 +27,11 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
         <link rel="manifest" href="/manifest.webmanifest" />
         <Script src="https://telegram.org/js/telegram-web-app.js" strategy="beforeInteractive" />
+        <Script id="tg-autoinit" strategy="beforeInteractive">
+          {`(function(){try{var w=window.Telegram&&window.Telegram.WebApp; if(!w) return; w.ready&&w.ready(); w.expand&&w.expand(); var once=function(){try{w.ready&&w.ready(); w.expand&&w.expand();}catch(e){}; window.removeEventListener('click',once); window.removeEventListener('touchstart',once); window.removeEventListener('pointerdown',once);}; window.addEventListener('click',once,{once:true,passive:true}); window.addEventListener('touchstart',once,{once:true,passive:true}); window.addEventListener('pointerdown',once,{once:true,passive:true});}catch(e){}})();`}
+        </Script>
       </head>
-      <body className="min-h-[var(--tg-viewport-height)] bg-bg text-text font-sans">
+      <body className="h-screen min-h-[var(--tg-viewport-height)] bg-bg text-text font-sans overflow-x-hidden">
         <TelegramProvider>
           <ThemeProvider>
             <main className="min-h-[var(--tg-viewport-height)] pb-[var(--bottom-nav-total)]">
