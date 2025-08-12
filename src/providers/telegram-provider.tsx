@@ -116,6 +116,17 @@ export function TelegramProvider({ children }: { children: React.ReactNode }) {
       document.documentElement.style.setProperty('--tg-viewport-height', `${vh}px`);
     });
 
+    // Ensure expand() is called on the first real user interaction as well
+    const handleFirstInteraction = () => {
+      try {
+        webApp.ready?.();
+        webApp.expand?.();
+      } catch {}
+    };
+    window.addEventListener('touchstart', handleFirstInteraction, { once: true, passive: true });
+    window.addEventListener('pointerdown', handleFirstInteraction, { once: true, passive: true });
+    window.addEventListener('click', handleFirstInteraction, { once: true, passive: true });
+
     return () => {
       offTheme?.();
       offViewport?.();
