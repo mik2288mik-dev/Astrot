@@ -1,7 +1,7 @@
 "use client";
 
 import React, { createContext, useContext, useEffect, useMemo, useRef, useState } from 'react';
-import { getTelegramWebApp, initTelegram, onTelegramEvent, type TelegramWebApp, type TelegramThemeParams } from '@/lib/telegram';
+import { getTelegramWebApp, onTelegramEvent, type TelegramWebApp, type TelegramThemeParams } from '@/lib/telegram';
 
 export type TelegramContextValue = {
   tg: TelegramWebApp | null;
@@ -87,7 +87,8 @@ export function TelegramProvider({ children }: { children: React.ReactNode }) {
 
   useEffect(() => {
     const w = typeof window !== 'undefined';
-    const isWebApp = !!getTelegramWebApp();
+    const tgInstance = getTelegramWebApp();
+    const isWebApp = !!tgInstance;
     if (!w || !isWebApp) {
       applyBrandTheme('dark');
       setTg(null);
@@ -97,37 +98,41 @@ export function TelegramProvider({ children }: { children: React.ReactNode }) {
       return;
     }
 
-    const webApp = initTelegram({ ready: true, expand: true, enableClosingConfirmation: true });
-    if (!webApp) return;
-    setTg(webApp);
-    const tp = webApp.themeParams ?? {};
-    const cs = (webApp.colorScheme as 'light' | 'dark') ?? 'dark';
+    try {
+      tgInstance.ready();
+      tgInstance.expand();
+      tgInstance.enableClosingConfirmation?.();
+    } catch {}
+
+    setTg(tgInstance);
+    const tp = tgInstance.themeParams ?? {};
+    const cs = (tgInstance.colorScheme as 'light' | 'dark') ?? 'dark';
     setThemeParams(tp);
     setColorScheme(cs);
-    initDataRef.current = webApp.initDataUnsafe ?? null;
+    initDataRef.current = tgInstance.initDataUnsafe ?? null;
 
     // Set initial viewport height immediately
-    const initialVh = webApp.viewportHeight ?? window.innerHeight;
+    const initialVh = tgInstance.viewportHeight ?? window.innerHeight;
     document.documentElement.style.setProperty('--tg-viewport-height', `${initialVh}px`);
 
     applyBrandTheme(cs);
 
     const offTheme = onTelegramEvent('themeChanged', () => {
-      const newCs = (webApp.colorScheme as 'light' | 'dark') ?? 'dark';
+      const newCs = (tgInstance.colorScheme as 'light' | 'dark') ?? 'dark';
       setColorScheme(newCs);
       applyBrandTheme(newCs);
     });
 
     const offViewport = onTelegramEvent('viewportChanged', () => {
-      const vh = webApp.viewportHeight ?? window.innerHeight;
+      const vh = tgInstance.viewportHeight ?? window.innerHeight;
       document.documentElement.style.setProperty('--tg-viewport-height', `${vh}px`);
     });
 
     // Ensure expand() is called on the first real user interaction as well
     const handleFirstInteraction = () => {
       try {
-        webApp.ready?.();
-        webApp.expand?.();
+        tgInstance.ready?.();
+        tgInstance.expand?.();
       } catch {}
     };
     window.addEventListener('touchstart', handleFirstInteraction, { once: true, passive: true });
