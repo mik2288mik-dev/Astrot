@@ -29,7 +29,7 @@ function hexToRgb(hex: string): { r: number; g: number; b: number } | null {
   return { r, g, b };
 }
 
-function applyBrandTheme(colorScheme: 'light' | 'dark') {
+function applyBrandTheme(colorScheme: 'light' | 'dark', themeParams?: TelegramThemeParams) {
   const root = document.documentElement;
   root.setAttribute('data-color-scheme', colorScheme);
 
@@ -77,6 +77,13 @@ function applyBrandTheme(colorScheme: 'light' | 'dark') {
     '--tg-theme-button-text-color': 'var(--astrot-text)'
   };
   Object.entries(mapToTg).forEach(([cssVar, value]) => root.style.setProperty(cssVar, value));
+
+  // Update <meta name="theme-color"> to match Telegram theme bg (prefer Telegram themeParams if provided)
+  const meta = document.querySelector('meta[name="theme-color"]');
+  if (meta) {
+    const themeBgHex = (themeParams && (themeParams as Record<string, string>).bg_color) || palette.bg;
+    meta.setAttribute('content', themeBgHex);
+  }
 }
 
 export function TelegramProvider({ children }: { children: React.ReactNode }) {
@@ -115,7 +122,7 @@ export function TelegramProvider({ children }: { children: React.ReactNode }) {
     const initialVh = tgInstance.viewportHeight ?? window.innerHeight;
     document.documentElement.style.setProperty('--tg-viewport-height', `${initialVh}px`);
 
-    applyBrandTheme(cs);
+    applyBrandTheme(cs, tp);
 
     const offTheme = onTelegramEvent('themeChanged', () => {
       const newCs = (tgInstance.colorScheme as 'light' | 'dark') ?? 'dark';
