@@ -105,23 +105,13 @@ export function TelegramProvider({ children }: { children: React.ReactNode }) {
       return;
     }
 
-    try {
-      tgInstance.ready();
-      tgInstance.expand();
-      console.log('Telegram WebApp expanded:', tgInstance.isExpanded);
-      tgInstance.enableClosingConfirmation?.();
-    } catch {}
-
+    // DO NOT call tg.ready()/expand() here; handled by TelegramViewportProvider
     setTg(tgInstance);
     const tp = tgInstance.themeParams ?? {};
     const cs = (tgInstance.colorScheme as 'light' | 'dark') ?? 'dark';
     setThemeParams(tp);
     setColorScheme(cs);
     initDataRef.current = tgInstance.initDataUnsafe ?? null;
-
-    // Set initial viewport height immediately (prefer stable)
-    const initialVh = tgInstance.viewportStableHeight ?? tgInstance.viewportHeight ?? window.innerHeight;
-    document.documentElement.style.setProperty('--tg-viewport-height', `${initialVh}px`);
 
     applyBrandTheme(cs, tp);
 
@@ -131,26 +121,8 @@ export function TelegramProvider({ children }: { children: React.ReactNode }) {
       applyBrandTheme(newCs);
     });
 
-    const offViewport = onTelegramEvent('viewportChanged', () => {
-      const vh = tgInstance.viewportStableHeight ?? tgInstance.viewportHeight ?? window.innerHeight;
-      document.documentElement.style.setProperty('--tg-viewport-height', `${vh}px`);
-    });
-
-    // Ensure expand() is called on the first real user interaction as well
-    const handleFirstInteraction = () => {
-      try {
-        tgInstance.ready?.();
-        tgInstance.expand?.();
-        console.log('Telegram WebApp expanded (interaction):', tgInstance.isExpanded);
-      } catch {}
-    };
-    window.addEventListener('touchstart', handleFirstInteraction, { once: true, passive: true });
-    window.addEventListener('pointerdown', handleFirstInteraction, { once: true, passive: true });
-    window.addEventListener('click', handleFirstInteraction, { once: true, passive: true });
-
     return () => {
       offTheme?.();
-      offViewport?.();
     };
   }, []);
 

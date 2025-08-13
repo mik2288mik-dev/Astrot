@@ -69,3 +69,13 @@ npm run dev
 - `/api/compute-chart` работает без подписки.
 - `/api/natal-full` отказывает без подписки и возвращает результат при активной.
 - UI корректно показывает бесплатный и премиум режимы.
+
+## Telegram WebApp viewport debug
+
+Set the env variable to enable the in-app debug strip:
+
+```bash
+NEXT_PUBLIC_DEBUG_VIEWPORT=1
+```
+
+You should see a fixed strip at the bottom showing `expanded`, `vh`, and `sh` when running in Telegram.

@@ -29,7 +29,11 @@
 
   --bottom-nav-height: 64px;
   --bottom-nav-total: calc(var(--bottom-nav-height) + env(safe-area-inset-bottom));
-  --tg-viewport-height: 100svh;
+
+  /* fallback если TWA var не прилетела */
+  --tg-viewport-height: 100%;
+  --tg-viewport-stable-height: 100%;
+  --app-viewport-height: 100%;
 }
 
 /* Pastel light theme variant */
@@ -43,24 +47,28 @@
   --astrot-border: 0 0 0;
 }
 
-html, body {
-  height: var(--tg-viewport-height);
-  min-height: var(--tg-viewport-height);
-  overflow: hidden;
-}
-
-/* App Router doesn't use #__next, keep for pages-router compatibility */
-#__next {
+html, body, #__next, [data-app-root] {
   height: 100%;
   min-height: 100%;
 }
 
 body {
+  margin: 0;
+  padding: 0;
+  overflow: hidden; /* убираем двойные скроллы */
   -webkit-tap-highlight-color: transparent;
   font-family: var(--font-sans), system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
   background-color: rgb(var(--tg-theme-bg-color));
   color: rgb(var(--tg-theme-text-color));
   overscroll-behavior-y: contain;
+}
+
+/* Главная обёртка приложения должна использовать стабильную высоту */
+.app-shell {
+  height: var(--app-viewport-height);
+  min-height: var(--app-viewport-height);
+  display: flex;
+  flex-direction: column;
 }
 
 * { outline-color: rgb(var(--astrot-accent)); }
