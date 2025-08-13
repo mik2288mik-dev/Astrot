@@ -108,6 +108,7 @@ export function TelegramProvider({ children }: { children: React.ReactNode }) {
     try {
       tgInstance.ready();
       tgInstance.expand();
+      console.log('Telegram WebApp expanded:', tgInstance.isExpanded);
       tgInstance.enableClosingConfirmation?.();
     } catch {}
 
@@ -140,6 +141,7 @@ export function TelegramProvider({ children }: { children: React.ReactNode }) {
       try {
         tgInstance.ready?.();
         tgInstance.expand?.();
+        console.log('Telegram WebApp expanded (interaction):', tgInstance.isExpanded);
       } catch {}
     };
     window.addEventListener('touchstart', handleFirstInteraction, { once: true, passive: true });
