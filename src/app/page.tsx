@@ -9,7 +9,7 @@ import { impactOccurred } from '@/lib/haptics';
 export default function Page() {
   const router = useRouter();
   return (
-    <div className="h-full min-h-screen bg-[--astrot-bg] text-[--astrot-text]">
+    <div className="bg-[--astrot-bg] text-[--astrot-text]">
       <motion.div
         initial={{ opacity: 0, y: 8 }}
         animate={{ opacity: 1, y: 0 }}

@@ -28,8 +28,8 @@ export type TelegramWebApp = {
   ready: () => void;
   expand: () => void;
   enableClosingConfirmation?: () => void;
-  onEvent?: (event: 'themeChanged' | 'viewportChanged', handler: () => void) => void;
-  offEvent?: (event: 'themeChanged' | 'viewportChanged', handler: () => void) => void;
+  onEvent?: (event: 'themeChanged' | 'viewportChanged', handler: (payload?: unknown) => void) => void;
+  offEvent?: (event: 'themeChanged' | 'viewportChanged', handler: (payload?: unknown) => void) => void;
   themeParams?: TelegramThemeParams;
   colorScheme?: 'light' | 'dark';
   initDataUnsafe?: unknown;
@@ -54,7 +54,7 @@ export function initTelegram(options?: { ready?: boolean; expand?: boolean; enab
   if (!tg) return null;
   try {
     if (options?.ready !== false) tg.ready();
-    if (options?.expand !== false) tg.expand();
+    if (options?.expand) tg.expand();
     if (options?.enableClosingConfirmation) tg.enableClosingConfirmation?.();
   } catch {
     // ignore
@@ -67,9 +67,9 @@ export function getTelegram(): TelegramWebApp | null {
   return cachedTelegramWebApp ?? getTelegramWebApp();
 }
 
-export function onTelegramEvent(event: 'themeChanged' | 'viewportChanged', handler: () => void) {
+export function onTelegramEvent(event: 'themeChanged' | 'viewportChanged', handler: (payload?: unknown) => void) {
   const tg = getTelegramWebApp();
   if (!tg?.onEvent) return () => {};
-  tg.onEvent?.(event, handler);
-  return () => tg.offEvent?.(event, handler);
+  tg.onEvent?.(event, handler as any);
+  return () => tg.offEvent?.(event, handler as any);
 }
