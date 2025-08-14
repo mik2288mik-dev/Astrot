@@ -4,6 +4,7 @@ import { geocodePlace, safeTzLookup } from '@/lib/geocode';
 
 export const runtime = 'nodejs';
 export const dynamic = 'force-dynamic';
+export const maxDuration = 10;
 
 const Schema = z.object({
   name: z.string().trim().min(1).max(100),

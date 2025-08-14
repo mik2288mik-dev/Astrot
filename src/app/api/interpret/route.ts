@@ -3,6 +3,7 @@ import OpenAI from 'openai';
 
 export const runtime = 'nodejs';
 export const dynamic = 'force-dynamic';
+export const maxDuration = 10;
 
 const client = new OpenAI({ apiKey: process.env.OPENAI_API_KEY! });
 

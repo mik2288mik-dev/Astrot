@@ -4,6 +4,7 @@ import { computeNatalChart } from '@/lib/astro/swiss';
 
 export const runtime = 'nodejs';
 export const dynamic = 'force-dynamic';
+export const maxDuration = 10;
 
 const Schema = z.object({
   date: z.string(),
