@@ -22,7 +22,8 @@
       "@/lib/*": ["src/lib/*"],
       "@/providers/*": ["src/providers/*"],
       "@/shared/*": ["src/shared/*"],
-      "@/config/*": ["src/config/*"]
+      "@/config/*": ["src/config/*"],
+      "@/types/*": ["types/*"]
     },
     "plugins": [{ "name": "next" }],
     "esModuleInterop": true
