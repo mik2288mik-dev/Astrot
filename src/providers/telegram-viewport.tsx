@@ -36,6 +36,7 @@ export function TelegramViewportProvider({ children }: { children: React.ReactNo
                 try { tg.ready?.() } catch {}
                 try { tg.expand?.() } catch {}
                 try { tg.requestFullscreen?.() } catch {}
+                try { tg.enableClosingConfirmation?.() } catch {}
                 // fallback через официальный SDK (инициализация и expand, если возможно)
                 let sdkCleanup: (() => void) | undefined
                 try {
@@ -46,6 +47,7 @@ export function TelegramViewportProvider({ children }: { children: React.ReactNo
                                         try {
                                                 if (!vp.isExpanded) vp.expand()
                                                 ;(vp as { requestFullscreen?: () => void }).requestFullscreen?.()
+                                                ;(vp as { enableClosingConfirmation?: () => void }).enableClosingConfirmation?.()
                                         } catch {}
                                 })
                                 .catch(() => {})

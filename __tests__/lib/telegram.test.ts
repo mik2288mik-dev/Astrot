@@ -19,4 +19,15 @@ describe('telegram', () => {
     // @ts-ignore
     delete window.Telegram;
   });
+
+  test('initTelegram enables closing confirmation when option is set', () => {
+    const enableClosingConfirmation = jest.fn();
+    const ready = jest.fn();
+    // @ts-ignore
+    window.Telegram = { WebApp: { enableClosingConfirmation, ready } };
+    initTelegram({ enableClosingConfirmation: true });
+    expect(enableClosingConfirmation).toHaveBeenCalled();
+    // @ts-ignore
+    delete window.Telegram;
+  });
 });
