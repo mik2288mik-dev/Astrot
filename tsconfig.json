@@ -22,7 +22,8 @@
       "@/lib/*": ["src/lib/*"],
       "@/providers/*": ["src/providers/*"],
       "@/shared/*": ["src/shared/*"],
-      "@/config/*": ["src/config/*"]
+      "@/config/*": ["src/config/*"],
+      "@/types/*": ["types/*"]
     },
     "plugins": [{ "name": "next" }],
     "esModuleInterop": true
@@ -33,7 +34,9 @@
     "src/**/*.tsx",
     ".next/types/**/*.ts",
     "__tests__/**/*.ts",
-    "__tests__/**/*.tsx"
+    "__tests__/**/*.tsx",
+    "types/**/*.d.ts",
+    "types/**/*.ts"
   ],
   "exclude": ["node_modules"]
 }
