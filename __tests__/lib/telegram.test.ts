@@ -2,15 +2,21 @@ import { getTelegramWebApp, initTelegram } from '@/lib/telegram';
 
 describe('telegram', () => {
   test('getTelegramWebApp returns null without window.Telegram', () => {
-    // Ensure no window
-    // @ts-ignore
-    global.window = undefined;
     expect(getTelegramWebApp()).toBeNull();
   });
 
   test('initTelegram does not throw without SDK', () => {
-    // @ts-ignore
-    global.window = {};
     expect(() => initTelegram()).not.toThrow();
+  });
+
+  test('initTelegram requests fullscreen when option is set', () => {
+    const requestFullscreen = jest.fn();
+    const ready = jest.fn();
+    // @ts-ignore
+    window.Telegram = { WebApp: { requestFullscreen, ready } };
+    initTelegram({ requestFullscreen: true });
+    expect(requestFullscreen).toHaveBeenCalled();
+    // @ts-ignore
+    delete window.Telegram;
   });
 });
