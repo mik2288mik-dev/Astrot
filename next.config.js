@@ -14,6 +14,12 @@ const nextConfig = {
       config.externals.push({ swisseph: 'commonjs swisseph' });
     }
     return config;
+  },
+  experimental: {
+    outputFileTracingIncludes: {
+      'src/app/api/chart/route.ts': ['./ephe/**'],
+      'src/app/api/interpret/route.ts': ['./ephe/**']
+    }
   }
 };
 
