@@ -13,7 +13,7 @@ export default function ViewportDebug() {
 			position: 'fixed', bottom: 0, left: 0, right: 0, zIndex: 99999,
 			fontSize: 12, padding: 8, background: 'rgba(0,0,0,0.6)', color: '#fff'
 		}}>
-		expanded: {String(isExpanded)} | vh: {viewportH} | sh: {stableH} | platform: {t && (t as unknown as { platform?: string }).platform} | ver: {t && (t as unknown as { version?: string }).version}
+		expanded:{String(isExpanded)} | vh:{viewportH} | vhs:{stableH} | platform:{t && (t as unknown as { platform?: string }).platform} | ver:{t && (t as unknown as { version?: string }).version}
 		</div>
 	)
 }

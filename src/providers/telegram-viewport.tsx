@@ -2,6 +2,7 @@
 
 import React, { createContext, useContext, useEffect, useState } from 'react'
 import type { TelegramWebApp } from '@/lib/telegram'
+import { initViewport } from '@telegram-apps/sdk'
 
 type Ctx = {
 	tg: TelegramWebApp | null
@@ -34,6 +35,13 @@ export function TelegramViewportProvider({ children }: { children: React.ReactNo
 		// Готовность и ранний expand
 		try { tg.ready?.() } catch {}
 		try { tg.expand?.() } catch {}
+		// fallback через официальный SDK (инициализация и expand, если возможно)
+		let sdkCleanup: (() => void) | undefined
+		try {
+			const [vpPromise, cleanup] = initViewport()
+			sdkCleanup = cleanup
+			vpPromise.then((vp) => { try { if (!vp.isExpanded) vp.expand() } catch {} }).catch(() => {})
+		} catch {}
 
 		const updateHeights = () => {
 			const h = (tg as { viewportHeight?: number }).viewportHeight ?? tg.viewportHeight ?? 0
@@ -52,6 +60,7 @@ export function TelegramViewportProvider({ children }: { children: React.ReactNo
 
 		return () => {
 			tg.offEvent?.('viewportChanged', handler)
+			try { sdkCleanup?.() } catch {}
 		}
 	}, [])
 
