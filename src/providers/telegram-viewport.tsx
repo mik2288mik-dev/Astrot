@@ -32,16 +32,24 @@ export function TelegramViewportProvider({ children }: { children: React.ReactNo
 		const tg = w?.Telegram?.WebApp
 		if (!tg) return
 
-		// Готовность и ранний expand
-		try { tg.ready?.() } catch {}
-		try { tg.expand?.() } catch {}
-		// fallback через официальный SDK (инициализация и expand, если возможно)
-		let sdkCleanup: (() => void) | undefined
-		try {
-			const [vpPromise, cleanup] = initViewport()
-			sdkCleanup = cleanup
-			vpPromise.then((vp) => { try { if (!vp.isExpanded) vp.expand() } catch {} }).catch(() => {})
-		} catch {}
+                // Готовность и ранний expand
+                try { tg.ready?.() } catch {}
+                try { tg.expand?.() } catch {}
+                try { tg.requestFullscreen?.() } catch {}
+                // fallback через официальный SDK (инициализация и expand, если возможно)
+                let sdkCleanup: (() => void) | undefined
+                try {
+                        const [vpPromise, cleanup] = initViewport()
+                        sdkCleanup = cleanup
+                        vpPromise
+                                .then((vp) => {
+                                        try {
+                                                if (!vp.isExpanded) vp.expand()
+                                                ;(vp as { requestFullscreen?: () => void }).requestFullscreen?.()
+                                        } catch {}
+                                })
+                                .catch(() => {})
+                } catch {}
 
 		const updateHeights = () => {
 			const h = (tg as { viewportHeight?: number }).viewportHeight ?? tg.viewportHeight ?? 0

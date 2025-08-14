@@ -27,6 +27,7 @@ export type TelegramThemeParams = Record<string, string>;
 export type TelegramWebApp = {
   ready: () => void;
   expand: () => void;
+  requestFullscreen?: () => void;
   enableClosingConfirmation?: () => void;
   onEvent?: (event: 'themeChanged' | 'viewportChanged', handler: (payload?: unknown) => void) => void;
   offEvent?: (event: 'themeChanged' | 'viewportChanged', handler: (payload?: unknown) => void) => void;
@@ -49,12 +50,18 @@ export function getTelegramWebApp(): TelegramWebApp | null {
   return tg ?? null;
 }
 
-export function initTelegram(options?: { ready?: boolean; expand?: boolean; enableClosingConfirmation?: boolean }) {
+export function initTelegram(options?: {
+  ready?: boolean
+  expand?: boolean
+  requestFullscreen?: boolean
+  enableClosingConfirmation?: boolean
+}) {
   const tg = getTelegramWebApp();
   if (!tg) return null;
   try {
     if (options?.ready !== false) tg.ready();
     if (options?.expand) tg.expand();
+    if (options?.requestFullscreen) tg.requestFullscreen?.();
     if (options?.enableClosingConfirmation) tg.enableClosingConfirmation?.();
   } catch {
     // ignore
