@@ -1,10 +1,6 @@
 {
   "functions": {
-    "app/api/**": {
-      "runtime": "nodejs20.x",
-      "memory": 1024,
-      "maxDuration": 15,
-      "includeFiles": "ephe/**"
-    }
+    "api/**.{js,ts}": { "runtime": "nodejs20.x" },
+    "app/**/route.{js,ts}": { "runtime": "nodejs20.x" }
   }
 }
