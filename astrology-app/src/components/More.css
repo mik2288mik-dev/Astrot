@@ -1,0 +1,97 @@
+.more-container {
+  min-height: 100vh;
+  color: white;
+  padding-bottom: 80px;
+}
+
+.more-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 20px;
+  background: rgba(0, 0, 0, 0.1);
+}
+
+.more-header h1 {
+  font-size: 20px;
+  font-weight: 600;
+  margin: 0;
+}
+
+.more-content {
+  max-width: 480px;
+  margin: 0 auto;
+  padding: 20px;
+}
+
+.more-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 15px;
+  margin-bottom: 30px;
+}
+
+.more-item {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  padding: 15px !important;
+  background: rgba(255, 255, 255, 0.1) !important;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.more-item:hover {
+  background: rgba(255, 255, 255, 0.15) !important;
+  transform: translateX(5px);
+}
+
+.more-icon {
+  width: 50px;
+  height: 50px;
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.more-info {
+  flex: 1;
+}
+
+.more-info h3 {
+  font-size: 16px;
+  font-weight: 600;
+  margin: 0 0 4px 0;
+}
+
+.more-info p {
+  font-size: 13px;
+  opacity: 0.8;
+  margin: 0;
+}
+
+.app-info {
+  text-align: center;
+  padding: 20px !important;
+  background: rgba(255, 255, 255, 0.1) !important;
+}
+
+.app-info h3 {
+  font-size: 16px;
+  font-weight: 600;
+  margin: 0 0 10px 0;
+}
+
+.app-info p {
+  font-size: 14px;
+  margin: 5px 0;
+  opacity: 0.9;
+}
+
+.app-info .copyright {
+  font-size: 12px;
+  opacity: 0.7;
+  margin-top: 10px;
+}
