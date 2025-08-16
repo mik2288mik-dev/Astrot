@@ -1,16 +1,25 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { z } from 'zod';
 import { computeNatalChart } from '@/lib/astro/swiss';
+import { existsSync } from 'node:fs';
+import { join } from 'node:path';
 
 export const runtime = 'nodejs';
 export const dynamic = 'force-dynamic';
 export const maxDuration = 10;
 
 async function loadSWE() {
-  const mod = await import('swisseph');
-  return mod.default ?? mod;
+  const m = await import('swisseph');
+  return m.default ?? m;
 }
-const EPHE_PATH = process.env.EPHE_PATH || 'ephe';
+
+function pickEphePath() {
+  if (process.env.EPHE_PATH) return process.env.EPHE_PATH;
+  if (process.env.VERCEL) return 'ephe';
+  const full = join(process.cwd(), 'ephe-full');
+  if (existsSync(full)) return 'ephe-full';
+  return 'ephe';
+}
 
 const Schema = z.object({
   date: z.string(),
@@ -21,12 +30,24 @@ const Schema = z.object({
   houseSystem: z.string().optional()
 });
 
+export async function GET(req: NextRequest) {
+  const { searchParams } = new URL(req.url);
+  if (searchParams.get('health') === '1') {
+    const swe = await loadSWE();
+    const EPHE_PATH = pickEphePath();
+    swe.swe_set_ephe_path(EPHE_PATH);
+    return NextResponse.json({ ephePath: EPHE_PATH, ok: true });
+  }
+  return NextResponse.json({ ok: false }, { status: 400 });
+}
+
 export async function POST(req: NextRequest) {
   try {
     const body = await req.json();
     const data = Schema.parse(body);
-    const swisseph = await loadSWE();
-    swisseph.swe_set_ephe_path(EPHE_PATH);
+    const swe = await loadSWE();
+    const EPHE_PATH = pickEphePath();
+    swe.swe_set_ephe_path(EPHE_PATH);
     const chart = computeNatalChart(data);
     return NextResponse.json({ ok: true, chart });
   } catch (e: unknown) {
