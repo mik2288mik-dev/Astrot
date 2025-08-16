@@ -14,13 +14,13 @@
     "typecheck": "tsc -p tsconfig.json --noEmit",
     "format": "prettier --write .",
     "prepare": "husky",
-    "test": "jest",
-    "postinstall": "pnpm rebuild swisseph || npm rebuild swisseph || true"
+    "test": "jest"
   },
   "dependencies": {
     "@tabler/icons-react": "^2.47.0",
     "@telegram-apps/sdk": "^1.1.3",
     "@telegram-apps/sdk-react": "^1.1.3",
+    "astronomy-engine": "^2.1.19",
     "framer-motion": "^12.23.12",
     "framework7": "^8.0.0",
     "framework7-react": "^8.0.0",
@@ -35,9 +35,6 @@
     "react-dom": "18.3.1",
     "tz-lookup": "^6.1.25",
     "zod": "^3.25.76"
-  },
-  "optionalDependencies": {
-    "swisseph": "^0.5.17"
   },
   "devDependencies": {
     "@types/jest": "^29.5.12",

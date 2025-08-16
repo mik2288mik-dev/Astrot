@@ -1,18 +1,18 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   experimental: {
-    serverComponentsExternalPackages: ['swisseph'],
-    outputFileTracingIncludes: {
-      'app/api/chart/route.ts': ['./ephe/**'],
-      'app/api/interpret/route.ts': ['./ephe/**']
+    serverComponentsExternalPackages: ['astronomy-engine'],
+  },
+  webpack: (config, { isServer }) => {
+    if (isServer) {
+      config.externals.push('canvas');
     }
+    return config;
   },
-  eslint: {
-    ignoreDuringBuilds: true
-  },
-  typescript: {
-    ignoreBuildErrors: true
-  }
+  transpilePackages: [
+    '@telegram-apps/sdk',
+    '@telegram-apps/sdk-react'
+  ]
 };
 
 export default nextConfig;

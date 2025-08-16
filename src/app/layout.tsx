@@ -2,12 +2,11 @@
 import Script from 'next/script';
 import { useEffect } from 'react';
 import '@/app/globals.css';
-
-declare global { interface Window { Telegram?: any } }
-const tg = typeof window !== 'undefined' ? window.Telegram?.WebApp : undefined;
+import { getTelegramWebApp } from '@/lib/telegram';
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   useEffect(() => {
+    const tg = getTelegramWebApp();
     if (!tg) return;
     try { tg.ready(); tg.expand(); } catch {}
     const setH = () => {
