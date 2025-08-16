@@ -2,19 +2,12 @@
 const nextConfig = {
   experimental: {
     serverComponentsExternalPackages: ['swisseph'],
+    outputFileTracingExcludes: {
+      '*': ['ephe-full/**'] // тяжёлое никогда не трейсить
+    },
     outputFileTracingIncludes: {
-      "/api/chart": [
-        "ephe/sepl_*",
-        "ephe/seplm*",
-        "ephe/semo_*",
-        "ephe/semom*"
-      ],
-      "app/api/chart/route": [
-        "ephe/sepl_*",
-        "ephe/seplm*",
-        "ephe/semo_*",
-        "ephe/semom*"
-      ]
+      '/api/chart': ['ephe/**'],
+      'app/api/chart/route': ['ephe/**']
     }
   }
 };
