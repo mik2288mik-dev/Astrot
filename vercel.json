@@ -1,8 +1,10 @@
 {
   "functions": {
-    "app/api/**/route.js": { "includeFiles": "ephe/**" },
-    "app/api/**/route.ts": { "includeFiles": "ephe/**" },
-    "pages/api/**/*.js":   { "includeFiles": "ephe/**" },
-    "pages/api/**/*.ts":   { "includeFiles": "ephe/**" }
+    "app/api/**": {
+      "runtime": "nodejs20.x",
+      "memory": 1024,
+      "maxDuration": 15,
+      "includeFiles": "ephe/**"
+    }
   }
 }

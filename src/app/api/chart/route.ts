@@ -1,57 +1,25 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { z } from 'zod';
-import { computeNatalChart } from '@/lib/astro/swiss';
-import { existsSync } from 'node:fs';
-import { join } from 'node:path';
+import { computeChart } from '@/lib/astro/swiss';
 
 export const runtime = 'nodejs';
 export const dynamic = 'force-dynamic';
-export const maxDuration = 10;
-
-async function loadSWE() {
-  const m = await import('swisseph');
-  return m.default ?? m;
-}
-
-function pickEphePath() {
-  if (process.env.EPHE_PATH) return process.env.EPHE_PATH;
-  if (process.env.VERCEL) return 'ephe';
-  const full = join(process.cwd(), 'ephe-full');
-  if (existsSync(full)) return 'ephe-full';
-  return 'ephe';
-}
 
 const Schema = z.object({
-  date: z.string(),
-  time: z.string(),
-  tzOffset: z.number(),
-  lat: z.number(),
-  lon: z.number(),
-  houseSystem: z.string().optional()
+  date: z.string().regex(/^\d{4}-\d{2}-\d{2}$/),
+  time: z.string().regex(/^\d{2}:\d{2}$/),
+  tzOffset: z.number().min(-14).max(14),
+  lat: z.number().min(-90).max(90),
+  lon: z.number().min(-180).max(180),
+  houseSystem: z.enum(['P','W']).optional()
 });
-
-export async function GET(req: NextRequest) {
-  const { searchParams } = new URL(req.url);
-  if (searchParams.get('health') === '1') {
-    const swe = await loadSWE();
-    const EPHE_PATH = pickEphePath();
-    swe.swe_set_ephe_path(EPHE_PATH);
-    return NextResponse.json({ ephePath: EPHE_PATH, ok: true });
-  }
-  return NextResponse.json({ ok: false }, { status: 400 });
-}
 
 export async function POST(req: NextRequest) {
   try {
-    const body = await req.json();
-    const data = Schema.parse(body);
-    const swe = await loadSWE();
-    const EPHE_PATH = pickEphePath();
-    swe.swe_set_ephe_path(EPHE_PATH);
-    const chart = computeNatalChart(data);
-    return NextResponse.json({ ok: true, chart });
-  } catch (e: unknown) {
-    const message = e instanceof Error ? e.message : 'Error';
-    return NextResponse.json({ ok: false, error: message }, { status: 400 });
+    const input = Schema.parse(await req.json());
+    const chart = computeChart(input);
+    return NextResponse.json({ ok:true, chart });
+  } catch (e:any) {
+    return NextResponse.json({ ok:false, error:e.message ?? 'Chart error' }, { status:400 });
   }
 }
