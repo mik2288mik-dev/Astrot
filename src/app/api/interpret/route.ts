@@ -4,10 +4,16 @@ import OpenAI from 'openai';
 export const runtime = 'nodejs';
 export const dynamic = 'force-dynamic';
 
-const client = new OpenAI({ apiKey: process.env.OPENAI_API_KEY! });
+// Initialize client only when API key is available
+const apiKey = process.env.OPENAI_API_KEY;
+const client = apiKey ? new OpenAI({ apiKey }) : null;
 
 export async function POST(req: NextRequest) {
   try {
+    if (!client) {
+      throw new Error('OpenAI API key is not configured');
+    }
+
     const { chart } = await req.json();
     if (!chart) throw new Error('chart is required');
 
@@ -24,7 +30,8 @@ export async function POST(req: NextRequest) {
     });
     const text = resp.choices[0]?.message?.content ?? '';
     return NextResponse.json({ ok:true, text });
-  } catch (e:any) {
-    return NextResponse.json({ ok:false, error: e.message ?? 'OpenAI error' }, { status:400 });
+  } catch (e: unknown) {
+    const error = e instanceof Error ? e.message : 'OpenAI error';
+    return NextResponse.json({ ok:false, error }, { status:400 });
   }
 }

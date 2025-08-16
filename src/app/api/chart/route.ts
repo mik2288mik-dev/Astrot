@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { z } from 'zod';
 import { computeChart } from '@/lib/astro/swiss';
+import type { BirthInput } from '@/lib/astro/swiss';
 
 export const runtime = 'nodejs';
 export const dynamic = 'force-dynamic';
@@ -17,9 +18,18 @@ const Schema = z.object({
 export async function POST(req: NextRequest) {
   try {
     const input = Schema.parse(await req.json());
-    const chart = computeChart(input);
+    const birthInput: BirthInput = {
+      date: input.date,
+      time: input.time,
+      tzOffset: input.tzOffset,
+      lat: input.lat,
+      lon: input.lon,
+      houseSystem: input.houseSystem || 'P'
+    };
+    const chart = await computeChart(birthInput);
     return NextResponse.json({ ok:true, chart });
-  } catch (e:any) {
-    return NextResponse.json({ ok:false, error:e.message ?? 'Chart error' }, { status:400 });
+  } catch (e: unknown) {
+    const error = e instanceof Error ? e.message : 'Chart error';
+    return NextResponse.json({ ok:false, error }, { status:400 });
   }
 }

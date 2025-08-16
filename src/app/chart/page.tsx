@@ -3,10 +3,36 @@ import { useState } from 'react';
 
 type Form = { name:string; date:string; time:string; tzOffset:number; place:string; lat:number; lon:number; houseSystem:'P'|'W' }
 
+interface Planet {
+  key: string;
+  lon: number;
+  lat: number;
+  speed: number;
+  sign: string;
+  house: number;
+}
+
+interface Houses {
+  cusps: number[];
+  asc: number;
+  mc: number;
+}
+
+interface ChartData {
+  jdUT: number;
+  planets: Planet[];
+  houses: Houses;
+  bigThree: {
+    Sun: string;
+    Moon: string;
+    Ascendant: string;
+  };
+}
+
 export default function ChartPage(){
   const [f,setF] = useState<Form>({ name:'Михаил', date:'1989-06-03', time:'23:23', tzOffset:3, place:'Сергиев Посад', lat:56.3159, lon:38.1359, houseSystem:'P' });
   const [loading,setLoading] = useState(false);
-  const [chart,setChart] = useState<any>(null);
+  const [chart,setChart] = useState<ChartData | null>(null);
   const [err,setErr] = useState<string>('');
 
   async function calc(e?:React.FormEvent){
@@ -14,7 +40,10 @@ export default function ChartPage(){
     try{
       const r = await fetch('/api/chart',{ method:'POST', headers:{'content-type':'application/json'}, body:JSON.stringify({ date:f.date, time:f.time, tzOffset:f.tzOffset, lat:f.lat, lon:f.lon, houseSystem:f.houseSystem }) });
       const j = await r.json(); if(!j.ok) throw new Error(j.error || 'calc error'); setChart(j.chart);
-    }catch(e:any){ setErr(e.message || 'Ошибка расчёта'); } finally{ setLoading(false); }
+    }catch(e: unknown){ 
+      const error = e instanceof Error ? e.message : 'Ошибка расчёта';
+      setErr(error); 
+    } finally{ setLoading(false); }
   }
 
   return (
@@ -29,7 +58,7 @@ export default function ChartPage(){
           <div><label>Часовой пояс (часы)</label><input type="number" step="1" min={-14} max={14} value={f.tzOffset} onChange={e=>setF({...f,tzOffset:Number(e.target.value)})}/></div>
           <div><label>Широта</label><input type="number" step="0.0001" min={-90} max={90} value={f.lat} onChange={e=>setF({...f,lat:Number(e.target.value)})}/></div>
           <div><label>Долгота</label><input type="number" step="0.0001" min={-180} max={180} value={f.lon} onChange={e=>setF({...f,lon:Number(e.target.value)})}/></div>
-          <div><label>Дома</label><select value={f.houseSystem} onChange={e=>setF({...f,houseSystem:e.target.value as any})}><option value="P">Placidus</option><option value="W">Whole sign</option></select></div>
+          <div><label>Дома</label><select value={f.houseSystem} onChange={e=>setF({...f,houseSystem:e.target.value as 'P'|'W'})}><option value="P">Placidus</option><option value="W">Whole sign</option></select></div>
           <div style={{gridColumn:'1 / -1', display:'flex', gap:12}}>
             <button className="btn" type="submit" disabled={loading}>{loading ? 'Считаю…' : 'Рассчитать'}</button>
             {err && <span style={{color:'#ff6b6b'}}>{err}</span>}
@@ -47,7 +76,7 @@ export default function ChartPage(){
           </div>
           <h4 style={{marginTop:8}}>Планеты</h4>
           <ul style={{lineHeight:1.6}}>
-            {chart.planets.map((p:any)=>(
+            {chart.planets.map((p: Planet)=>(
               <li key={p.key}>{p.key}: {p.sign}, дом {p.house} — {p.lon.toFixed(2)}°</li>
             ))}
           </ul>
