@@ -1,205 +1,209 @@
 'use client';
-import { useRouter } from 'next/navigation';
-import { useTelegram } from '@/providers/telegram-provider';
-import { ProfileCard } from '@/components/profile/profile-card';
-import { motion } from 'framer-motion';
-import { 
-  IconChartDots3, 
-  IconZodiacAries, 
-  IconCards, 
-  IconHeart,
-  IconShoppingBag,
-  IconMessageCircle,
-  IconSparkles,
-  IconMoon
-} from '@tabler/icons-react';
 
-const features = [
-  {
-    icon: IconChartDots3,
-    title: 'Натальная карта',
-    description: 'Персональный астрологический анализ',
-    color: 'from-blue-500 to-cyan-500',
-    href: '/chart'
-  },
-  {
-    icon: IconZodiacAries,
-    title: 'Гороскоп',
-    description: 'Ежедневные предсказания',
-    color: 'from-purple-500 to-pink-500',
-    href: '/horoscope'
-  },
-  {
-    icon: IconMessageCircle,
-    title: 'AI Астролог',
-    description: 'Персональные консультации',
-    color: 'from-green-500 to-emerald-500',
-    href: '/ai-astrologer'
-  },
-  {
-    icon: IconCards,
-    title: 'Таро',
-    description: 'Мистические расклады',
-    color: 'from-orange-500 to-red-500',
-    href: '/tarot'
-  },
-  {
-    icon: IconHeart,
-    title: 'Совместимость',
-    description: 'Анализ отношений',
-    color: 'from-pink-500 to-rose-500',
-    href: '/compatibility'
-  },
-  {
-    icon: IconShoppingBag,
-    title: 'Магазин',
-    description: 'Амулеты и талисманы',
-    color: 'from-indigo-500 to-purple-500',
-    href: '/shop'
-  }
-];
+import React, { useEffect, useState } from 'react';
+import FunctionCard, { FunctionGrid } from '@/components/FunctionCard';
+import { useTelegramUser, useTelegram } from '@/hooks/useTelegram';
+import { 
+  MapIcon,
+  SparklesIcon,
+  ChatBubbleLeftRightIcon,
+  HeartIcon,
+  ShoppingBagIcon,
+  MoonIcon,
+  StarIcon,
+  SunIcon
+} from '@heroicons/react/24/outline';
+
+// Данные для карты дня
+const getDailyCard = () => {
+  const moonSigns = ['Овен', 'Телец', 'Близнецы', 'Рак', 'Лев', 'Дева', 'Весы', 'Скорпион', 'Стрелец', 'Козерог', 'Водолей', 'Рыбы'];
+  const colors = ['Розовый', 'Голубой', 'Зеленый', 'Фиолетовый', 'Желтый', 'Оранжевый', 'Бирюзовый', 'Красный'];
+  const numbers = [3, 7, 9, 11, 13, 21, 33, 42];
+  
+  const today = new Date();
+  const dayIndex = today.getDate() % 12;
+  const colorIndex = today.getDate() % colors.length;
+  const numberIndex = today.getDate() % numbers.length;
+  
+  return {
+    moonSign: moonSigns[dayIndex],
+    luckyNumber: numbers[numberIndex],
+    luckyColor: colors[colorIndex],
+    date: today.toLocaleDateString('ru-RU', { day: 'numeric', month: 'long' })
+  };
+};
 
 export default function HomePage() {
-  const router = useRouter();
-  const { user } = useTelegram();
-  
+  const { firstName, photoUrl } = useTelegramUser();
+  const { hapticFeedback } = useTelegram();
+  const [dailyCard, setDailyCard] = useState(getDailyCard());
+  const [greeting, setGreeting] = useState('');
+
+  useEffect(() => {
+    const hour = new Date().getHours();
+    if (hour < 6) setGreeting('Доброй ночи');
+    else if (hour < 12) setGreeting('Доброе утро');
+    else if (hour < 18) setGreeting('Добрый день');
+    else setGreeting('Добрый вечер');
+  }, []);
+
+  const handleFunctionClick = () => {
+    hapticFeedback('impact', 'light');
+  };
+
   return (
-    <main className="min-h-screen bg-gradient-to-br from-[#0E0D1B] via-[#1A1A2E] to-[#0E0D1B] text-white">
-      {/* Header с приветствием */}
-      <div className="px-4 pt-8 pb-6">
-        <motion.div
-          initial={{ opacity: 0, y: -20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.5 }}
-        >
-          <div className="flex items-center justify-between mb-2">
-            <div>
-              <h1 className="text-2xl font-bold bg-gradient-to-r from-purple-400 to-blue-400 bg-clip-text text-transparent">
-                Добро пожаловать,
-              </h1>
-              <p className="text-3xl font-bold mt-1">
-                {user?.firstName || 'Путешественник'} ✨
+    <div className="page-wrapper animate-fadeIn">
+      {/* Приветствие */}
+      <section className="mb-6">
+        <div className="flex items-center justify-between mb-4">
+          <div>
+            <h1 className="text-2xl font-bold text-neutral-900">
+              {greeting}, {firstName}!
+            </h1>
+            <p className="text-sm text-neutral-500 mt-1">
+              Что вас интересует сегодня?
+            </p>
+          </div>
+          {photoUrl && (
+            <img 
+              src={photoUrl} 
+              alt={firstName}
+              className="w-12 h-12 rounded-full border-2 border-white shadow-soft"
+            />
+          )}
+        </div>
+      </section>
+
+      {/* Карта дня */}
+      <section className="mb-6">
+        <div className="bg-gradient-to-br from-pastel-purple via-pastel-pink to-pastel-peach p-5 rounded-2xl shadow-card">
+          <div className="flex items-center justify-between mb-3">
+            <h2 className="text-lg font-semibold text-neutral-800">
+              Карта дня
+            </h2>
+            <span className="text-xs text-neutral-600 bg-white/60 px-2 py-1 rounded-lg">
+              {dailyCard.date}
+            </span>
+          </div>
+          
+          <div className="space-y-3">
+            <div className="flex items-center gap-3">
+              <div className="w-10 h-10 bg-white/40 rounded-xl flex items-center justify-center">
+                <MoonIcon className="w-5 h-5 text-primary-700" />
+              </div>
+              <div>
+                <p className="text-xs text-neutral-600">Луна в знаке</p>
+                <p className="text-sm font-semibold text-neutral-800">{dailyCard.moonSign}</p>
+              </div>
+            </div>
+            
+            <div className="flex gap-4">
+              <div className="flex items-center gap-2">
+                <div className="w-8 h-8 bg-white/40 rounded-lg flex items-center justify-center">
+                  <StarIcon className="w-4 h-4 text-primary-700" />
+                </div>
+                <div>
+                  <p className="text-xs text-neutral-600">Число</p>
+                  <p className="text-sm font-semibold text-neutral-800">{dailyCard.luckyNumber}</p>
+                </div>
+              </div>
+              
+              <div className="flex items-center gap-2">
+                <div className="w-8 h-8 bg-white/40 rounded-lg flex items-center justify-center">
+                  <SunIcon className="w-4 h-4 text-primary-700" />
+                </div>
+                <div>
+                  <p className="text-xs text-neutral-600">Цвет</p>
+                  <p className="text-sm font-semibold text-neutral-800">{dailyCard.luckyColor}</p>
+                </div>
+              </div>
+            </div>
+          </div>
+          
+          <button 
+            onClick={() => {
+              hapticFeedback('impact', 'light');
+            }}
+            className="mt-4 w-full bg-white/60 hover:bg-white/80 text-primary-700 font-medium py-2.5 px-4 rounded-xl transition-all duration-200 text-sm"
+          >
+            Посмотреть полную карту →
+          </button>
+        </div>
+      </section>
+
+      {/* Функции */}
+      <section>
+        <h2 className="text-lg font-semibold text-neutral-800 mb-4">
+          Функции
+        </h2>
+        
+        <FunctionGrid>
+          <FunctionCard
+            href="/chart"
+            icon={<MapIcon className="w-7 h-7" />}
+            title="Натальная карта"
+            bgColor="bg-pastel-purple"
+            iconColor="text-primary-600"
+          />
+          <FunctionCard
+            href="/horoscope"
+            icon="♈"
+            title="Гороскоп"
+            bgColor="bg-pastel-blue"
+            iconColor="text-secondary-600"
+          />
+          <FunctionCard
+            href="/chat"
+            icon={<ChatBubbleLeftRightIcon className="w-7 h-7" />}
+            title="AI Астролог"
+            bgColor="bg-pastel-mint"
+            iconColor="text-emerald-600"
+          />
+          <FunctionCard
+            href="/tarot"
+            icon="🎴"
+            title="Таро"
+            bgColor="bg-pastel-peach"
+            iconColor="text-orange-600"
+          />
+          <FunctionCard
+            href="/compat"
+            icon={<HeartIcon className="w-7 h-7" />}
+            title="Совместимость"
+            bgColor="bg-pastel-pink"
+            iconColor="text-pink-600"
+          />
+          <FunctionCard
+            href="/shop"
+            icon={<ShoppingBagIcon className="w-7 h-7" />}
+            title="Магазин"
+            bgColor="bg-pastel-lavender"
+            iconColor="text-purple-600"
+          />
+        </FunctionGrid>
+      </section>
+
+      {/* Промо-блок */}
+      <section className="mt-6 mb-20">
+        <div className="bg-gradient-to-r from-primary-50 to-secondary-50 p-4 rounded-2xl border border-primary-100">
+          <div className="flex items-center gap-3">
+            <div className="w-10 h-10 bg-white rounded-xl flex items-center justify-center flex-shrink-0">
+              <SparklesIcon className="w-5 h-5 text-primary-600" />
+            </div>
+            <div className="flex-1">
+              <p className="text-sm font-medium text-neutral-800">
+                Попробуйте премиум
+              </p>
+              <p className="text-xs text-neutral-600 mt-0.5">
+                Разблокируйте все функции приложения
               </p>
             </div>
-            <motion.div
-              animate={{ rotate: 360 }}
-              transition={{ duration: 20, repeat: Infinity, ease: "linear" }}
-            >
-              <IconMoon size={40} className="text-purple-400" />
-            </motion.div>
+            <button className="text-primary-600 font-medium text-sm px-3 py-1.5 bg-white rounded-lg">
+              Узнать
+            </button>
           </div>
-        </motion.div>
-
-        {/* Карточка профиля */}
-        <div className="mt-6">
-          <ProfileCard />
         </div>
-
-        {/* Астрологическая карта дня */}
-        <motion.div
-          initial={{ opacity: 0, scale: 0.95 }}
-          animate={{ opacity: 1, scale: 1 }}
-          transition={{ delay: 0.2, duration: 0.5 }}
-          className="mt-6 bg-gradient-to-r from-purple-600/20 to-blue-600/20 rounded-2xl p-6 backdrop-blur-sm border border-white/10"
-        >
-          <div className="flex items-center justify-between mb-3">
-            <h3 className="text-lg font-semibold">Ваша карта дня</h3>
-            <IconSparkles className="text-yellow-400" />
-          </div>
-          <div className="space-y-2">
-            <div className="flex justify-between">
-              <span className="text-gray-400">Луна в</span>
-              <span className="font-medium">Скорпионе ♏</span>
-            </div>
-            <div className="flex justify-between">
-              <span className="text-gray-400">Счастливое число</span>
-              <span className="font-medium text-green-400">7</span>
-            </div>
-            <div className="flex justify-between">
-              <span className="text-gray-400">Цвет дня</span>
-              <span className="font-medium text-purple-400">Фиолетовый</span>
-            </div>
-          </div>
-          <button 
-            onClick={() => router.push('/chart')}
-            className="mt-4 w-full bg-gradient-to-r from-purple-500 to-blue-500 text-white py-3 rounded-xl font-semibold shadow-lg hover:shadow-xl transition-all duration-200 hover:scale-[1.02]"
-          >
-            Посмотреть полную карту
-          </button>
-        </motion.div>
-      </div>
-
-      {/* Функции приложения */}
-      <div className="px-4 pb-20">
-        <motion.h2 
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ delay: 0.3 }}
-          className="text-xl font-bold mb-4"
-        >
-          Функции
-        </motion.h2>
-        
-        <div className="grid grid-cols-2 gap-4">
-          {features.map((feature, index) => {
-            const Icon = feature.icon;
-            return (
-              <motion.button
-                key={feature.title}
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: 0.1 * index, duration: 0.3 }}
-                onClick={() => router.push(feature.href)}
-                className="relative group"
-              >
-                <div className="bg-gradient-to-br from-gray-800/50 to-gray-900/50 backdrop-blur-sm rounded-2xl p-4 border border-white/5 hover:border-white/20 transition-all duration-300 hover:scale-[1.05] hover:shadow-xl">
-                  <div className={`w-12 h-12 rounded-xl bg-gradient-to-br ${feature.color} flex items-center justify-center mb-3 group-hover:scale-110 transition-transform duration-300`}>
-                    <Icon size={24} className="text-white" />
-                  </div>
-                  <h3 className="font-semibold text-sm mb-1">{feature.title}</h3>
-                  <p className="text-xs text-gray-400">{feature.description}</p>
-                  
-                  {/* Эффект свечения при наведении */}
-                  <div className={`absolute inset-0 rounded-2xl bg-gradient-to-br ${feature.color} opacity-0 group-hover:opacity-10 transition-opacity duration-300`} />
-                </div>
-              </motion.button>
-            );
-          })}
-        </div>
-      </div>
-
-      {/* Нижняя навигация */}
-      <motion.div 
-        initial={{ y: 100 }}
-        animate={{ y: 0 }}
-        transition={{ type: "spring", stiffness: 260, damping: 20 }}
-        className="fixed bottom-0 left-0 right-0 bg-gradient-to-t from-[#0E0D1B] via-[#1A1A2E]/95 to-transparent backdrop-blur-lg border-t border-white/10"
-      >
-        <div className="flex justify-around items-center py-4">
-          <button className="flex flex-col items-center gap-1 text-purple-400">
-            <IconSparkles size={24} />
-            <span className="text-xs">Главная</span>
-          </button>
-          <button 
-            onClick={() => router.push('/chart')}
-            className="flex flex-col items-center gap-1 text-gray-400 hover:text-white transition-colors"
-          >
-            <IconChartDots3 size={24} />
-            <span className="text-xs">Карта</span>
-          </button>
-          <button className="flex flex-col items-center gap-1 text-gray-400 hover:text-white transition-colors">
-            <IconMessageCircle size={24} />
-            <span className="text-xs">Чат</span>
-          </button>
-          <button 
-            onClick={() => router.push('/profile')}
-            className="flex flex-col items-center gap-1 text-gray-400 hover:text-white transition-colors"
-          >
-            <IconHeart size={24} />
-            <span className="text-xs">Профиль</span>
-          </button>
-        </div>
-      </motion.div>
-    </main>
+      </section>
+    </div>
   );
 }

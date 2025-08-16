@@ -1,37 +1,46 @@
 import { NextRequest, NextResponse } from 'next/server';
-import OpenAI from 'openai';
 
-export const runtime = 'nodejs';
-export const dynamic = 'force-dynamic';
-
-// Initialize client only when API key is available
-const apiKey = process.env.OPENAI_API_KEY;
-const client = apiKey ? new OpenAI({ apiKey }) : null;
-
-export async function POST(req: NextRequest) {
+export async function POST(request: NextRequest) {
   try {
-    if (!client) {
-      throw new Error('OpenAI API key is not configured');
-    }
-
-    const { chart } = await req.json();
-    if (!chart) throw new Error('chart is required');
-
-    const system = `Ты — доброжелательный астролог-редактор. Коротко и по делу, без фатализма.
-Дай: 1) тему по Большой тройке, 2) 5–7 пунктов по планетам в домах, 3) 3 практичных совета.`;
-
-    const resp = await client.chat.completions.create({
-      model: 'gpt-4o-mini',
-      temperature: 0.7,
-      messages: [
-        { role:'system', content: system },
-        { role:'user', content: 'JSON натальной карты:\n' + JSON.stringify(chart) }
-      ]
+    const data = await request.json();
+    
+    // Здесь будет интеграция с OpenAI API
+    // Пока возвращаем заглушку
+    const interpretation = {
+      summary: `Вы обладаете уникальным сочетанием качеств, которые делают вас особенной личностью. 
+                Ваша натальная карта показывает сильную интуицию и творческий потенциал.`,
+      
+      personality: `Вы - многогранная личность с богатым внутренним миром. 
+                    Сочетание планет в вашей карте указывает на высокий интеллект, 
+                    эмоциональную глубину и стремление к самопознанию.`,
+      
+      career: `В профессиональной сфере вам подходят области, связанные с творчеством, 
+               коммуникациями или помощью людям. Ваши сильные стороны - это умение 
+               видеть общую картину и находить нестандартные решения.`,
+      
+      love: `В отношениях вы цените глубину, искренность и взаимопонимание. 
+             Вам важна эмоциональная связь с партнером и общие ценности. 
+             Избегайте поверхностных отношений.`,
+      
+      health: `Обратите внимание на баланс между работой и отдыхом. 
+              Вам полезны медитативные практики, йога и время на природе. 
+              Следите за нервной системой и не перегружайте себя.`,
+      
+      advice: `Доверяйте своей интуиции и не бойтесь проявлять свою уникальность. 
+              Развивайте свои таланты и помните, что ваша чувствительность - 
+              это не слабость, а сила, которая помогает вам понимать мир глубже.`
+    };
+    
+    return NextResponse.json({
+      success: true,
+      interpretation
     });
-    const text = resp.choices[0]?.message?.content ?? '';
-    return NextResponse.json({ ok:true, text });
-  } catch (e: unknown) {
-    const error = e instanceof Error ? e.message : 'OpenAI error';
-    return NextResponse.json({ ok:false, error }, { status:400 });
+    
+  } catch (error) {
+    console.error('Error in interpretation API:', error);
+    return NextResponse.json(
+      { success: false, error: 'Failed to generate interpretation' },
+      { status: 500 }
+    );
   }
 }
