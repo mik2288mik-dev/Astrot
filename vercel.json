@@ -1,7 +1,20 @@
 {
   "functions": {
-    "api/**": {
-      "excludeFiles": "{ephe/sat/**,ephe/seasnam.txt}"
+    "app/api/**/route.js": {
+      "excludeFiles": "{ephe/sat/**,ephe/seasnam.txt}",
+      "includeFiles": "ephe/{sepl_*,seplm*,semo_*,semom*}"
+    },
+    "app/api/**/route.ts": {
+      "excludeFiles": "{ephe/sat/**,ephe/seasnam.txt}",
+      "includeFiles": "ephe/{sepl_*,seplm*,semo_*,semom*}"
+    },
+    "pages/api/**/*.js": {
+      "excludeFiles": "{ephe/sat/**,ephe/seasnam.txt}",
+      "includeFiles": "ephe/{sepl_*,seplm*,semo_*,semom*}"
+    },
+    "pages/api/**/*.ts": {
+      "excludeFiles": "{ephe/sat/**,ephe/seasnam.txt}",
+      "includeFiles": "ephe/{sepl_*,seplm*,semo_*,semom*}"
     }
   }
 }
