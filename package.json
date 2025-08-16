@@ -14,7 +14,8 @@
     "typecheck": "tsc -p tsconfig.json --noEmit",
     "format": "prettier --write .",
     "prepare": "husky",
-    "test": "jest"
+    "test": "jest",
+    "postinstall": "pnpm rebuild swisseph || npm rebuild swisseph || true"
   },
   "dependencies": {
     "@tabler/icons-react": "^2.47.0",

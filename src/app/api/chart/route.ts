@@ -1,15 +1,16 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { z } from 'zod';
-import swisseph from 'swisseph';
 import { computeNatalChart } from '@/lib/astro/swiss';
-
-const EPHE_PATH = process.env.EPHE_PATH || 'ephe';
-const swe = swisseph as unknown as { swe_set_ephe_path(path: string): void };
-swe.swe_set_ephe_path(EPHE_PATH);
 
 export const runtime = 'nodejs';
 export const dynamic = 'force-dynamic';
 export const maxDuration = 10;
+
+async function loadSWE() {
+  const mod = await import('swisseph');
+  return mod.default ?? mod;
+}
+const EPHE_PATH = process.env.EPHE_PATH || 'ephe';
 
 const Schema = z.object({
   date: z.string(),
@@ -24,6 +25,8 @@ export async function POST(req: NextRequest) {
   try {
     const body = await req.json();
     const data = Schema.parse(body);
+    const swisseph = await loadSWE();
+    swisseph.swe_set_ephe_path(EPHE_PATH);
     const chart = computeNatalChart(data);
     return NextResponse.json({ ok: true, chart });
   } catch (e: unknown) {

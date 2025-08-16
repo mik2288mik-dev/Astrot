@@ -1,6 +1,7 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   experimental: {
+    serverComponentsExternalPackages: ['swisseph'],
     outputFileTracingIncludes: {
       "/api/chart": [
         "ephe/sepl_*",
