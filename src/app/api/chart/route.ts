@@ -1,6 +1,11 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { z } from 'zod';
+import swisseph from 'swisseph';
 import { computeNatalChart } from '@/lib/astro/swiss';
+
+const EPHE_PATH = process.env.EPHE_PATH || 'ephe';
+const swe = swisseph as unknown as { swe_set_ephe_path(path: string): void };
+swe.swe_set_ephe_path(EPHE_PATH);
 
 export const runtime = 'nodejs';
 export const dynamic = 'force-dynamic';

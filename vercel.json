@@ -1,0 +1,7 @@
+{
+  "functions": {
+    "api/**": {
+      "excludeFiles": "{ephe/sat/**,ephe/seasnam.txt}"
+    }
+  }
+}
