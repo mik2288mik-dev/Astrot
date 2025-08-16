@@ -1,396 +1,300 @@
 'use client';
 
-import { useState, useEffect, useCallback, useRef } from 'react';
-import { PlaceResult } from '@/lib/geo/geocode';
-import { getTimezone, getTimezoneOffset } from '@/lib/geo/timezone';
+import React, { useState, useEffect } from 'react';
+import { useTelegramUser, useTelegram } from '@/hooks/useTelegram';
+import { 
+  UserIcon,
+  CalendarIcon,
+  ClockIcon,
+  MapPinIcon,
+  ChevronDownIcon,
+  InformationCircleIcon
+} from '@heroicons/react/24/outline';
 
 interface FormData {
   name: string;
-  date: string;
-  time: string;
+  birthDate: string;
+  birthTime: string;
+  birthPlace: string;
+  latitude?: number;
+  longitude?: number;
+  timezone?: string;
+  houseSystem: string;
   unknownTime: boolean;
-  place: string;
-  selectedPlace: PlaceResult | null;
-  timezone: string;
-  houseSystem: 'P' | 'W' | 'K' | 'E';
 }
 
-interface FormCardProps {
-  onSubmit: (data: FormData & { lat: number; lon: number; tzOffset: number }) => Promise<void>;
-  loading?: boolean;
-  error?: string;
-  onReset?: () => void;
+interface PlaceSuggestion {
+  display_name: string;
+  lat: string;
+  lon: string;
 }
 
-const HOUSE_SYSTEMS = [
-  { value: 'P', label: 'Placidus' },
-  { value: 'W', label: 'Whole Sign' },
-  { value: 'K', label: 'Koch' },
-  { value: 'E', label: 'Equal' },
-] as const;
-
-export default function FormCard({ onSubmit, loading = false, error, onReset }: FormCardProps) {
+export default function FormCard({ onSubmit }: { onSubmit: (data: FormData) => void }) {
+  const { fullName, userId } = useTelegramUser();
+  const { hapticFeedback, showMainButton, hideMainButton } = useTelegram();
+  const [showAdvanced, setShowAdvanced] = useState(false);
+  const [isSearching, setIsSearching] = useState(false);
+  const [suggestions, setSuggestions] = useState<PlaceSuggestion[]>([]);
+  const [showSuggestions, setShowSuggestions] = useState(false);
+  
   const [formData, setFormData] = useState<FormData>({
-    name: '',
-    date: '',
-    time: '',
-    unknownTime: false,
-    place: '',
-    selectedPlace: null,
-    timezone: '',
-    houseSystem: 'P',
+    name: fullName || '',
+    birthDate: '',
+    birthTime: '',
+    birthPlace: '',
+    houseSystem: 'placidus',
+    unknownTime: false
   });
 
-  const [showAdvanced, setShowAdvanced] = useState(false);
-  const [placeSuggestions, setPlaceSuggestions] = useState<PlaceResult[]>([]);
-  const [showSuggestions, setShowSuggestions] = useState(false);
-  const [placesLoading, setPlacesLoading] = useState(false);
-  
-  const debounceRef = useRef<NodeJS.Timeout>();
-  const suggestionsRef = useRef<HTMLDivElement>(null);
+  const houseSystems = [
+    { value: 'placidus', label: 'Плацидус' },
+    { value: 'koch', label: 'Кох' },
+    { value: 'regiomontanus', label: 'Региомонтан' },
+    { value: 'campanus', label: 'Кампанус' },
+    { value: 'equal', label: 'Равнодомная' },
+    { value: 'whole', label: 'Целые знаки' }
+  ];
 
-  // Debounced place search
-  const searchPlaces = useCallback(async (query: string) => {
-    if (query.length < 2) {
-      setPlaceSuggestions([]);
-      setShowSuggestions(false);
+  useEffect(() => {
+    // Показываем главную кнопку Telegram когда форма заполнена
+    const isFormValid = formData.name && formData.birthDate && formData.birthPlace && 
+                       (formData.birthTime || formData.unknownTime);
+    
+    if (isFormValid) {
+      showMainButton('Рассчитать карту', () => handleSubmit());
+    } else {
+      hideMainButton();
+    }
+    
+    return () => hideMainButton();
+  }, [formData]);
+
+  const searchPlace = async (query: string) => {
+    if (query.length < 3) {
+      setSuggestions([]);
       return;
     }
 
-    setPlacesLoading(true);
+    setIsSearching(true);
     try {
-      const response = await fetch(`/api/geocode?q=${encodeURIComponent(query)}`);
+      const response = await fetch(
+        `https://nominatim.openstreetmap.org/search?q=${encodeURIComponent(query)}&format=json&limit=5&accept-language=ru`
+      );
       const data = await response.json();
-      
-      if (data.places) {
-        setPlaceSuggestions(data.places);
-        setShowSuggestions(true);
-      }
+      setSuggestions(data);
+      setShowSuggestions(true);
     } catch (error) {
-      console.error('Place search error:', error);
-      setPlaceSuggestions([]);
+      console.error('Error searching place:', error);
     } finally {
-      setPlacesLoading(false);
+      setIsSearching(false);
     }
-  }, []);
-
-  // Handle place input change with debouncing
-  const handlePlaceChange = (value: string) => {
-    setFormData(prev => ({ ...prev, place: value, selectedPlace: null }));
-    
-    if (debounceRef.current) {
-      clearTimeout(debounceRef.current);
-    }
-    
-    debounceRef.current = setTimeout(() => {
-      searchPlaces(value);
-    }, 300);
   };
 
-  // Handle place selection
-  const selectPlace = async (place: PlaceResult) => {
-    setFormData(prev => ({
-      ...prev,
-      place: place.cityLikeLabel,
-      selectedPlace: place,
-    }));
-    
-    setShowSuggestions(false);
-    
-    // Get timezone for selected place
-    const timezone = getTimezone(place.lat, place.lon);
-    setFormData(prev => ({ ...prev, timezone }));
-  };
-
-  // Close suggestions when clicking outside
-  useEffect(() => {
-    const handleClickOutside = (event: MouseEvent) => {
-      if (suggestionsRef.current && !suggestionsRef.current.contains(event.target as Node)) {
-        setShowSuggestions(false);
-      }
-    };
-
-    document.addEventListener('mousedown', handleClickOutside);
-    return () => document.removeEventListener('mousedown', handleClickOutside);
-  }, []);
-
-  // Reset form
-  const handleReset = () => {
+  const selectPlace = (place: PlaceSuggestion) => {
+    hapticFeedback('selection');
     setFormData({
-      name: '',
-      date: '',
-      time: '',
-      unknownTime: false,
-      place: '',
-      selectedPlace: null,
-      timezone: '',
-      houseSystem: 'P',
+      ...formData,
+      birthPlace: place.display_name,
+      latitude: parseFloat(place.lat),
+      longitude: parseFloat(place.lon)
     });
-    setShowAdvanced(false);
-    setPlaceSuggestions([]);
     setShowSuggestions(false);
-    onReset?.();
+    setSuggestions([]);
   };
 
-  // Form validation
-  const isValid = formData.name.trim() && 
-                  formData.date && 
-                  (formData.time || formData.unknownTime) && 
-                  formData.selectedPlace;
+  const handleSubmit = () => {
+    hapticFeedback('impact', 'medium');
+    onSubmit(formData);
+  };
 
-  // Handle form submission
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    
-    if (!isValid || !formData.selectedPlace) return;
-
-    const timeToUse = formData.unknownTime ? '12:00' : formData.time;
-    const tzOffset = getTimezoneOffset(formData.timezone);
-
-    await onSubmit({
-      ...formData,
-      time: timeToUse,
-      lat: formData.selectedPlace.lat,
-      lon: formData.selectedPlace.lon,
-      tzOffset,
-    });
+  const handleInputChange = (field: keyof FormData, value: any) => {
+    hapticFeedback('selection');
+    setFormData({ ...formData, [field]: value });
   };
 
   return (
-    <div className="bg-white rounded-2xl shadow-lg border border-gray-100 overflow-hidden">
-      <div className="p-6">
-        <h2 className="text-2xl font-bold text-gray-900 mb-6">Данные рождения</h2>
-        
-        <form onSubmit={handleSubmit} className="space-y-6">
-          {/* Basic Fields */}
-          <div className="space-y-4">
-            {/* Name */}
-            <div>
-              <label htmlFor="name" className="block text-sm font-medium text-gray-700 mb-2">
-                Имя *
-              </label>
+    <div className="page-wrapper animate-fadeIn">
+      <section className="mb-6">
+        <h1 className="text-2xl font-bold text-neutral-900 mb-2">
+          Натальная карта
+        </h1>
+        <p className="text-sm text-neutral-500">
+          Введите данные для расчета вашей карты рождения
+        </p>
+      </section>
+
+      <form className="space-y-4" onSubmit={(e) => { e.preventDefault(); handleSubmit(); }}>
+        {/* Имя */}
+        <div>
+          <label className="flex items-center gap-2 text-sm font-medium text-neutral-700 mb-2">
+            <UserIcon className="w-4 h-4" />
+            Имя
+          </label>
+          <input
+            type="text"
+            value={formData.name}
+            onChange={(e) => handleInputChange('name', e.target.value)}
+            placeholder="Введите ваше имя"
+            className="w-full px-4 py-3 bg-white border border-neutral-200 rounded-xl focus:border-primary-400 focus:ring-2 focus:ring-primary-100 transition-all"
+            required
+          />
+        </div>
+
+        {/* Дата рождения */}
+        <div>
+          <label className="flex items-center gap-2 text-sm font-medium text-neutral-700 mb-2">
+            <CalendarIcon className="w-4 h-4" />
+            Дата рождения
+          </label>
+          <input
+            type="date"
+            value={formData.birthDate}
+            onChange={(e) => handleInputChange('birthDate', e.target.value)}
+            className="w-full px-4 py-3 bg-white border border-neutral-200 rounded-xl focus:border-primary-400 focus:ring-2 focus:ring-primary-100 transition-all"
+            required
+          />
+        </div>
+
+        {/* Время рождения */}
+        <div>
+          <label className="flex items-center gap-2 text-sm font-medium text-neutral-700 mb-2">
+            <ClockIcon className="w-4 h-4" />
+            Время рождения
+          </label>
+          <div className="flex gap-2">
+            <input
+              type="time"
+              value={formData.birthTime}
+              onChange={(e) => handleInputChange('birthTime', e.target.value)}
+              disabled={formData.unknownTime}
+              className="flex-1 px-4 py-3 bg-white border border-neutral-200 rounded-xl focus:border-primary-400 focus:ring-2 focus:ring-primary-100 transition-all disabled:opacity-50"
+              required={!formData.unknownTime}
+            />
+            <label className="flex items-center gap-2 px-4 py-3 bg-neutral-50 rounded-xl cursor-pointer hover:bg-neutral-100 transition-colors">
               <input
-                id="name"
-                type="text"
-                value={formData.name}
-                onChange={(e) => setFormData(prev => ({ ...prev, name: e.target.value }))}
-                placeholder="Введите ваше имя"
-                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-colors"
-                required
+                type="checkbox"
+                checked={formData.unknownTime}
+                onChange={(e) => handleInputChange('unknownTime', e.target.checked)}
+                className="w-4 h-4 text-primary-600 rounded"
               />
-            </div>
-
-            {/* Date and Time */}
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <div>
-                <label htmlFor="date" className="block text-sm font-medium text-gray-700 mb-2">
-                  Дата рождения *
-                </label>
-                <input
-                  id="date"
-                  type="date"
-                  value={formData.date}
-                  onChange={(e) => setFormData(prev => ({ ...prev, date: e.target.value }))}
-                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-colors"
-                  required
-                />
-              </div>
-
-              <div>
-                <label htmlFor="time" className="block text-sm font-medium text-gray-700 mb-2">
-                  Время рождения *
-                </label>
-                <input
-                  id="time"
-                  type="time"
-                  value={formData.time}
-                  onChange={(e) => setFormData(prev => ({ ...prev, time: e.target.value }))}
-                  disabled={formData.unknownTime}
-                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-colors disabled:bg-gray-100 disabled:text-gray-500"
-                  required={!formData.unknownTime}
-                />
-                <div className="mt-2">
-                  <label className="flex items-center text-sm text-gray-600">
-                    <input
-                      type="checkbox"
-                      checked={formData.unknownTime}
-                      onChange={(e) => setFormData(prev => ({ 
-                        ...prev, 
-                        unknownTime: e.target.checked,
-                        time: e.target.checked ? '' : prev.time
-                      }))}
-                      className="mr-2 rounded"
-                    />
-                    Не знаю точное время
-                  </label>
-                </div>
-                {formData.unknownTime && (
-                  <p className="text-xs text-amber-600 mt-1">
-                    Будет использовано 12:00 (точность снижена)
-                  </p>
-                )}
-              </div>
-            </div>
-
-            {/* Place */}
-            <div className="relative" ref={suggestionsRef}>
-              <label htmlFor="place" className="block text-sm font-medium text-gray-700 mb-2">
-                Место рождения *
-              </label>
-              <input
-                id="place"
-                type="text"
-                value={formData.place}
-                onChange={(e) => handlePlaceChange(e.target.value)}
-                placeholder="Начните вводить город..."
-                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-colors"
-                required
-                autoComplete="off"
-              />
-              
-              {/* Loading indicator */}
-              {placesLoading && (
-                <div className="absolute right-3 top-12 transform -translate-y-1/2">
-                  <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-blue-500"></div>
-                </div>
-              )}
-
-              {/* Suggestions dropdown */}
-              {showSuggestions && placeSuggestions.length > 0 && (
-                <div className="absolute z-10 w-full mt-1 bg-white border border-gray-300 rounded-lg shadow-lg max-h-60 overflow-y-auto">
-                  {placeSuggestions.map((place, index) => (
-                    <button
-                      key={index}
-                      type="button"
-                      onClick={() => selectPlace(place)}
-                      className="w-full px-4 py-3 text-left hover:bg-gray-50 focus:bg-gray-50 focus:outline-none border-b border-gray-100 last:border-b-0"
-                    >
-                      <div className="font-medium text-gray-900">{place.cityLikeLabel}</div>
-                      <div className="text-sm text-gray-500 truncate">{place.displayName}</div>
-                    </button>
-                  ))}
-                </div>
-              )}
-            </div>
+              <span className="text-sm text-neutral-700">Не знаю</span>
+            </label>
           </div>
+          {formData.unknownTime && (
+            <p className="text-xs text-amber-600 mt-2 flex items-start gap-1">
+              <InformationCircleIcon className="w-4 h-4 flex-shrink-0 mt-0.5" />
+              Будет использовано время 12:00
+            </p>
+          )}
+        </div>
 
-          {/* Advanced Section Toggle */}
+        {/* Место рождения */}
+        <div className="relative">
+          <label className="flex items-center gap-2 text-sm font-medium text-neutral-700 mb-2">
+            <MapPinIcon className="w-4 h-4" />
+            Место рождения
+          </label>
+          <input
+            type="text"
+            value={formData.birthPlace}
+            onChange={(e) => {
+              handleInputChange('birthPlace', e.target.value);
+              searchPlace(e.target.value);
+            }}
+            placeholder="Начните вводить город..."
+            className="w-full px-4 py-3 bg-white border border-neutral-200 rounded-xl focus:border-primary-400 focus:ring-2 focus:ring-primary-100 transition-all"
+            required
+          />
+          
+          {/* Подсказки мест */}
+          {showSuggestions && suggestions.length > 0 && (
+            <div className="absolute z-10 w-full mt-2 bg-white border border-neutral-200 rounded-xl shadow-lg overflow-hidden">
+              {suggestions.map((place, index) => (
+                <button
+                  key={index}
+                  type="button"
+                  onClick={() => selectPlace(place)}
+                  className="w-full px-4 py-3 text-left hover:bg-neutral-50 transition-colors border-b border-neutral-100 last:border-0"
+                >
+                  <p className="text-sm text-neutral-800">{place.display_name}</p>
+                </button>
+              ))}
+            </div>
+          )}
+          
+          {isSearching && (
+            <p className="text-xs text-neutral-500 mt-2">Поиск...</p>
+          )}
+        </div>
+
+        {/* Дополнительные настройки */}
+        <div>
           <button
             type="button"
-            onClick={() => setShowAdvanced(!showAdvanced)}
-            className="flex items-center text-blue-600 hover:text-blue-700 font-medium transition-colors"
+            onClick={() => {
+              hapticFeedback('impact', 'light');
+              setShowAdvanced(!showAdvanced);
+            }}
+            className="flex items-center gap-2 text-sm font-medium text-primary-600 hover:text-primary-700 transition-colors"
           >
-            <span>Дополнительно</span>
-            <svg
-              className={`ml-2 h-4 w-4 transition-transform ${showAdvanced ? 'rotate-90' : ''}`}
-              fill="none"
-              viewBox="0 0 24 24"
-              stroke="currentColor"
-            >
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
-            </svg>
+            <ChevronDownIcon className={`w-4 h-4 transition-transform ${showAdvanced ? 'rotate-180' : ''}`} />
+            Дополнительные настройки
           </button>
-
-          {/* Advanced Fields */}
+          
           {showAdvanced && (
-            <div className="space-y-4 pt-4 border-t border-gray-200">
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                {/* Coordinates */}
+            <div className="mt-4 space-y-4 p-4 bg-neutral-50 rounded-xl">
+              {/* Координаты */}
+              {formData.latitude && formData.longitude && (
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                  <label className="text-sm font-medium text-neutral-700 mb-2 block">
                     Координаты
                   </label>
-                  <div className="space-y-2">
+                  <div className="grid grid-cols-2 gap-2">
                     <input
                       type="text"
-                      value={formData.selectedPlace ? formData.selectedPlace.lat.toFixed(4) : ''}
-                      placeholder="Широта"
-                      className="w-full px-4 py-2 bg-gray-100 border border-gray-300 rounded-lg text-gray-600"
+                      value={formData.latitude.toFixed(4)}
                       readOnly
+                      className="px-3 py-2 bg-white border border-neutral-200 rounded-lg text-sm text-neutral-600"
                     />
                     <input
                       type="text"
-                      value={formData.selectedPlace ? formData.selectedPlace.lon.toFixed(4) : ''}
-                      placeholder="Долгота"
-                      className="w-full px-4 py-2 bg-gray-100 border border-gray-300 rounded-lg text-gray-600"
+                      value={formData.longitude.toFixed(4)}
                       readOnly
+                      className="px-3 py-2 bg-white border border-neutral-200 rounded-lg text-sm text-neutral-600"
                     />
                   </div>
                 </div>
-
-                {/* Timezone and House System */}
-                <div className="space-y-4">
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">
-                      Часовой пояс
-                    </label>
-                    <input
-                      type="text"
-                      value={formData.timezone}
-                      className="w-full px-4 py-2 bg-gray-100 border border-gray-300 rounded-lg text-gray-600"
-                      readOnly
-                    />
-                  </div>
-
-                  <div>
-                    <label htmlFor="houseSystem" className="block text-sm font-medium text-gray-700 mb-2">
-                      Система домов
-                    </label>
-                    <select
-                      id="houseSystem"
-                      value={formData.houseSystem}
-                      onChange={(e) => setFormData(prev => ({ 
-                        ...prev, 
-                        houseSystem: e.target.value as 'P' | 'W' | 'K' | 'E'
-                      }))}
-                      className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                    >
-                      {HOUSE_SYSTEMS.map(system => (
-                        <option key={system.value} value={system.value}>
-                          {system.label}
-                        </option>
-                      ))}
-                    </select>
-                  </div>
-                </div>
+              )}
+              
+              {/* Система домов */}
+              <div>
+                <label className="text-sm font-medium text-neutral-700 mb-2 block">
+                  Система домов
+                </label>
+                <select
+                  value={formData.houseSystem}
+                  onChange={(e) => handleInputChange('houseSystem', e.target.value)}
+                  className="w-full px-4 py-3 bg-white border border-neutral-200 rounded-xl focus:border-primary-400 focus:ring-2 focus:ring-primary-100 transition-all"
+                >
+                  {houseSystems.map(system => (
+                    <option key={system.value} value={system.value}>
+                      {system.label}
+                    </option>
+                  ))}
+                </select>
               </div>
             </div>
           )}
+        </div>
 
-          {/* Error Message */}
-          {error && (
-            <div className="p-4 bg-red-50 border border-red-200 rounded-lg">
-              <p className="text-red-600 text-sm">{error}</p>
-            </div>
-          )}
-
-          {/* Action Buttons */}
-          <div className="flex flex-col sm:flex-row gap-3 pt-4">
-            <button
-              type="submit"
-              disabled={!isValid || loading}
-              className="flex-1 bg-blue-600 text-white py-3 px-6 rounded-lg font-medium hover:bg-blue-700 focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
-            >
-              {loading ? (
-                <span className="flex items-center justify-center">
-                  <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white mr-2"></div>
-                  Рассчитываю...
-                </span>
-              ) : (
-                'Рассчитать карту'
-              )}
-            </button>
-            
-            <button
-              type="button"
-              onClick={handleReset}
-              className="sm:w-auto px-6 py-3 border border-gray-300 text-gray-700 rounded-lg font-medium hover:bg-gray-50 focus:ring-2 focus:ring-gray-500 focus:ring-offset-2 transition-colors"
-            >
-              Новый расчёт
-            </button>
-          </div>
-        </form>
-      </div>
+        {/* Кнопка отправки (для веб-версии) */}
+        <button
+          type="submit"
+          className="w-full bg-gradient-to-r from-primary-500 to-primary-600 text-white font-semibold py-4 rounded-xl hover:shadow-lg transition-all duration-200 mb-20"
+        >
+          Рассчитать карту
+        </button>
+      </form>
     </div>
   );
 }

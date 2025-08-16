@@ -1,121 +1,102 @@
 'use client';
 
-import { useState } from 'react';
+import React, { useState } from 'react';
 import FormCard from '@/components/chart/FormCard';
-import ChartResults from '@/components/chart/ChartResults';
-import { PlaceResult } from '@/lib/geo/geocode';
-
-interface Planet {
-  key: string;
-  lon: number;
-  lat: number;
-  speed: number;
-  sign: string;
-  house: number;
-}
-
-interface Houses {
-  cusps: number[];
-  asc: number;
-  mc: number;
-}
+import Interpretation from '@/components/chart/Interpretation';
+import { useTelegram } from '@/hooks/useTelegram';
 
 interface ChartData {
-  jdUT: number;
-  planets: Planet[];
-  houses: Houses;
-  bigThree: {
-    Sun: string;
-    Moon: string;
-    Ascendant: string;
-  };
-}
-
-interface FormSubmitData {
-  name: string;
-  date: string;
-  time: string;
-  unknownTime: boolean;
-  place: string;
-  selectedPlace: PlaceResult | null;
-  timezone: string;
-  houseSystem: 'P' | 'W' | 'K' | 'E';
-  lat: number;
-  lon: number;
-  tzOffset: number;
+  planets: any[];
+  houses: any[];
+  aspects: any[];
+  interpretation?: any;
 }
 
 export default function ChartPage() {
-  const [loading, setLoading] = useState(false);
-  const [chart, setChart] = useState<ChartData | null>(null);
-  const [error, setError] = useState<string>('');
-  const [userName, setUserName] = useState<string>('');
+  const { hapticFeedback } = useTelegram();
+  const [chartData, setChartData] = useState<ChartData | null>(null);
+  const [isLoading, setIsLoading] = useState(false);
+  const [showForm, setShowForm] = useState(true);
 
-  const handleFormSubmit = async (formData: FormSubmitData) => {
-    setError('');
-    setChart(null);
-    setLoading(true);
-    setUserName(formData.name);
+  const handleFormSubmit = async (formData: any) => {
+    hapticFeedback('impact', 'medium');
+    setIsLoading(true);
 
     try {
-      const response = await fetch('/api/chart', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          date: formData.date,
-          time: formData.time,
-          tzOffset: formData.tzOffset,
-          lat: formData.lat,
-          lon: formData.lon,
-          houseSystem: formData.houseSystem,
-        }),
-      });
+      // Здесь будет вызов API для расчета карты
+      // Пока используем заглушку
+      setTimeout(() => {
+        const mockData: ChartData = {
+          planets: [
+            { name: 'Солнце', sign: 'Близнецы', degree: '21°', house: 10 },
+            { name: 'Луна', sign: 'Скорпион', degree: '15°', house: 3 },
+            { name: 'Меркурий', sign: 'Близнецы', degree: '18°', house: 10 },
+            { name: 'Венера', sign: 'Рак', degree: '25°', house: 11 },
+            { name: 'Марс', sign: 'Лев', degree: '8°', house: 12 },
+            { name: 'Юпитер', sign: 'Стрелец', degree: '12°', house: 4 },
+            { name: 'Сатурн', sign: 'Водолей', degree: '3°', house: 6 },
+          ],
+          houses: [
+            { number: 1, sign: 'Дева', degree: '12°' },
+            { number: 2, sign: 'Весы', degree: '8°' },
+            { number: 3, sign: 'Скорпион', degree: '9°' },
+            { number: 4, sign: 'Стрелец', degree: '13°' },
+            { number: 5, sign: 'Козерог', degree: '18°' },
+            { number: 6, sign: 'Водолей', degree: '17°' },
+            { number: 7, sign: 'Рыбы', degree: '12°' },
+            { number: 8, sign: 'Овен', degree: '8°' },
+            { number: 9, sign: 'Телец', degree: '9°' },
+            { number: 10, sign: 'Близнецы', degree: '13°' },
+            { number: 11, sign: 'Рак', degree: '18°' },
+            { number: 12, sign: 'Лев', degree: '17°' },
+          ],
+          aspects: [
+            { planets: ['Солнце', 'Луна'], type: 'Квадрат', orb: '2°' },
+            { planets: ['Венера', 'Марс'], type: 'Соединение', orb: '3°' },
+            { planets: ['Меркурий', 'Юпитер'], type: 'Трин', orb: '1°' },
+          ],
+          interpretation: {
+            summary: 'Вы обладаете ярким интеллектом и коммуникативными способностями. Солнце в Близнецах в 10 доме указывает на карьеру, связанную с общением и информацией.',
+            personality: 'Любознательная и многогранная личность с глубокими эмоциями (Луна в Скорпионе). Стремление к знаниям и новым впечатлениям.',
+            career: 'Успех в областях, связанных с коммуникациями, медиа, образованием или торговлей. Возможность нескольких карьерных путей.',
+            love: 'В отношениях цените эмоциональную глубину и интеллектуальную совместимость. Венера в Раке говорит о потребности в заботе и безопасности.',
+            health: 'Обратите внимание на нервную систему и дыхательные пути. Полезны медитация и дыхательные практики.',
+            advice: 'Развивайте свои коммуникативные таланты, но не забывайте о важности эмоциональной глубины и стабильности.'
+          }
+        };
 
-      const result = await response.json();
-      
-      if (!result.ok) {
-        throw new Error(result.error || 'Ошибка расчёта карты');
-      }
-
-      setChart(result.chart);
-    } catch (err: unknown) {
-      const errorMessage = err instanceof Error ? err.message : 'Неизвестная ошибка';
-      setError(errorMessage);
-    } finally {
-      setLoading(false);
+        setChartData(mockData);
+        setShowForm(false);
+        setIsLoading(false);
+        hapticFeedback('notification', 'success');
+      }, 2000);
+    } catch (error) {
+      console.error('Error calculating chart:', error);
+      setIsLoading(false);
+      hapticFeedback('notification', 'error');
     }
   };
 
-  const handleReset = () => {
-    setChart(null);
-    setError('');
-    setUserName('');
+  const handleNewChart = () => {
+    hapticFeedback('impact', 'light');
+    setChartData(null);
+    setShowForm(true);
   };
 
-  return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-purple-50">
-      <div className="container mx-auto px-4 py-8 max-w-4xl">
-        <div className="space-y-8">
-          {/* Form */}
-          <FormCard
-            onSubmit={handleFormSubmit}
-            loading={loading}
-            error={error}
-            onReset={handleReset}
-          />
-
-          {/* Results */}
-          {(loading || chart) && (
-            <ChartResults
-              data={chart!}
-              name={userName}
-              isLoading={loading}
-            />
-          )}
+  if (isLoading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-gradient-to-b from-neutral-50 to-white">
+        <div className="text-center">
+          <div className="w-16 h-16 border-4 border-primary-200 border-t-primary-600 rounded-full animate-spin mx-auto mb-4"></div>
+          <p className="text-neutral-600">Рассчитываю вашу натальную карту...</p>
         </div>
       </div>
-    </div>
-  );
+    );
+  }
+
+  if (!showForm && chartData) {
+    return <Interpretation data={chartData} onNewChart={handleNewChart} />;
+  }
+
+  return <FormCard onSubmit={handleFormSubmit} />;
 }
