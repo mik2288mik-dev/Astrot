@@ -5,11 +5,51 @@ import FormCard from '@/components/chart/FormCard';
 import Interpretation from '@/components/chart/Interpretation';
 import { useTelegram } from '@/hooks/useTelegram';
 
+interface Planet {
+  name: string;
+  sign: string;
+  degree: string;
+  house: number;
+}
+
+interface House {
+  number: number;
+  sign: string;
+  degree: string;
+}
+
+interface Aspect {
+  planets: [string, string];
+  type: string;
+  orb: string;
+}
+
+interface ChartInterpretation {
+  summary: string;
+  personality: string;
+  career: string;
+  love: string;
+  health: string;
+  advice: string;
+}
+
 interface ChartData {
-  planets: any[];
-  houses: any[];
-  aspects: any[];
-  interpretation?: any;
+  planets: Planet[];
+  houses: House[];
+  aspects: Aspect[];
+  interpretation?: ChartInterpretation;
+}
+
+interface FormData {
+  name: string;
+  birthDate: string;
+  birthTime: string;
+  birthPlace: string;
+  latitude?: number;
+  longitude?: number;
+  timezone?: string;
+  houseSystem: string;
+  unknownTime: boolean;
 }
 
 export default function ChartPage() {
@@ -18,11 +58,14 @@ export default function ChartPage() {
   const [isLoading, setIsLoading] = useState(false);
   const [showForm, setShowForm] = useState(true);
 
-  const handleFormSubmit = async (formData: any) => {
+  const handleFormSubmit = async (formData: FormData) => {
     hapticFeedback('impact', 'medium');
     setIsLoading(true);
 
     try {
+      // Логируем данные формы для будущего использования в API
+      console.log('Form data:', formData);
+      
       // Здесь будет вызов API для расчета карты
       // Пока используем заглушку
       setTimeout(() => {

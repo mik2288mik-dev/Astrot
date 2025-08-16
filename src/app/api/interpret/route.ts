@@ -1,8 +1,9 @@
 import { NextRequest, NextResponse } from 'next/server';
 
-export async function POST(request: NextRequest) {
+export async function POST(_request: NextRequest) {
   try {
-    const data = await request.json();
+    // const data = await request.json();
+    // Данные могут быть использованы в будущем для персонализации интерпретации
     
     // Здесь будет интеграция с OpenAI API
     // Пока возвращаем заглушку

@@ -36,7 +36,7 @@ const getDailyCard = () => {
 export default function HomePage() {
   const { firstName, photoUrl } = useTelegramUser();
   const { hapticFeedback } = useTelegram();
-  const [dailyCard, setDailyCard] = useState(getDailyCard());
+  const [dailyCard] = useState(getDailyCard());
   const [greeting, setGreeting] = useState('');
 
   useEffect(() => {
@@ -46,10 +46,6 @@ export default function HomePage() {
     else if (hour < 18) setGreeting('Добрый день');
     else setGreeting('Добрый вечер');
   }, []);
-
-  const handleFunctionClick = () => {
-    hapticFeedback('impact', 'light');
-  };
 
   return (
     <div className="page-wrapper animate-fadeIn">

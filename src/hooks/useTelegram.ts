@@ -93,7 +93,7 @@ interface WebApp {
   readTextFromClipboard: (callback?: (text: string) => void) => void;
   requestWriteAccess: (callback?: (granted: boolean) => void) => void;
   requestContact: (callback?: (shared: boolean) => void) => void;
-  invokeCustomMethod: (method: string, params?: object, callback?: (result: any) => void) => void;
+  invokeCustomMethod: (method: string, params?: object, callback?: (result: unknown) => void) => void;
 }
 
 declare global {
@@ -165,9 +165,9 @@ export function useTelegram() {
   const hapticFeedback = (type: 'impact' | 'notification' | 'selection', style?: string) => {
     if (webApp?.HapticFeedback) {
       if (type === 'impact') {
-        webApp.HapticFeedback.impactOccurred((style as any) || 'medium');
+        webApp.HapticFeedback.impactOccurred((style as 'light' | 'medium' | 'heavy' | 'rigid' | 'soft') || 'medium');
       } else if (type === 'notification') {
-        webApp.HapticFeedback.notificationOccurred((style as any) || 'success');
+        webApp.HapticFeedback.notificationOccurred((style as 'error' | 'success' | 'warning') || 'success');
       } else if (type === 'selection') {
         webApp.HapticFeedback.selectionChanged();
       }
