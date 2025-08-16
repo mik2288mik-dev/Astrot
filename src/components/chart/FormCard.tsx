@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { useTelegramUser, useTelegram } from '@/hooks/useTelegram';
 import { 
   UserIcon,
@@ -30,7 +30,7 @@ interface PlaceSuggestion {
 }
 
 export default function FormCard({ onSubmit }: { onSubmit: (data: FormData) => void }) {
-  const { fullName, userId } = useTelegramUser();
+  const { fullName } = useTelegramUser();
   const { hapticFeedback, showMainButton, hideMainButton } = useTelegram();
   const [showAdvanced, setShowAdvanced] = useState(false);
   const [isSearching, setIsSearching] = useState(false);
@@ -55,19 +55,24 @@ export default function FormCard({ onSubmit }: { onSubmit: (data: FormData) => v
     { value: 'whole', label: 'Целые знаки' }
   ];
 
+  const handleSubmit = useCallback(() => {
+    hapticFeedback('impact', 'medium');
+    onSubmit(formData);
+  }, [hapticFeedback, onSubmit, formData]);
+
   useEffect(() => {
     // Показываем главную кнопку Telegram когда форма заполнена
     const isFormValid = formData.name && formData.birthDate && formData.birthPlace && 
                        (formData.birthTime || formData.unknownTime);
     
     if (isFormValid) {
-      showMainButton('Рассчитать карту', () => handleSubmit());
+      showMainButton('Рассчитать карту', handleSubmit);
     } else {
       hideMainButton();
     }
     
     return () => hideMainButton();
-  }, [formData]);
+  }, [formData, showMainButton, hideMainButton, handleSubmit]);
 
   const searchPlace = async (query: string) => {
     if (query.length < 3) {
@@ -102,12 +107,7 @@ export default function FormCard({ onSubmit }: { onSubmit: (data: FormData) => v
     setSuggestions([]);
   };
 
-  const handleSubmit = () => {
-    hapticFeedback('impact', 'medium');
-    onSubmit(formData);
-  };
-
-  const handleInputChange = (field: keyof FormData, value: any) => {
+  const handleInputChange = (field: keyof FormData, value: string | number | boolean) => {
     hapticFeedback('selection');
     setFormData({ ...formData, [field]: value });
   };

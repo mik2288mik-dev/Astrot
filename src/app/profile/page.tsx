@@ -17,7 +17,7 @@ import {
 } from '@heroicons/react/24/outline';
 
 interface MenuItem {
-  icon: React.ComponentType<{ className?: string }>;
+  icon: React.ComponentType<React.SVGProps<SVGSVGElement>>;
   label: string;
   value?: string;
   action?: () => void;
@@ -26,7 +26,7 @@ interface MenuItem {
 
 export default function ProfilePage() {
   const router = useRouter();
-  const { fullName, firstName, username, photoUrl, userId } = useTelegramUser();
+  const { fullName, username, photoUrl, userId } = useTelegramUser();
   const { hapticFeedback, showAlert, showConfirm } = useTelegram();
 
   const statsItems = [

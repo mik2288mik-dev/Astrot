@@ -14,19 +14,40 @@ import {
   BookmarkIcon
 } from '@heroicons/react/24/outline';
 
+interface Planet {
+  name: string;
+  sign: string;
+  degree: string;
+  house: number;
+}
+
+interface House {
+  number: number;
+  sign: string;
+  degree: string;
+}
+
+interface Aspect {
+  planets: [string, string];
+  type: string;
+  orb: string;
+}
+
+interface ChartInterpretation {
+  summary: string;
+  personality: string;
+  career: string;
+  love: string;
+  health: string;
+  advice: string;
+}
+
 interface InterpretationProps {
   data: {
-    planets: any[];
-    houses: any[];
-    aspects: any[];
-    interpretation?: {
-      summary: string;
-      personality: string;
-      career: string;
-      love: string;
-      health: string;
-      advice: string;
-    };
+    planets: Planet[];
+    houses: House[];
+    aspects: Aspect[];
+    interpretation?: ChartInterpretation;
   };
   onNewChart: () => void;
 }
@@ -37,7 +58,7 @@ export default function Interpretation({ data, onNewChart }: InterpretationProps
   React.useEffect(() => {
     showMainButton('Новый расчет', onNewChart);
     return () => hideMainButton();
-  }, []);
+  }, [onNewChart, showMainButton, hideMainButton]);
 
   const handleShare = () => {
     hapticFeedback('impact', 'light');
@@ -125,7 +146,7 @@ export default function Interpretation({ data, onNewChart }: InterpretationProps
               Основные показатели
             </h2>
             <div className="grid grid-cols-2 gap-3">
-              {data.planets.slice(0, 4).map((planet: any, index: number) => (
+              {data.planets.slice(0, 4).map((planet: Planet, index: number) => (
                 <div key={index} className="bg-white/70 p-3 rounded-xl">
                   <p className="text-xs text-neutral-600">{planet.name}</p>
                   <p className="text-sm font-semibold text-neutral-800">
@@ -144,7 +165,7 @@ export default function Interpretation({ data, onNewChart }: InterpretationProps
             Планеты в знаках
           </h2>
           <div className="bg-white rounded-2xl border border-neutral-100 overflow-hidden">
-            {data.planets.map((planet: any, index: number) => (
+            {data.planets.map((planet: Planet, index: number) => (
               <div
                 key={index}
                 className={`flex items-center justify-between p-4 ${
@@ -176,7 +197,7 @@ export default function Interpretation({ data, onNewChart }: InterpretationProps
             Дома гороскопа
           </h2>
           <div className="grid grid-cols-2 gap-3">
-            {data.houses.map((house: any, index: number) => (
+            {data.houses.map((house: House, index: number) => (
               <div key={index} className="bg-white p-3 rounded-xl border border-neutral-100">
                 <div className="flex items-center justify-between mb-1">
                   <span className="text-xs font-medium text-neutral-600">
@@ -201,7 +222,7 @@ export default function Interpretation({ data, onNewChart }: InterpretationProps
               Основные аспекты
             </h2>
             <div className="space-y-2">
-              {data.aspects.map((aspect: any, index: number) => (
+              {data.aspects.map((aspect: Aspect, index: number) => (
                 <div key={index} className="bg-white p-3 rounded-xl border border-neutral-100">
                   <div className="flex items-center justify-between">
                     <div className="flex items-center gap-2">

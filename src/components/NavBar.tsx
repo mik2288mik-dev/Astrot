@@ -19,8 +19,8 @@ import {
 interface NavItem {
   href: string;
   label: string;
-  icon: React.ComponentType<{ className?: string }>;
-  activeIcon: React.ComponentType<{ className?: string }>;
+  icon: React.ComponentType<React.SVGProps<SVGSVGElement>>;
+  activeIcon: React.ComponentType<React.SVGProps<SVGSVGElement>>;
 }
 
 const navItems: NavItem[] = [
