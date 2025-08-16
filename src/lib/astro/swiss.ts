@@ -1,153 +1,79 @@
 import path from 'node:path';
-// Lazy load native module to avoid requiring it at build time
-let swe: any;
-function getSwe() {
-  // eslint-disable-next-line @typescript-eslint/no-var-requires
-  return swe ?? (swe = require('swisseph'));
-}
+import * as swe from 'swisseph';
 
-export type BirthData = {
+export type BirthInput = {
   date: string;      // 'YYYY-MM-DD'
-  time: string;      // 'HH:mm' (локальное время места рождения)
-  tzOffset: number;  // смещение от UTC в часах, напр. +3 => 3, -5 => -5
-  lat: number;       // широта, напр. 55.7558
-  lon: number;       // долгота, напр. 37.6173 (восток +, запад -)
-  houseSystem?: string | undefined; // 'P' (Placidus) по умолчанию
+  time: string;      // 'HH:mm'
+  tzOffset: number;  // часы от UTC (Москва лето = 3)
+  lat: number;
+  lon: number;
+  houseSystem?: 'P'|'W'; // Placidus / Whole Sign
 };
 
 const PLANETS = [
-  { idKey: 'SE_SUN',       key: 'Sun' },
-  { idKey: 'SE_MOON',      key: 'Moon' },
-  { idKey: 'SE_MERCURY',   key: 'Mercury' },
-  { idKey: 'SE_VENUS',     key: 'Venus' },
-  { idKey: 'SE_MARS',      key: 'Mars' },
-  { idKey: 'SE_JUPITER',   key: 'Jupiter' },
-  { idKey: 'SE_SATURN',    key: 'Saturn' },
-  { idKey: 'SE_URANUS',    key: 'Uranus' },
-  { idKey: 'SE_NEPTUNE',   key: 'Neptune' },
-  { idKey: 'SE_PLUTO',     key: 'Pluto' },
-  { idKey: 'SE_TRUE_NODE', key: 'Node' }
+  { id: (swe as any).SE_SUN,       key: 'Sun' },
+  { id: (swe as any).SE_MOON,      key: 'Moon' },
+  { id: (swe as any).SE_MERCURY,   key: 'Mercury' },
+  { id: (swe as any).SE_VENUS,     key: 'Venus' },
+  { id: (swe as any).SE_MARS,      key: 'Mars' },
+  { id: (swe as any).SE_JUPITER,   key: 'Jupiter' },
+  { id: (swe as any).SE_SATURN,    key: 'Saturn' },
+  { id: (swe as any).SE_URANUS,    key: 'Uranus' },
+  { id: (swe as any).SE_NEPTUNE,   key: 'Neptune' },
+  { id: (swe as any).SE_PLUTO,     key: 'Pluto' },
+  { id: (swe as any).SE_TRUE_NODE, key: 'Node' }
 ];
 
-const SIGNS = [
-  'Aries','Taurus','Gemini','Cancer','Leo','Virgo',
-  'Libra','Scorpio','Sagittarius','Capricorn','Aquarius','Pisces'
-];
+const SIGNS = ['Aries','Taurus','Gemini','Cancer','Leo','Virgo','Libra','Scorpio','Sagittarius','Capricorn','Aquarius','Pisces'];
+const signOf = (deg:number)=> SIGNS[Math.floor(((deg%360)+360)%360/30)];
 
-function getSignName(eclipticLongitude: number) {
-  const idx = Math.floor(((eclipticLongitude % 360) + 360) % 360 / 30);
-  return SIGNS[(idx + 12) % 12] ?? 'Aries';
+function toJDUT(date: string, time: string, tz: number){
+  const [Y,M,D] = date.split('-').map(Number);
+  const [h,m] = time.split(':').map(Number);
+  const utcHour = h - tz + (m/60);
+  return Number((swe as any).swe_julday(Y,M,D,utcHour,(swe as any).SE_GREG_CAL));
 }
 
-export function initSwissEphemeris() {
-  const ephePath = path.resolve(process.cwd(), 'ephe');
-  getSwe().swe_set_ephe_path(ephePath);
-}
-
-function toUT(date: string, time: string, tzOffset: number) {
-  const dateParts = date.split('-');
-  const y = Number(dateParts[0] ?? 1970);
-  const m = Number(dateParts[1] ?? 1);
-  const d = Number(dateParts[2] ?? 1);
-  const timeParts = time.split(':');
-  const hh = Number(timeParts[0] ?? 0);
-  const mm = Number(timeParts[1] ?? 0);
-  const local = new Date(Date.UTC(y, m - 1, d, hh, mm));
-  const utMillis = local.getTime() - tzOffset * 3600 * 1000;
-  const ut = new Date(utMillis);
-
-  const Y = ut.getUTCFullYear();
-  const M = ut.getUTCMonth() + 1;
-  const D = ut.getUTCDate();
-  const H = ut.getUTCHours() + ut.getUTCMinutes() / 60 + ut.getUTCSeconds() / 3600;
-
-  const s = getSwe();
-  const jdUT = s.swe_julday(Y, M, D, H, s.SE_GREG_CAL);
-  return { jdUT, ut: { Y, M, D, H } };
-}
-
-export type PlanetPosition = {
-  key: string;
-  lon: number;
-  lat: number;
-  dist: number;
-  speedLon: number;
-  sign: string;
-  house?: number;
-};
-
-export type Houses = {
-  cusps: number[];
-  asc: number;
-  mc: number;
-};
-
-export type NatalChart = {
-  jdUT: number;
-  planets: PlanetPosition[];
-  houses: Houses;
-  bigThree: { Sun: string; Moon: string; Ascendant: string };
-};
-
-export function computeNatalChart(b: BirthData): NatalChart {
-  initSwissEphemeris();
-
-  const { jdUT } = toUT(b.date, b.time, b.tzOffset);
-  const s = getSwe();
-  const flag = s.SEFLG_SWIEPH | s.SEFLG_SPEED;
-
-  const planets: PlanetPosition[] = PLANETS.map(p => {
-    const id = (s as Record<string, number>)[p.idKey] ?? 0;
-    const calc = s.swe_calc_ut(jdUT, id, flag) as any;
-    const lon = Number(calc?.longitude ?? 0);
-    return {
-      key: p.key,
-      lon,
-      lat: Number(calc?.latitude ?? 0),
-      dist: Number(calc?.distance ?? 0),
-      speedLon: Number(calc?.longitudeSpeed ?? 0),
-      sign: getSignName(lon)
-    };
-  });
-
-  const hs = (b.houseSystem ?? 'P').toUpperCase();
-  const houseRes = s.swe_houses(jdUT, b.lat, b.lon, hs) as any;
-
-  const cusps = Array.from({ length: 12 }, (_, i) => Number(houseRes?.houseCusps?.[i + 1] ?? 0));
-  const asc = Number(houseRes?.ascmc?.[0] ?? 0);
-  const mc  = Number(houseRes?.ascmc?.[1] ?? 0);
-
-  const planetWithHouses = planets.map(pl => ({
-    ...pl,
-    house: houseOf(pl.lon, cusps)
-  }));
-
-  const bigThree = {
-    Sun: planetWithHouses.find(p => p.key === 'Sun')!.sign,
-    Moon: planetWithHouses.find(p => p.key === 'Moon')!.sign,
-    Ascendant: getSignName(asc)
-  };
-
-  return {
-    jdUT,
-    planets: planetWithHouses,
-    houses: { cusps, asc, mc },
-    bigThree
-  };
-}
-
-function houseOf(lon: number, cusps: number[]) {
-  const L = (lon + 360) % 360;
-  for (let i = 0; i < 12; i++) {
-    const c1 = cusps[i] ?? 0;
-    const c2 = cusps[(i + 1) % 12] ?? 0;
-    if (betweenOnCircle(L, c1, c2)) return i + 1;
+function inArc(x:number, a:number, b:number){ if (a<=b) return x>=a && x<b; return x>=a || x<b; }
+function houseOf(lon:number, cusps:number[]){
+  const L = ((lon%360)+360)%360;
+  for(let i=0;i<12;i++){
+    const a = ((cusps[i]%360)+360)%360;
+    const b = ((cusps[(i+1)%12]%360)+360)%360;
+    if (inArc(L,a,b)) return i+1;
   }
   return 12;
 }
 
-function betweenOnCircle(L: number, start: number, end: number) {
-  const s = (start + 360) % 360, e = (end + 360) % 360;
-  if (s <= e) return L >= s && L < e;
-  return L >= s || L < e;
+export function computeChart(input: BirthInput){
+  (swe as any).swe_set_ephe_path(path.resolve(process.cwd(),'ephe'));
+
+  const jdUT = toJDUT(input.date, input.time, input.tzOffset);
+  const FLAG = (swe as any).SEFLG_SWIEPH | (swe as any).SEFLG_SPEED;
+
+  const calc = (swe as any).swe_calc_ut;
+  const bodies = PLANETS.map(p=>{
+    const r = calc(jdUT, p.id, FLAG);
+    const lon = Number(r.longitude);
+    return { key:p.key, lon, lat:Number(r.latitude), speed:Number(r.longitudeSpeed), sign:signOf(lon) };
+  });
+
+  const hs = (input.houseSystem ?? 'P').toUpperCase();
+  const H  = (swe as any).swe_houses(jdUT, input.lat, input.lon, hs);
+  const cusps = Array.from({length:12}, (_,i)=> Number(H.houseCusps[i+1]));
+  const asc   = Number(H.ascmc[0]);
+  const mc    = Number(H.ascmc[1]);
+
+  const planets = bodies.map(b => ({ ...b, house: houseOf(b.lon, cusps) }));
+
+  return {
+    jdUT,
+    planets,
+    houses: { cusps, asc, mc },
+    bigThree: {
+      Sun: planets.find(p=>p.key==='Sun')?.sign ?? '',
+      Moon: planets.find(p=>p.key==='Moon')?.sign ?? '',
+      Ascendant: signOf(asc)
+    }
+  };
 }

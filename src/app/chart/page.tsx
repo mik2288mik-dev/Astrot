@@ -1,194 +1,77 @@
-"use client";
+'use client';
+import { useState } from 'react';
 
-import { motion } from 'framer-motion';
-import { Card } from '@/components/ui/card';
-import { MainButton } from '@/components/telegram/main-button';
-import { useMemo, useState } from 'react';
-import { Button } from '@/components/ui/button';
+type Form = { name:string; date:string; time:string; tzOffset:number; place:string; lat:number; lon:number; houseSystem:'P'|'W' }
 
-type PlanetView = { key: string; sign: string; house?: number; lon: number };
+export default function ChartPage(){
+  const [f,setF] = useState<Form>({ name:'Михаил', date:'1989-06-03', time:'23:23', tzOffset:3, place:'Сергиев Посад', lat:56.3159, lon:38.1359, houseSystem:'P' });
+  const [loading,setLoading] = useState(false);
+  const [chart,setChart] = useState<any>(null);
+  const [err,setErr] = useState<string>('');
 
-type ChartView = {
-  bigThree: { Sun: string; Moon: string; Ascendant: string };
-  planets: PlanetView[];
-};
-
-type ResolveResult = {
-  name: string;
-  date: string;
-  time: string;
-  lat: number;
-  lon: number;
-  tz?: string;
-  tzOffset: number;
-  address?: string;
-};
-
-export default function Page() {
-  const [hasData] = useState(false);
-  const text = useMemo(() => (hasData ? 'Обновить данные' : 'Ввести данные рождения'), [hasData]);
-
-  const [loading, setLoading] = useState(false);
-  const [chart, setChart] = useState<ChartView | null>(null);
-  const [interpretation, setInterpretation] = useState<string>('');
-
-  const [name, setName] = useState('Алексей');
-  const [birthDate, setBirthDate] = useState('1995-07-14');
-  const [birthTime, setBirthTime] = useState('10:30');
-  const [place, setPlace] = useState('Москва');
-
-  const [errors, setErrors] = useState<Record<string, string>>({});
-  const [resolved, setResolved] = useState<ResolveResult | null>(null);
-
-  function validate() {
-    const errs: Record<string, string> = {};
-    if (!name.trim()) errs.name = 'Введите имя';
-    if (!/^\d{4}-\d{2}-\d{2}$/.test(birthDate)) errs.birthDate = 'Формат YYYY-MM-DD';
-    if (!/^\d{2}:\d{2}$/.test(birthTime)) errs.birthTime = 'Формат HH:mm';
-    if (!place.trim()) errs.place = 'Укажите место рождения';
-    setErrors(errs);
-    return Object.keys(errs).length === 0;
-  }
-
-  async function resolvePlace(): Promise<ResolveResult> {
-    const res = await fetch('/api/resolve', {
-      method: 'POST',
-      headers: { 'content-type': 'application/json' },
-      body: JSON.stringify({ name, birthDate, birthTime, place })
-    });
-    const json = await res.json();
-    if (!json.ok) throw new Error(json.error || 'Resolve failed');
-    return json.resolved as ResolveResult;
-  }
-
-  async function getNatalReading(input: { date: string; time: string; tzOffset: number; lat: number; lon: number; }) {
-    const chartRes = await fetch('/api/chart', {
-      method: 'POST',
-      headers: { 'content-type': 'application/json' },
-      body: JSON.stringify({ ...input, houseSystem: 'P' })
-    });
-    const chartJson = (await chartRes.json()) as { chart: ChartView };
-    const readRes = await fetch('/api/interpret', {
-      method: 'POST',
-      headers: { 'content-type': 'application/json' },
-      body: JSON.stringify({ chart: chartJson.chart, locale: 'ru', tone: 'friendly' })
-    });
-    const readJson = (await readRes.json()) as { text: string };
-    return { chart: chartJson.chart, text: readJson.text };
-  }
-
-  async function run() {
-    if (!validate()) return;
-    setLoading(true);
-    setInterpretation('');
-    setChart(null);
-    try {
-      const r = await resolvePlace();
-      setResolved(r);
-      const { chart, text } = await getNatalReading({
-        date: r.date,
-        time: r.time,
-        tzOffset: r.tzOffset,
-        lat: r.lat,
-        lon: r.lon
-      });
-      setChart(chart);
-      setInterpretation(text);
-    } catch (e) {
-      setErrors((prev) => ({ ...prev, form: e instanceof Error ? e.message : 'Ошибка' }));
-    } finally {
-      setLoading(false);
-    }
+  async function calc(e?:React.FormEvent){
+    e?.preventDefault(); setErr(''); setChart(null); setLoading(true);
+    try{
+      const r = await fetch('/api/chart',{ method:'POST', headers:{'content-type':'application/json'}, body:JSON.stringify({ date:f.date, time:f.time, tzOffset:f.tzOffset, lat:f.lat, lon:f.lon, houseSystem:f.houseSystem }) });
+      const j = await r.json(); if(!j.ok) throw new Error(j.error || 'calc error'); setChart(j.chart);
+    }catch(e:any){ setErr(e.message || 'Ошибка расчёта'); } finally{ setLoading(false); }
   }
 
   return (
-    <>
-      <MainButton text={text} visible />
-      <motion.div initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.18 }} className="space-y-4">
-        <Card>
-          <h2 className="text-lg font-semibold mb-2">Данные рождения</h2>
-          <div className="grid grid-cols-1 gap-3">
-            <div>
-              <label className="block text-sm mb-1">Имя</label>
-              <input
-                className="w-full rounded-lg border border-[rgb(var(--astrot-border))] bg-transparent px-3 py-2 text-sm"
-                value={name}
-                onChange={(e) => setName(e.target.value)}
-                placeholder="Имя"
-              />
-              {errors.name && <p className="text-xs text-red-500 mt-1">{errors.name}</p>}
-            </div>
-            <div className="grid grid-cols-2 gap-3">
-              <div>
-                <label className="block text-sm mb-1">Дата рождения</label>
-                <input
-                  className="w-full rounded-lg border border-[rgb(var(--astrot-border))] bg-transparent px-3 py-2 text-sm"
-                  value={birthDate}
-                  onChange={(e) => setBirthDate(e.target.value)}
-                  placeholder="YYYY-MM-DD"
-                />
-                {errors.birthDate && <p className="text-xs text-red-500 mt-1">{errors.birthDate}</p>}
-              </div>
-              <div>
-                <label className="block text-sm mb-1">Время рождения</label>
-                <input
-                  className="w-full rounded-lg border border-[rgb(var(--astrot-border))] bg-transparent px-3 py-2 text-sm"
-                  value={birthTime}
-                  onChange={(e) => setBirthTime(e.target.value)}
-                  placeholder="HH:mm"
-                />
-                {errors.birthTime && <p className="text-xs text-red-500 mt-1">{errors.birthTime}</p>}
-              </div>
-            </div>
-            <div>
-              <label className="block text-sm mb-1">Место рождения</label>
-              <input
-                className="w-full rounded-lg border border-[rgb(var(--astrot-border))] bg-transparent px-3 py-2 text-sm"
-                value={place}
-                onChange={(e) => setPlace(e.target.value)}
-                placeholder="Город, страна"
-              />
-              {errors.place && <p className="text-xs text-red-500 mt-1">{errors.place}</p>}
-            </div>
-            {resolved && (
-              <div className="text-xs text-astrot-muted">
-                Определено: {resolved.address || '—'} {resolved.tz ? `(часовой пояс: ${resolved.tz})` : ''}
-              </div>
-            )}
-            {errors.form && <div className="text-xs text-red-500">{errors.form}</div>}
-            <div className="flex justify-end">
-              <Button onClick={run} disabled={loading}>
-                {loading ? 'Считаю…' : 'Рассчитать и интерпретировать'}
-              </Button>
-            </div>
+    <main className="page">
+      <section className="card" style={{gap:12}}>
+        <h2 style={{fontSize:22, fontWeight:800}}>Данные рождения</h2>
+        <form onSubmit={calc} style={{display:'grid', gap:12, gridTemplateColumns:'1fr 1fr'}}>
+          <div style={{gridColumn:'1 / -1'}}><input placeholder="Имя" value={f.name} onChange={e=>setF({...f,name:e.target.value})}/></div>
+          <div><label>Дата</label><input type="date" value={f.date} onChange={e=>setF({...f,date:e.target.value})} required/></div>
+          <div><label>Время</label><input type="time" value={f.time} onChange={e=>setF({...f,time:e.target.value})} required/></div>
+          <div><label>Место (текст)</label><input value={f.place} onChange={e=>setF({...f,place:e.target.value})}/></div>
+          <div><label>Часовой пояс (часы)</label><input type="number" step="1" min={-14} max={14} value={f.tzOffset} onChange={e=>setF({...f,tzOffset:Number(e.target.value)})}/></div>
+          <div><label>Широта</label><input type="number" step="0.0001" min={-90} max={90} value={f.lat} onChange={e=>setF({...f,lat:Number(e.target.value)})}/></div>
+          <div><label>Долгота</label><input type="number" step="0.0001" min={-180} max={180} value={f.lon} onChange={e=>setF({...f,lon:Number(e.target.value)})}/></div>
+          <div><label>Дома</label><select value={f.houseSystem} onChange={e=>setF({...f,houseSystem:e.target.value as any})}><option value="P">Placidus</option><option value="W">Whole sign</option></select></div>
+          <div style={{gridColumn:'1 / -1', display:'flex', gap:12}}>
+            <button className="btn" type="submit" disabled={loading}>{loading ? 'Считаю…' : 'Рассчитать'}</button>
+            {err && <span style={{color:'#ff6b6b'}}>{err}</span>}
           </div>
-        </Card>
+        </form>
+      </section>
 
-        {chart && (
-          <Card>
-            <h3 className="text-lg font-semibold">Большая тройка</h3>
-            <p className="text-sm">Солнце: <b>{chart.bigThree.Sun}</b></p>
-            <p className="text-sm">Луна: <b>{chart.bigThree.Moon}</b></p>
-            <p className="text-sm">Асцендент: <b>{chart.bigThree.Ascendant}</b></p>
+      {chart && (
+        <section className="card" style={{gap:12}}>
+          <h3 style={{fontSize:20, fontWeight:800}}>Итоги</h3>
+          <div style={{display:'grid', gridTemplateColumns:'repeat(3,1fr)', gap:8}}>
+            <Mini title="Солнце" value={chart.bigThree.Sun}/>
+            <Mini title="Луна" value={chart.bigThree.Moon}/>
+            <Mini title="Асцендент" value={chart.bigThree.Ascendant}/>
+          </div>
+          <h4 style={{marginTop:8}}>Планеты</h4>
+          <ul style={{lineHeight:1.6}}>
+            {chart.planets.map((p:any)=>(
+              <li key={p.key}>{p.key}: {p.sign}, дом {p.house} — {p.lon.toFixed(2)}°</li>
+            ))}
+          </ul>
+          <h4 style={{marginTop:8}}>Дома</h4>
+          <ul style={{lineHeight:1.6}}>
+            {chart.houses.cusps.map((c:number,i:number)=>(<li key={i+1}>{i+1} дом: {c.toFixed(2)}°</li>))}
+            <li>ASC: {chart.houses.asc.toFixed(2)}°</li>
+            <li>MC: {chart.houses.mc.toFixed(2)}°</li>
+          </ul>
+        </section>
+      )}
+    </main>
+  );
+}
 
-            <h4 className="mt-2 font-medium">Планеты</h4>
-            <ul className="list-disc pl-4">
-              {chart.planets.map((p) => (
-                <li key={p.key} className="text-sm">
-                  {p.key}: {p.sign} — дом {p.house} ({p.lon.toFixed(2)}°)
-                </li>
-              ))}
-            </ul>
-          </Card>
-        )}
-
-        {interpretation && (
-          <Card>
-            <h3 className="text-lg font-semibold mb-1">Интерпретация</h3>
-            <div className="whitespace-pre-wrap text-sm">{interpretation}</div>
-          </Card>
-        )}
-      </motion.div>
-    </>
+function Mini({title,value}:{title:string; value:string}){
+  return (
+    <div style={{
+      borderRadius:14, padding:'10px 12px',
+      background:'color-mix(in oklab, var(--bg) 88%, #000)',
+      border:'1px solid color-mix(in oklab, var(--bg) 60%, #fff)'
+    }}>
+      <div style={{fontSize:12, color:'var(--hint)'}}>{title}</div>
+      <div style={{fontSize:16, fontWeight:800}}>{value}</div>
+    </div>
   );
 }

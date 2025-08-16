@@ -1,14 +1,11 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   experimental: {
-    serverComponentsExternalPackages: ['swisseph'],
-    outputFileTracingExcludes: {
-      '*': ['ephe-full/**'] // тяжёлое никогда не трейсить
-    },
+    serverExternalPackages: ['swisseph'],
     outputFileTracingIncludes: {
-      '/api/chart': ['ephe/**'],
-      'app/api/chart/route': ['ephe/**']
+      'app/api/chart/route.ts': ['./ephe/**'],
+      'app/api/interpret/route.ts': ['./ephe/**']
     }
   }
 };
-export default nextConfig;
+module.exports = nextConfig;
