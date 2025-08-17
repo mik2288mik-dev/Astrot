@@ -22,24 +22,6 @@ interface ProfileData {
   houseSystem: 'P' | 'W';
 }
 
-// interface ChartData {
-//   planets: Array<{
-//     key: string;
-//     lon: number;
-//     sign: string;
-//     house: number;
-//   }>;
-//   houses: {
-//     asc: number;
-//     mc: number;
-//   };
-//   bigThree: {
-//     Sun: string;
-//     Moon: string;
-//     Ascendant: string;
-//   };
-// }
-
 interface InterpretationData {
   summary: string;
   personality: string;
@@ -50,11 +32,23 @@ interface InterpretationData {
   disclaimers: string[];
 }
 
+interface HoroscopeData {
+  general: string;
+  love: string;
+  career: string;
+  health: string;
+  lucky_numbers: number[];
+  lucky_color: string;
+  advice: string;
+  energy_level: number;
+}
+
 export default function ChartPage() {
   const { userId } = useTelegramUser();
   const router = useRouter();
   const [existingProfile, setExistingProfile] = useState<ProfileData | null>(null);
   const [interpretation, setInterpretation] = useState<InterpretationData | null>(null);
+  const [horoscope, setHoroscope] = useState<HoroscopeData | null>(null);
   const [isLoadingProfile, setIsLoadingProfile] = useState(true);
   const [isLoadingInterpretation, setIsLoadingInterpretation] = useState(false);
   const [isSavingProfile, setIsSavingProfile] = useState(false);
@@ -77,7 +71,7 @@ export default function ChartPage() {
           setExistingProfile(data.profile);
 
           // Автоматически загружаем интерпретацию для существующего профиля
-          await loadInterpretation(userId);
+          await loadInterpretationAndHoroscope(userId);
         } else {
           // Профиль не найден или произошла другая ошибка - показываем форму без сообщения об ошибке
           setShowForm(true);
@@ -93,17 +87,22 @@ export default function ChartPage() {
     loadProfile();
   }, [userId]);
 
-  const loadInterpretation = async (tgId: number) => {
+  const loadInterpretationAndHoroscope = async (tgId: number) => {
     try {
       setIsLoadingInterpretation(true);
       setError(null);
 
-      // Сначала вычисляем карту
-      const chartResponse = await fetch('/api/chart/calc', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ tgId })
-      });
+      // Параллельно вызываем все API
+      const [chartResponse, horoscopeResponse] = await Promise.all([
+        // Вычисляем карту
+        fetch('/api/chart/calc', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ tgId })
+        }),
+        // Получаем гороскоп
+        fetch(`/api/horoscope?tgId=${tgId}`)
+      ]);
 
       if (!chartResponse.ok) {
         throw new Error('Ошибка вычисления карты');
@@ -115,7 +114,7 @@ export default function ChartPage() {
         throw new Error(chartData.error || 'Ошибка вычисления карты');
       }
 
-      // Затем получаем интерпретацию
+      // Получаем интерпретацию на основе карты
       const interpretResponse = await fetch('/api/interpret', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -135,6 +134,22 @@ export default function ChartPage() {
         setInterpretation(interpretData.data);
       } else {
         throw new Error(interpretData.error || 'Ошибка интерпретации карты');
+      }
+
+      // Обрабатываем гороскоп
+      if (horoscopeResponse.ok) {
+        const horoscopeData = await horoscopeResponse.json();
+        if (horoscopeData.success) {
+          // Добавляем данные гороскопа в интерпретацию
+          setHoroscope(horoscopeData.horoscope);
+          // Обновляем today_focus данными из гороскопа
+          if (interpretData.data && horoscopeData.horoscope) {
+            setInterpretation(prev => prev ? {
+              ...prev,
+              today_focus: horoscopeData.horoscope.general || prev.today_focus
+            } : null);
+          }
+        }
       }
 
     } catch (error) {
@@ -161,7 +176,7 @@ export default function ChartPage() {
         throw new Error('Location is required');
       }
 
-      // Сохраняем или обновляем профиль
+      // Сохраняем или обновляем профиль через API
       const method = existingProfile ? 'PUT' : 'POST';
       const response = await fetch('/api/profile', {
         method,
@@ -181,8 +196,8 @@ export default function ChartPage() {
       setExistingProfile(data.profile);
       setShowForm(false);
 
-      // Загружаем интерпретацию
-      await loadInterpretation(profileData.tgId);
+      // Загружаем интерпретацию и гороскоп
+      await loadInterpretationAndHoroscope(profileData.tgId);
 
     } catch (error) {
       console.error('Error saving profile:', error);
@@ -195,6 +210,7 @@ export default function ChartPage() {
   const handleEditProfile = () => {
     setShowForm(true);
     setInterpretation(null);
+    setHoroscope(null);
   };
 
   const handleGoBack = () => {
@@ -203,8 +219,8 @@ export default function ChartPage() {
 
   if (isLoadingProfile) {
     return (
-      <div className="page-wrapper animate-fadeIn min-h-[calc(100vh-140px)] flex flex-col">
-        <div className="flex items-center mb-6">
+      <div className="page-wrapper animate-fadeIn">
+        <div className="flex items-center mb-6 pt-safe">
           <button
             onClick={handleGoBack}
             className="p-2 rounded-full hover:bg-neutral-100 transition-colors mr-3"
@@ -215,7 +231,7 @@ export default function ChartPage() {
         </div>
         
         <div className="max-w-md mx-auto">
-          <div className="bg-white rounded-2xl shadow-lg p-6 animate-pulse">
+          <div className="bg-white rounded-2xl shadow-sm border border-neutral-100 p-6 animate-pulse">
             <div className="h-6 bg-neutral-200 rounded w-48 mx-auto mb-6"></div>
             <div className="space-y-4">
               <div className="h-12 bg-neutral-200 rounded"></div>
@@ -229,8 +245,8 @@ export default function ChartPage() {
   }
 
   return (
-    <div className="page-wrapper animate-fadeIn min-h-[calc(100vh-140px)] flex flex-col">
-      <div className="flex items-center mb-6">
+    <div className="page-wrapper animate-fadeIn">
+      <div className="flex items-center mb-6 pt-safe">
         <button
           onClick={handleGoBack}
           className="p-2 rounded-full hover:bg-neutral-100 transition-colors mr-3"
@@ -262,52 +278,87 @@ export default function ChartPage() {
         />
       ) : existingProfile ? (
         <div className="space-y-6">
-          {/* Профиль */}
-          <div className="max-w-md mx-auto bg-white rounded-2xl shadow-lg p-6 animate-fadeIn">
-            <div className="flex items-center justify-between mb-4">
-              <h2 className="text-lg font-semibold text-neutral-900">Ваш профиль</h2>
-              <button
-                onClick={handleEditProfile}
-                className="text-sm text-purple-600 hover:text-purple-700 transition-colors"
-              >
-                Изменить
-              </button>
-            </div>
-            
-            <div className="space-y-3 text-sm">
-              <div>
-                <span className="text-neutral-500">Имя:</span>
-                <span className="ml-2 font-medium text-neutral-900">{existingProfile.name}</span>
+          {/* Профиль карточка */}
+          <div className="max-w-md mx-auto">
+            <div className="bg-white rounded-2xl shadow-sm border border-neutral-100 p-6 animate-fadeIn">
+              <div className="flex items-center justify-between mb-4">
+                <h2 className="text-lg font-semibold text-neutral-900">Ваши данные</h2>
+                <button
+                  onClick={handleEditProfile}
+                  className="text-sm text-purple-600 hover:text-purple-700 font-medium transition-colors"
+                >
+                  Изменить
+                </button>
               </div>
-              <div>
-                <span className="text-neutral-500">Дата рождения:</span>
-                <span className="ml-2 font-medium text-neutral-900">
-                  {new Date(existingProfile.birthDate).toLocaleDateString('ru-RU')}
-                </span>
-              </div>
-              <div>
-                <span className="text-neutral-500">Время:</span>
-                <span className="ml-2 font-medium text-neutral-900">
-                  {existingProfile.timeUnknown ? 'Неизвестно' : existingProfile.birthTime}
-                </span>
-              </div>
-              <div>
-                <span className="text-neutral-500">Место:</span>
-                <span className="ml-2 font-medium text-neutral-900">{existingProfile.location.name}</span>
+              
+              <div className="grid grid-cols-2 gap-4 text-sm">
+                <div>
+                  <span className="text-neutral-500 block">Имя</span>
+                  <span className="font-medium text-neutral-900">{existingProfile.name}</span>
+                </div>
+                <div>
+                  <span className="text-neutral-500 block">Дата рождения</span>
+                  <span className="font-medium text-neutral-900">
+                    {new Date(existingProfile.birthDate).toLocaleDateString('ru-RU')}
+                  </span>
+                </div>
+                <div>
+                  <span className="text-neutral-500 block">Время</span>
+                  <span className="font-medium text-neutral-900">
+                    {existingProfile.timeUnknown ? 'Неизвестно' : existingProfile.birthTime}
+                  </span>
+                </div>
+                <div>
+                  <span className="text-neutral-500 block">Место</span>
+                  <span className="font-medium text-neutral-900">{existingProfile.location.name}</span>
+                </div>
               </div>
             </div>
           </div>
 
-          {/* Интерпретация */}
+          {/* Интерпретация и результаты */}
           {isLoadingInterpretation ? (
             <SkeletonCards />
           ) : interpretation ? (
-            <InterpretationCards interpretation={interpretation} />
+            <div className="max-w-md mx-auto">
+              <InterpretationCards interpretation={interpretation} />
+              
+              {/* Дополнительная карточка с гороскопом если есть */}
+              {horoscope && (
+                <div className="mt-6 bg-gradient-to-br from-purple-50 to-pink-50 rounded-2xl p-6 border border-purple-100">
+                  <h3 className="text-lg font-semibold text-neutral-900 mb-4">
+                    Ваш гороскоп на сегодня
+                  </h3>
+                  <div className="space-y-3 text-sm">
+                    <div>
+                      <span className="font-medium text-purple-700">Совет дня:</span>
+                      <p className="text-neutral-700 mt-1">{horoscope.advice}</p>
+                    </div>
+                    <div className="flex items-center justify-between pt-3 border-t border-purple-100">
+                      <div>
+                        <span className="text-xs text-neutral-500">Счастливые числа</span>
+                        <div className="flex gap-2 mt-1">
+                          {horoscope.lucky_numbers.map(num => (
+                            <span key={num} className="inline-flex items-center justify-center w-8 h-8 bg-white rounded-full text-purple-600 font-semibold text-sm">
+                              {num}
+                            </span>
+                          ))}
+                        </div>
+                      </div>
+                      <div className="text-right">
+                        <span className="text-xs text-neutral-500">Цвет дня</span>
+                        <div className="text-purple-600 font-medium">{horoscope.lucky_color}</div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              )}
+            </div>
           ) : (
             <div className="max-w-md mx-auto">
               <button
-                onClick={() => loadInterpretation(userId!)}
-                className="w-full bg-gradient-to-r from-purple-600 to-pink-600 text-white font-semibold py-4 px-6 rounded-xl hover:from-purple-700 hover:to-pink-700 transition-all"
+                onClick={() => loadInterpretationAndHoroscope(userId!)}
+                className="w-full bg-gradient-to-r from-purple-600 to-pink-600 text-white font-semibold py-4 px-6 rounded-xl hover:from-purple-700 hover:to-pink-700 transition-all shadow-lg hover:shadow-xl transform hover:-translate-y-0.5"
               >
                 Получить интерпретацию
               </button>
