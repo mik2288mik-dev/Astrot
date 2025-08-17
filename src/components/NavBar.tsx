@@ -41,7 +41,7 @@ export default function NavBar() {
               <div
                 className={`p-2 rounded-xl transition-all duration-200 ${
                   isActive
-                    ? 'bg-gradient-to-br from-pink-300 to-purple-300'
+                    ? 'bg-gradient-to-br from-pink-200 to-purple-200'
                     : 'group-hover:bg-pink-100/60'
                 }`}
               >

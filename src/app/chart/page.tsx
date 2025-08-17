@@ -119,7 +119,7 @@ export default function ChartPage() {
       const interpretResponse = await fetch('/api/interpret', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ 
+        body: JSON.stringify({
           tgId,
           chart: chartData.chart
         })
@@ -130,9 +130,9 @@ export default function ChartPage() {
       }
 
       const interpretData = await interpretResponse.json();
-      
-      if (interpretData.success) {
-        setInterpretation(interpretData.interpretation);
+
+      if (interpretData.ok) {
+        setInterpretation(interpretData.data);
       } else {
         throw new Error(interpretData.error || 'Ошибка интерпретации карты');
       }
@@ -157,21 +157,20 @@ export default function ChartPage() {
     try {
       setIsSavingProfile(true);
       setError(null);
+      if (!profileData.location) {
+        throw new Error('Location is required');
+      }
 
-              if (!profileData.location) {
-          throw new Error('Location is required');
-        }
-
-        // Сохраняем или обновляем профиль
-        const method = existingProfile ? 'PUT' : 'POST';
-        const response = await fetch('/api/profile', {
-          method,
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({
-            ...profileData,
-            location: profileData.location
-          })
-        });
+      // Сохраняем или обновляем профиль
+      const method = existingProfile ? 'PUT' : 'POST';
+      const response = await fetch('/api/profile', {
+        method,
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          ...profileData,
+          location: profileData.location
+        })
+      });
 
       if (!response.ok) {
         const errorData = await response.json();

@@ -5,7 +5,7 @@
 :root {
   /* Telegram viewport */
   --tg-viewport-height: 100dvh;
-  --safe-top: env(safe-area-inset-top);
+  --safe-top: calc(env(safe-area-inset-top) + 16px);
   --safe-bottom: env(safe-area-inset-bottom);
   
   /* Light theme colors */
@@ -82,7 +82,7 @@ body {
 /* Main content area */
 .main-content {
   flex: 1;
-  padding-top: calc(var(--safe-top) + 20px); /* Добавляем отступ от кнопки закрыть Telegram WebApp */
+  padding-top: var(--safe-top); /* Опускаем контент ниже Telegram header */
   padding-bottom: calc(var(--nav-height) + var(--safe-bottom));
   overflow-y: auto;
   -webkit-overflow-scrolling: touch;
