@@ -71,22 +71,19 @@ export default function ChartPage() {
 
       try {
         const response = await fetch(`/api/profile?tgId=${userId}`);
-        
+
         if (response.ok) {
           const data = await response.json();
           setExistingProfile(data.profile);
-          
+
           // Автоматически загружаем интерпретацию для существующего профиля
           await loadInterpretation(userId);
-        } else if (response.status === 404) {
-          // Профиль не найден, показываем форму
-          setShowForm(true);
         } else {
-          throw new Error('Ошибка загрузки профиля');
+          // Профиль не найден или произошла другая ошибка - показываем форму без сообщения об ошибке
+          setShowForm(true);
         }
       } catch (error) {
         console.error('Error loading profile:', error);
-        setError('Ошибка загрузки профиля');
         setShowForm(true);
       } finally {
         setIsLoadingProfile(false);
@@ -207,7 +204,7 @@ export default function ChartPage() {
 
   if (isLoadingProfile) {
     return (
-      <div className="page-wrapper">
+      <div className="page-wrapper animate-fadeIn min-h-[calc(100vh-140px)] flex flex-col">
         <div className="flex items-center mb-6">
           <button
             onClick={handleGoBack}
@@ -233,7 +230,7 @@ export default function ChartPage() {
   }
 
   return (
-    <div className="page-wrapper">
+    <div className="page-wrapper animate-fadeIn min-h-[calc(100vh-140px)] flex flex-col">
       <div className="flex items-center mb-6">
         <button
           onClick={handleGoBack}

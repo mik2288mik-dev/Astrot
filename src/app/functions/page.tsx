@@ -39,7 +39,7 @@ export default function FunctionsPage() {
   const [dailyCard] = useState(getDailyCard());
 
   return (
-    <div className="page-wrapper animate-fadeIn">
+    <div className="page-wrapper animate-fadeIn min-h-[calc(100vh-140px)] flex flex-col">
       {/* Заголовок */}
       <section className="mb-6 text-center">
         <h1 className="text-2xl font-bold text-neutral-900 mb-2">

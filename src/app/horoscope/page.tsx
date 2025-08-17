@@ -80,7 +80,7 @@ export default function HoroscopePage() {
 
   if (error) {
     return (
-      <div className="page-wrapper">
+      <div className="page-wrapper animate-fadeIn min-h-[calc(100vh-140px)] flex flex-col">
         <div className="flex items-center mb-6">
           <button
             onClick={handleGoBack}
@@ -136,7 +136,7 @@ export default function HoroscopePage() {
   }
 
   return (
-    <div className="page-wrapper">
+    <div className="page-wrapper animate-fadeIn min-h-[calc(100vh-140px)] flex flex-col">
       <div className="flex items-center mb-6">
         <button
           onClick={handleGoBack}
