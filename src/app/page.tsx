@@ -110,10 +110,11 @@ export default function HomePage() {
           <button 
             onClick={() => {
               hapticFeedback('impact', 'light');
+              window.location.href = '/horoscope';
             }}
             className="mt-4 w-full bg-white/60 hover:bg-white/80 text-primary-700 font-medium py-2.5 px-4 rounded-xl transition-all duration-200 text-sm"
           >
-            Посмотреть полную карту →
+            Посмотреть гороскоп дня →
           </button>
         </div>
       </section>
