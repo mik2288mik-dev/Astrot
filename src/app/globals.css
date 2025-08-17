@@ -96,6 +96,11 @@ body {
   width: 100%;
 }
 
+/* Safe area padding class */
+.pt-safe {
+  padding-top: var(--safe-top);
+}
+
 /* Card styles */
 .card {
   background: var(--bg-card);
