@@ -19,10 +19,10 @@ export default function FunctionCard({
   return (
     <Link
       href={href}
-      className="flex flex-col items-center justify-center p-4 rounded-2xl bg-white border border-neutral-100 hover:shadow-hover transition-all duration-300 hover:-translate-y-1 group"
+      className="flex flex-col items-center justify-center p-4 rounded-2xl bg-white shadow-sm border border-neutral-100/50 hover:shadow-md hover:border-purple-200/50 transition-all duration-200 hover:scale-[1.02] group active:scale-[0.98]"
     >
       <div
-        className={`w-14 h-14 rounded-xl ${bgColor} flex items-center justify-center mb-2 group-hover:scale-110 transition-transform duration-300`}
+        className={`w-14 h-14 rounded-xl ${bgColor} flex items-center justify-center mb-3 group-hover:scale-110 transition-transform duration-200 shadow-sm`}
       >
         {typeof icon === 'string' ? (
           // eslint-disable-next-line @next/next/no-img-element
@@ -33,7 +33,7 @@ export default function FunctionCard({
           </div>
         )}
       </div>
-      <span className="text-sm font-medium text-neutral-700 text-center">
+      <span className="text-sm font-medium text-neutral-800 text-center leading-tight">
         {title}
       </span>
     </Link>
