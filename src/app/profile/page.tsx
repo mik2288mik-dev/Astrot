@@ -3,18 +3,7 @@
 import React from 'react';
 import { useTelegramUser, useTelegram } from '@/hooks/useTelegram';
 import { useRouter } from 'next/navigation';
-import { 
-  BellIcon,
-  ShieldCheckIcon,
-  QuestionMarkCircleIcon,
-  ArrowRightOnRectangleIcon,
-  CogIcon,
-  StarIcon,
-  HeartIcon,
-  ChartBarIcon,
-  CalendarIcon,
-  UserIcon
-} from '@heroicons/react/24/outline';
+import { BellIcon, ShieldCheckIcon, QuestionMarkCircleIcon, StarIcon, UserIcon } from '@heroicons/react/24/outline';
 
 interface MenuItem {
   icon: React.ComponentType<React.SVGProps<SVGSVGElement>>;
@@ -27,54 +16,23 @@ interface MenuItem {
 export default function ProfilePage() {
   const router = useRouter();
   const { fullName, username, photoUrl, userId } = useTelegramUser();
-  const { hapticFeedback, showAlert, showConfirm } = useTelegram();
-
-  const statsItems = [
-    { icon: ChartBarIcon, label: 'Карт построено', value: '12' },
-    { icon: StarIcon, label: 'Дней в приложении', value: '45' },
-    { icon: HeartIcon, label: 'Избранное', value: '8' },
-  ];
+  const { hapticFeedback } = useTelegram();
 
   const menuItems: MenuItem[] = [
-    { 
-      icon: CalendarIcon, 
-      label: 'Мои данные', 
-      value: '12.06.1994',
-      action: () => router.push('/profile/edit')
+    {
+      icon: BellIcon,
+      label: 'Уведомления',
+      action: () => router.push('/profile/notifications'),
     },
-    { 
-      icon: BellIcon, 
-      label: 'Уведомления', 
-      value: 'Включены',
-      action: () => router.push('/profile/notifications')
-    },
-    { 
-      icon: ShieldCheckIcon, 
+    {
+      icon: ShieldCheckIcon,
       label: 'Конфиденциальность',
-      action: () => router.push('/profile/privacy')
+      action: () => router.push('/profile/privacy'),
     },
-    { 
-      icon: CogIcon, 
-      label: 'Настройки',
-      action: () => router.push('/profile/settings')
-    },
-    { 
-      icon: QuestionMarkCircleIcon, 
+    {
+      icon: QuestionMarkCircleIcon,
       label: 'Помощь и поддержка',
-      action: () => router.push('/profile/help')
-    },
-    { 
-      icon: ArrowRightOnRectangleIcon, 
-      label: 'Выйти',
-      color: 'text-red-500',
-      action: () => {
-        showConfirm('Вы уверены, что хотите выйти?', (confirmed) => {
-          if (confirmed) {
-            hapticFeedback('notification', 'warning');
-            showAlert('Выход выполнен');
-          }
-        });
-      }
+      action: () => router.push('/profile/help'),
     },
   ];
 
@@ -137,26 +95,9 @@ export default function ProfilePage() {
         </div>
       </section>
 
-      {/* Статистика */}
-      <section className="mb-6">
-        <h2 className="text-lg font-semibold text-neutral-800 mb-3">Ваша активность</h2>
-        <div className="grid grid-cols-3 gap-3">
-          {statsItems.map((item, index) => {
-            const Icon = item.icon;
-            return (
-              <div key={index} className="bg-white p-4 rounded-xl border border-neutral-100 text-center">
-                <Icon className="w-6 h-6 text-primary-500 mx-auto mb-2" />
-                <p className="text-lg font-bold text-neutral-900">{item.value}</p>
-                <p className="text-xs text-neutral-500">{item.label}</p>
-              </div>
-            );
-          })}
-        </div>
-      </section>
-
       {/* Меню */}
       <section className="mb-20">
-        <div className="bg-white rounded-2xl border border-neutral-100 overflow-hidden">
+        <div className="bg-white rounded-2xl border border-gray-200 overflow-hidden">
           {menuItems.map((item, index) => {
             const Icon = item.icon;
             return (
@@ -164,7 +105,7 @@ export default function ProfilePage() {
                 key={index}
                 onClick={() => handleMenuClick(item)}
                 className={`w-full flex items-center justify-between p-4 hover:bg-neutral-50 transition-colors ${
-                  index !== menuItems.length - 1 ? 'border-b border-neutral-100' : ''
+                  index !== menuItems.length - 1 ? 'border-b border-gray-200' : ''
                 }`}
               >
                 <div className="flex items-center gap-3">

@@ -3,16 +3,7 @@
 import React, { useEffect, useState } from 'react';
 import FunctionCard, { FunctionGrid } from '@/components/FunctionCard';
 import { useTelegramUser, useTelegram } from '@/hooks/useTelegram';
-import { 
-  MapIcon,
-  SparklesIcon,
-  ChatBubbleLeftRightIcon,
-  HeartIcon,
-  ShoppingBagIcon,
-  MoonIcon,
-  StarIcon,
-  SunIcon
-} from '@heroicons/react/24/outline';
+import { SparklesIcon, MoonIcon, StarIcon, SunIcon } from '@heroicons/react/24/outline';
 
 // Данные для карты дня
 const getDailyCard = () => {
@@ -136,52 +127,46 @@ export default function HomePage() {
         <FunctionGrid>
           <FunctionCard
             href="/chart"
-            icon={<MapIcon className="w-7 h-7" />}
+            icon="/assets/deepsoul/zodiac.svg"
             title="Натальная карта"
-            bgColor="bg-pastel-purple"
-            iconColor="text-primary-600"
+            bgColor="bg-gradient-to-br from-purple-200 to-pink-200"
           />
           <FunctionCard
             href="/horoscope"
-            icon="♈"
+            icon="/assets/deepsoul/star.svg"
             title="Гороскоп"
-            bgColor="bg-pastel-blue"
-            iconColor="text-secondary-600"
+            bgColor="bg-gradient-to-br from-blue-100 to-purple-100"
           />
           <FunctionCard
             href="/chat"
-            icon={<ChatBubbleLeftRightIcon className="w-7 h-7" />}
+            icon="/assets/deepsoul/chat.svg"
             title="AI Астролог"
-            bgColor="bg-pastel-mint"
-            iconColor="text-emerald-600"
+            bgColor="bg-gradient-to-br from-teal-100 to-blue-100"
           />
           <FunctionCard
             href="/tarot"
-            icon="🎴"
+            icon="/assets/deepsoul/tarot.svg"
             title="Таро"
-            bgColor="bg-pastel-peach"
-            iconColor="text-orange-600"
+            bgColor="bg-gradient-to-br from-orange-100 to-pink-100"
           />
           <FunctionCard
             href="/compat"
-            icon={<HeartIcon className="w-7 h-7" />}
+            icon="/assets/deepsoul/hearts.svg"
             title="Совместимость"
-            bgColor="bg-pastel-pink"
-            iconColor="text-pink-600"
+            bgColor="bg-gradient-to-br from-pink-100 to-purple-100"
           />
           <FunctionCard
-            href="/shop"
-            icon={<ShoppingBagIcon className="w-7 h-7" />}
-            title="Магазин"
-            bgColor="bg-pastel-lavender"
-            iconColor="text-purple-600"
+            href="/premium"
+            icon="/assets/deepsoul/crown.svg"
+            title="Премиум"
+            bgColor="bg-gradient-to-br from-purple-100 to-orange-100"
           />
         </FunctionGrid>
       </section>
 
       {/* Промо-блок */}
       <section className="mt-6 mb-20">
-        <div className="bg-gradient-to-r from-primary-50 to-secondary-50 p-4 rounded-2xl border border-primary-100">
+        <div className="bg-gradient-to-r from-purple-200 to-pink-200 p-4 rounded-2xl border border-primary-100">
           <div className="flex items-center gap-3">
             <div className="w-10 h-10 bg-white rounded-xl flex items-center justify-center flex-shrink-0">
               <SparklesIcon className="w-5 h-5 text-primary-600" />
