@@ -88,9 +88,9 @@ export default function ChatPage() {
   };
 
   return (
-    <div className="flex flex-col h-screen bg-gradient-to-b from-neutral-50 to-white">
+    <div className="page-wrapper animate-fadeIn min-h-[calc(100vh-140px)] flex flex-col bg-gradient-to-b from-neutral-50 to-white">
       {/* Header */}
-      <div className="bg-white border-b border-neutral-100 px-4 py-3 flex items-center gap-3">
+      <div className="bg-white border-b border-neutral-100 py-3 flex items-center gap-3">
         <div className="w-10 h-10 bg-gradient-to-br from-primary-400 to-primary-600 rounded-full flex items-center justify-center">
           <SparklesIcon className="w-6 h-6 text-white" />
         </div>
@@ -101,7 +101,7 @@ export default function ChatPage() {
       </div>
 
       {/* Messages */}
-      <div className="flex-1 overflow-y-auto px-4 py-4">
+      <div className="flex-1 overflow-y-auto py-4">
         {messages.length === 1 && (
           <div className="mb-4">
             <p className="text-sm text-neutral-500 mb-3">Популярные вопросы:</p>
@@ -162,7 +162,7 @@ export default function ChatPage() {
       </div>
 
       {/* Input */}
-      <form onSubmit={handleSubmit} className="bg-white border-t border-neutral-100 px-4 py-3 pb-safe">
+      <form onSubmit={handleSubmit} className="bg-white border-t border-neutral-100 py-3 pb-safe">
         <div className="flex items-center gap-2">
           <button
             type="button"

@@ -7,7 +7,12 @@ import { ProfileCard } from '@/components/profile/profile-card';
 
 export default function Page() {
   return (
-    <motion.div initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.2 }} className="space-y-4">
+    <motion.div
+      initial={{ opacity: 0, y: 8 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.2 }}
+      className="page-wrapper animate-fadeIn min-h-[calc(100vh-140px)] flex flex-col space-y-4"
+    >
       <ProfileCard />
       <Card className="py-5">
         <h2 className="text-lg font-semibold">Календарь</h2>

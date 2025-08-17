@@ -45,7 +45,7 @@ export default function ProfilePage() {
   };
 
   return (
-    <div className="page-wrapper animate-fadeIn">
+    <div className="page-wrapper animate-fadeIn min-h-[calc(100vh-140px)] flex flex-col">
       {/* Профиль пользователя */}
       <section className="mb-6">
         <div className="bg-gradient-to-br from-pastel-purple via-pastel-pink to-pastel-peach p-6 rounded-2xl shadow-card">

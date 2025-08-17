@@ -22,10 +22,10 @@ export default function NavBar() {
 
   return (
     <nav
-      className="fixed bottom-0 left-0 right-0 bg-white/96 backdrop-blur-xl border-t border-neutral-200/60 z-50 shadow-nav"
+      className="fixed bottom-0 left-0 right-0 bg-gradient-to-r from-purple-600 to-pink-600 backdrop-blur-xl border-t border-white/20 z-50 shadow-nav text-white"
       style={{ paddingBottom: 'env(safe-area-inset-bottom)' }}
     >
-              <div className="flex items-center justify-around h-[72px] px-2">
+      <div className="flex items-center justify-around h-[72px] px-2">
         {navItems.map((item) => {
           const isActive =
             pathname === item.href || (item.href !== '/' && pathname.startsWith(item.href));
@@ -33,13 +33,13 @@ export default function NavBar() {
             <Link
               key={item.href}
               href={item.href}
-              className="group flex flex-col items-center justify-center flex-1 py-2 px-2 transition-all duration-200 rounded-xl hover:bg-neutral-50/50"
+              className="group flex flex-col items-center justify-center flex-1 py-2 px-2 transition-all duration-200 rounded-xl hover:bg-white/10"
             >
               <div
                 className={`p-2 rounded-xl transition-all duration-200 ${
                   isActive
-                    ? 'bg-gradient-to-br from-purple-200 to-pink-200'
-                    : 'bg-neutral-50/50 group-hover:bg-neutral-100'
+                    ? 'bg-white/20'
+                    : 'bg-white/10 group-hover:bg-white/20'
                 }`}
               >
                 {/* eslint-disable-next-line @next/next/no-img-element */}
@@ -54,8 +54,8 @@ export default function NavBar() {
               <span
                 className={`text-xs mt-1 font-medium transition-all duration-200 ${
                   isActive
-                    ? 'text-primary-600'
-                    : 'text-neutral-500 group-hover:text-neutral-700'
+                    ? 'text-white'
+                    : 'text-white/70 group-hover:text-white'
                 }`}
               >
                 {item.label}
