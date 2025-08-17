@@ -1,145 +1,324 @@
 'use client';
 
-import React, { useState } from 'react';
-import FormCard from '@/components/chart/FormCard';
-import Interpretation from '@/components/chart/Interpretation';
-import { useTelegram } from '@/hooks/useTelegram';
+import React, { useState, useEffect } from 'react';
+import { ArrowLeftIcon } from '@heroicons/react/24/outline';
+import { useTelegramUser } from '@/hooks/useTelegram';
+import ProfileForm from '@/components/ProfileForm';
+import InterpretationCards, { SkeletonCards } from '@/components/InterpretationCards';
+import { useRouter } from 'next/navigation';
 
-interface Planet {
-  name: string;
-  sign: string;
-  degree: string;
-  house: number;
-}
-
-interface House {
-  number: number;
-  sign: string;
-  degree: string;
-}
-
-interface Aspect {
-  planets: [string, string];
-  type: string;
-  orb: string;
-}
-
-interface ChartInterpretation {
-  summary: string;
-  personality: string;
-  career: string;
-  love: string;
-  health: string;
-  advice: string;
-}
-
-interface ChartData {
-  planets: Planet[];
-  houses: House[];
-  aspects: Aspect[];
-  interpretation?: ChartInterpretation;
-}
-
-interface FormData {
+interface ProfileData {
   name: string;
   birthDate: string;
   birthTime: string;
-  birthPlace: string;
-  latitude?: number;
-  longitude?: number;
-  timezone?: string;
-  houseSystem: string;
-  unknownTime: boolean;
+  timeUnknown: boolean;
+  location: {
+    name: string;
+    lat: number;
+    lon: number;
+    timezone: string;
+    tzOffset: number;
+  };
+  houseSystem: 'P' | 'W';
+}
+
+// interface ChartData {
+//   planets: Array<{
+//     key: string;
+//     lon: number;
+//     sign: string;
+//     house: number;
+//   }>;
+//   houses: {
+//     asc: number;
+//     mc: number;
+//   };
+//   bigThree: {
+//     Sun: string;
+//     Moon: string;
+//     Ascendant: string;
+//   };
+// }
+
+interface InterpretationData {
+  summary: string;
+  personality: string;
+  work_money: string;
+  love_social: string;
+  health_energy: string;
+  today_focus: string;
+  disclaimers: string[];
 }
 
 export default function ChartPage() {
-  const { hapticFeedback } = useTelegram();
-  const [chartData, setChartData] = useState<ChartData | null>(null);
-  const [isLoading, setIsLoading] = useState(false);
-  const [showForm, setShowForm] = useState(true);
+  const { userId } = useTelegramUser();
+  const router = useRouter();
+  const [existingProfile, setExistingProfile] = useState<ProfileData | null>(null);
+  const [interpretation, setInterpretation] = useState<InterpretationData | null>(null);
+  const [isLoadingProfile, setIsLoadingProfile] = useState(true);
+  const [isLoadingInterpretation, setIsLoadingInterpretation] = useState(false);
+  const [isSavingProfile, setIsSavingProfile] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+  const [showForm, setShowForm] = useState(false);
 
-  const handleFormSubmit = async (formData: FormData) => {
-    hapticFeedback('impact', 'medium');
-    setIsLoading(true);
+  useEffect(() => {
+    const loadProfile = async () => {
+      if (!userId) {
+        setIsLoadingProfile(false);
+        setShowForm(true);
+        return;
+      }
 
+      try {
+        const response = await fetch(`/api/profile?tgId=${userId}`);
+        
+        if (response.ok) {
+          const data = await response.json();
+          setExistingProfile(data.profile);
+          
+          // Автоматически загружаем интерпретацию для существующего профиля
+          await loadInterpretation(userId);
+        } else if (response.status === 404) {
+          // Профиль не найден, показываем форму
+          setShowForm(true);
+        } else {
+          throw new Error('Ошибка загрузки профиля');
+        }
+      } catch (error) {
+        console.error('Error loading profile:', error);
+        setError('Ошибка загрузки профиля');
+        setShowForm(true);
+      } finally {
+        setIsLoadingProfile(false);
+      }
+    };
+
+    loadProfile();
+  }, [userId]);
+
+  const loadInterpretation = async (tgId: number) => {
     try {
-      // Логируем данные формы для будущего использования в API
-      console.log('Form data:', formData);
-      
-      // Здесь будет вызов API для расчета карты
-      // Пока используем заглушку
-      setTimeout(() => {
-        const mockData: ChartData = {
-          planets: [
-            { name: 'Солнце', sign: 'Близнецы', degree: '21°', house: 10 },
-            { name: 'Луна', sign: 'Скорпион', degree: '15°', house: 3 },
-            { name: 'Меркурий', sign: 'Близнецы', degree: '18°', house: 10 },
-            { name: 'Венера', sign: 'Рак', degree: '25°', house: 11 },
-            { name: 'Марс', sign: 'Лев', degree: '8°', house: 12 },
-            { name: 'Юпитер', sign: 'Стрелец', degree: '12°', house: 4 },
-            { name: 'Сатурн', sign: 'Водолей', degree: '3°', house: 6 },
-          ],
-          houses: [
-            { number: 1, sign: 'Дева', degree: '12°' },
-            { number: 2, sign: 'Весы', degree: '8°' },
-            { number: 3, sign: 'Скорпион', degree: '9°' },
-            { number: 4, sign: 'Стрелец', degree: '13°' },
-            { number: 5, sign: 'Козерог', degree: '18°' },
-            { number: 6, sign: 'Водолей', degree: '17°' },
-            { number: 7, sign: 'Рыбы', degree: '12°' },
-            { number: 8, sign: 'Овен', degree: '8°' },
-            { number: 9, sign: 'Телец', degree: '9°' },
-            { number: 10, sign: 'Близнецы', degree: '13°' },
-            { number: 11, sign: 'Рак', degree: '18°' },
-            { number: 12, sign: 'Лев', degree: '17°' },
-          ],
-          aspects: [
-            { planets: ['Солнце', 'Луна'], type: 'Квадрат', orb: '2°' },
-            { planets: ['Венера', 'Марс'], type: 'Соединение', orb: '3°' },
-            { planets: ['Меркурий', 'Юпитер'], type: 'Трин', orb: '1°' },
-          ],
-          interpretation: {
-            summary: 'Вы обладаете ярким интеллектом и коммуникативными способностями. Солнце в Близнецах в 10 доме указывает на карьеру, связанную с общением и информацией.',
-            personality: 'Любознательная и многогранная личность с глубокими эмоциями (Луна в Скорпионе). Стремление к знаниям и новым впечатлениям.',
-            career: 'Успех в областях, связанных с коммуникациями, медиа, образованием или торговлей. Возможность нескольких карьерных путей.',
-            love: 'В отношениях цените эмоциональную глубину и интеллектуальную совместимость. Венера в Раке говорит о потребности в заботе и безопасности.',
-            health: 'Обратите внимание на нервную систему и дыхательные пути. Полезны медитация и дыхательные практики.',
-            advice: 'Развивайте свои коммуникативные таланты, но не забывайте о важности эмоциональной глубины и стабильности.'
-          }
-        };
+      setIsLoadingInterpretation(true);
+      setError(null);
 
-        setChartData(mockData);
-        setShowForm(false);
-        setIsLoading(false);
-        hapticFeedback('notification', 'success');
-      }, 2000);
+      // Сначала вычисляем карту
+      const chartResponse = await fetch('/api/chart/calc', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ tgId })
+      });
+
+      if (!chartResponse.ok) {
+        throw new Error('Ошибка вычисления карты');
+      }
+
+      const chartData = await chartResponse.json();
+      
+      if (!chartData.ok) {
+        throw new Error(chartData.error || 'Ошибка вычисления карты');
+      }
+
+      // Затем получаем интерпретацию
+      const interpretResponse = await fetch('/api/interpret', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ 
+          tgId,
+          chart: chartData.chart
+        })
+      });
+
+      if (!interpretResponse.ok) {
+        throw new Error('Ошибка интерпретации карты');
+      }
+
+      const interpretData = await interpretResponse.json();
+      
+      if (interpretData.success) {
+        setInterpretation(interpretData.interpretation);
+      } else {
+        throw new Error(interpretData.error || 'Ошибка интерпретации карты');
+      }
+
     } catch (error) {
-      console.error('Error calculating chart:', error);
-      setIsLoading(false);
-      hapticFeedback('notification', 'error');
+      console.error('Error loading interpretation:', error);
+      setError(error instanceof Error ? error.message : 'Неизвестная ошибка');
+    } finally {
+      setIsLoadingInterpretation(false);
     }
   };
 
-  const handleNewChart = () => {
-    hapticFeedback('impact', 'light');
-    setChartData(null);
-    setShowForm(true);
+  const handleProfileSubmit = async (profileData: { 
+    name: string; 
+    birthDate: string; 
+    birthTime: string; 
+    timeUnknown: boolean; 
+    location: { name: string; lat: number; lon: number; timezone: string; tzOffset: number } | null; 
+    houseSystem: 'P' | 'W'; 
+    tgId: number 
+  }) => {
+    try {
+      setIsSavingProfile(true);
+      setError(null);
+
+              if (!profileData.location) {
+          throw new Error('Location is required');
+        }
+
+        // Сохраняем или обновляем профиль
+        const method = existingProfile ? 'PUT' : 'POST';
+        const response = await fetch('/api/profile', {
+          method,
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            ...profileData,
+            location: profileData.location
+          })
+        });
+
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.error || 'Ошибка сохранения профиля');
+      }
+
+      const data = await response.json();
+      setExistingProfile(data.profile);
+      setShowForm(false);
+
+      // Загружаем интерпретацию
+      await loadInterpretation(profileData.tgId);
+
+    } catch (error) {
+      console.error('Error saving profile:', error);
+      setError(error instanceof Error ? error.message : 'Ошибка сохранения профиля');
+    } finally {
+      setIsSavingProfile(false);
+    }
   };
 
-  if (isLoading) {
+  const handleEditProfile = () => {
+    setShowForm(true);
+    setInterpretation(null);
+  };
+
+  const handleGoBack = () => {
+    router.back();
+  };
+
+  if (isLoadingProfile) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-gradient-to-b from-neutral-50 to-white">
-        <div className="text-center">
-          <div className="w-16 h-16 border-4 border-primary-200 border-t-primary-600 rounded-full animate-spin mx-auto mb-4"></div>
-          <p className="text-neutral-600">Рассчитываю вашу натальную карту...</p>
+      <div className="page-wrapper">
+        <div className="flex items-center mb-6">
+          <button
+            onClick={handleGoBack}
+            className="p-2 rounded-full hover:bg-neutral-100 transition-colors mr-3"
+          >
+            <ArrowLeftIcon className="w-6 h-6 text-neutral-700" />
+          </button>
+          <h1 className="text-xl font-bold text-neutral-900">Натальная карта</h1>
+        </div>
+        
+        <div className="max-w-md mx-auto">
+          <div className="bg-white rounded-2xl shadow-lg p-6 animate-pulse">
+            <div className="h-6 bg-neutral-200 rounded w-48 mx-auto mb-6"></div>
+            <div className="space-y-4">
+              <div className="h-12 bg-neutral-200 rounded"></div>
+              <div className="h-12 bg-neutral-200 rounded"></div>
+              <div className="h-12 bg-neutral-200 rounded"></div>
+            </div>
+          </div>
         </div>
       </div>
     );
   }
 
-  if (!showForm && chartData) {
-    return <Interpretation data={chartData} onNewChart={handleNewChart} />;
-  }
+  return (
+    <div className="page-wrapper">
+      <div className="flex items-center mb-6">
+        <button
+          onClick={handleGoBack}
+          className="p-2 rounded-full hover:bg-neutral-100 transition-colors mr-3"
+        >
+          <ArrowLeftIcon className="w-6 h-6 text-neutral-700" />
+        </button>
+        <h1 className="text-xl font-bold text-neutral-900">Натальная карта</h1>
+      </div>
 
-  return <FormCard onSubmit={handleFormSubmit} />;
+      {error && (
+        <div className="max-w-md mx-auto mb-6">
+          <div className="bg-red-50 border border-red-200 rounded-xl p-4 animate-fadeIn">
+            <p className="text-red-800 text-sm">{error}</p>
+            <button
+              onClick={() => setError(null)}
+              className="text-red-600 hover:text-red-700 text-xs mt-2 underline"
+            >
+              Закрыть
+            </button>
+          </div>
+        </div>
+      )}
+
+      {showForm ? (
+        <ProfileForm
+          onSubmit={handleProfileSubmit}
+          initialData={existingProfile ?? undefined}
+          isLoading={isSavingProfile}
+        />
+      ) : existingProfile ? (
+        <div className="space-y-6">
+          {/* Профиль */}
+          <div className="max-w-md mx-auto bg-white rounded-2xl shadow-lg p-6 animate-fadeIn">
+            <div className="flex items-center justify-between mb-4">
+              <h2 className="text-lg font-semibold text-neutral-900">Ваш профиль</h2>
+              <button
+                onClick={handleEditProfile}
+                className="text-sm text-purple-600 hover:text-purple-700 transition-colors"
+              >
+                Изменить
+              </button>
+            </div>
+            
+            <div className="space-y-3 text-sm">
+              <div>
+                <span className="text-neutral-500">Имя:</span>
+                <span className="ml-2 font-medium text-neutral-900">{existingProfile.name}</span>
+              </div>
+              <div>
+                <span className="text-neutral-500">Дата рождения:</span>
+                <span className="ml-2 font-medium text-neutral-900">
+                  {new Date(existingProfile.birthDate).toLocaleDateString('ru-RU')}
+                </span>
+              </div>
+              <div>
+                <span className="text-neutral-500">Время:</span>
+                <span className="ml-2 font-medium text-neutral-900">
+                  {existingProfile.timeUnknown ? 'Неизвестно' : existingProfile.birthTime}
+                </span>
+              </div>
+              <div>
+                <span className="text-neutral-500">Место:</span>
+                <span className="ml-2 font-medium text-neutral-900">{existingProfile.location.name}</span>
+              </div>
+            </div>
+          </div>
+
+          {/* Интерпретация */}
+          {isLoadingInterpretation ? (
+            <SkeletonCards />
+          ) : interpretation ? (
+            <InterpretationCards interpretation={interpretation} />
+          ) : (
+            <div className="max-w-md mx-auto">
+              <button
+                onClick={() => loadInterpretation(userId!)}
+                className="w-full bg-gradient-to-r from-purple-600 to-pink-600 text-white font-semibold py-4 px-6 rounded-xl hover:from-purple-700 hover:to-pink-700 transition-all"
+              >
+                Получить интерпретацию
+              </button>
+            </div>
+          )}
+        </div>
+      ) : null}
+    </div>
+  );
 }
