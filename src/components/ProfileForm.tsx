@@ -216,12 +216,66 @@ export default function ProfileForm({ onSubmit, initialData, isLoading = false }
           className="flex items-center text-sm text-purple-600 hover:text-purple-700 transition-colors"
         >
           <PlusIcon className="w-4 h-4 mr-1" />
-          Дополнительные настройки
+          Дополнительно
           <ChevronDownIcon className={`w-4 h-4 ml-1 transition-transform ${showAdvanced ? 'rotate-180' : ''}`} />
         </button>
 
         {showAdvanced && (
           <div className="space-y-4 p-4 bg-neutral-50 rounded-xl animate-fadeIn">
+            {formData.location ? (
+              <>
+                <div>
+                  <label className="block text-sm font-medium text-neutral-700 mb-2">Координаты</label>
+                  <div className="grid grid-cols-2 gap-4">
+                    <input
+                      type="number"
+                      step="0.01"
+                      min="-90"
+                      max="90"
+                      value={formData.location.lat}
+                      onChange={(e) => setFormData(prev => ({
+                        ...prev,
+                        location: prev.location ? { ...prev.location, lat: parseFloat(e.target.value) } : null
+                      }))}
+                      className="px-4 py-3 border border-neutral-200 rounded-xl focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-colors"
+                      placeholder="Широта"
+                    />
+                    <input
+                      type="number"
+                      step="0.01"
+                      min="-180"
+                      max="180"
+                      value={formData.location.lon}
+                      onChange={(e) => setFormData(prev => ({
+                        ...prev,
+                        location: prev.location ? { ...prev.location, lon: parseFloat(e.target.value) } : null
+                      }))}
+                      className="px-4 py-3 border border-neutral-200 rounded-xl focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-colors"
+                      placeholder="Долгота"
+                    />
+                  </div>
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-neutral-700 mb-2">Часовой пояс (UTC)</label>
+                  <input
+                    type="number"
+                    step="0.5"
+                    min="-14"
+                    max="14"
+                    value={formData.location.tzOffset}
+                    onChange={(e) => setFormData(prev => ({
+                      ...prev,
+                      location: prev.location ? { ...prev.location, tzOffset: parseFloat(e.target.value) } : null
+                    }))}
+                    className="w-full px-4 py-3 border border-neutral-200 rounded-xl focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-colors"
+                    placeholder="например, 3"
+                  />
+                </div>
+              </>
+            ) : (
+              <p className="text-sm text-neutral-500">Сначала выберите место рождения</p>
+            )}
+
             <div>
               <label className="block text-sm font-medium text-neutral-700 mb-2">
                 Система домов
