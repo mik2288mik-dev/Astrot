@@ -5,6 +5,9 @@ import { TelegramViewportProvider } from '@/providers/telegram-viewport';
 import NavBar from '@/components/NavBar';
 import { Inter } from 'next/font/google';
 
+export const runtime = 'nodejs';
+export const dynamic = 'force-dynamic';
+
 const inter = Inter({
   subsets: ['latin', 'cyrillic'],
   weight: ['400', '500', '600', '700'],
