@@ -94,7 +94,7 @@ export default function FunctionsPage() {
           />
           <FunctionCard
             href="/numerology"
-            icon={<span className="text-lg">🔢</span>}
+            icon={<img src="/assets/deepsoul/functions.svg" alt="" className="w-7 h-7" />}
             title="Нумерология"
             bgColor="bg-amber-50"
           />

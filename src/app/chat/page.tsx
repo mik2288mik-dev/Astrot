@@ -28,7 +28,7 @@ export default function ChatPage() {
   const [messages, setMessages] = useState<Message[]>([
     {
       id: '1',
-      text: 'Привет! Я ваш персональный AI астролог. Задайте мне любой вопрос о звездах, планетах или вашей судьбе ✨',
+      text: 'Привет! Я ваш персональный AI астролог. Задайте мне любой вопрос о звездах, планетах или вашей судьбе',
       sender: 'ai',
       timestamp: new Date()
     }
@@ -88,7 +88,7 @@ export default function ChatPage() {
   };
 
   return (
-    <div className="flex flex-col h-screen bg-gradient-to-b from-neutral-50 to-white">
+    <div className="flex flex-col h-screen bg-gradient-to-b from-neutral-50 to-white pt-11">
       {/* Header */}
       <div className="bg-white border-b border-neutral-100 px-4 py-3 flex items-center gap-3">
         <div className="w-10 h-10 bg-gradient-to-br from-primary-400 to-primary-600 rounded-full flex items-center justify-center">

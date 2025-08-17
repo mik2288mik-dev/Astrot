@@ -26,7 +26,7 @@ export default function HoroscopePage() {
   return (
     <main className="min-h-screen bg-gradient-to-br from-[#0E0D1B] via-[#1A1A2E] to-[#0E0D1B] text-white">
       {/* Header */}
-      <div className="px-4 pt-6 pb-4">
+      <div className="px-4 pt-12 pb-4">
         <div className="flex items-center justify-between mb-6">
           <button 
             onClick={() => router.back()}
@@ -107,16 +107,28 @@ export default function HoroscopePage() {
               </p>
               <div className="grid grid-cols-3 gap-3 text-center">
                 <div>
-                  <p className="text-xs text-gray-400">Любовь</p>
-                  <div className="text-lg">💕💕💕💕</div>
+                  <p className="text-xs text-gray-400 mb-2">Любовь</p>
+                  <div className="flex justify-center gap-1">
+                    {[1,2,3,4].map(i => (
+                      <img key={i} src="/assets/deepsoul/hearts.svg" alt="" className="w-4 h-4" />
+                    ))}
+                  </div>
                 </div>
                 <div>
-                  <p className="text-xs text-gray-400">Карьера</p>
-                  <div className="text-lg">⭐⭐⭐⭐⭐</div>
+                  <p className="text-xs text-gray-400 mb-2">Карьера</p>
+                  <div className="flex justify-center gap-1">
+                    {[1,2,3,4,5].map(i => (
+                      <img key={i} src="/assets/deepsoul/star.svg" alt="" className="w-4 h-4" />
+                    ))}
+                  </div>
                 </div>
                 <div>
-                  <p className="text-xs text-gray-400">Здоровье</p>
-                  <div className="text-lg">💪💪💪</div>
+                  <p className="text-xs text-gray-400 mb-2">Здоровье</p>
+                  <div className="flex justify-center gap-1">
+                    {[1,2,3].map(i => (
+                      <img key={i} src="/assets/deepsoul/star.svg" alt="" className="w-4 h-4" />
+                    ))}
+                  </div>
                 </div>
               </div>
             </div>
@@ -132,9 +144,12 @@ export default function HoroscopePage() {
 
             {/* Совет дня */}
             <div className="bg-gradient-to-r from-yellow-600/20 to-orange-600/20 rounded-2xl p-4 backdrop-blur-sm border border-yellow-500/20">
-              <p className="text-sm">
-                💡 <span className="font-semibold">Совет дня:</span> Доверьтесь интуиции и не бойтесь рисковать
-              </p>
+              <div className="flex items-start gap-2">
+                <img src="/assets/deepsoul/star.svg" alt="" className="w-5 h-5 mt-0.5" />
+                <p className="text-sm">
+                  <span className="font-semibold">Совет дня:</span> Доверьтесь интуиции и не бойтесь рисковать
+                </p>
+              </div>
             </div>
           </motion.div>
         )}
