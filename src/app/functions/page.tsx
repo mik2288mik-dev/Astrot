@@ -3,11 +3,7 @@
 import React from 'react';
 import FunctionCard, { FunctionGrid } from '@/components/FunctionCard';
 import { useTelegram } from '@/hooks/useTelegram';
-import { 
-  MapIcon,
-  ChatBubbleLeftRightIcon,
-  HeartIcon,
-  ShoppingBagIcon,
+import {
   CalendarDaysIcon,
   SparklesIcon,
   MoonIcon,
@@ -41,45 +37,39 @@ export default function FunctionsPage() {
         <FunctionGrid>
           <FunctionCard
             href="/chart"
-            icon={<MapIcon className="w-7 h-7" />}
+            icon="/assets/deepsoul/zodiac.svg"
             title="Натальная карта"
-            bgColor="bg-pastel-purple"
-            iconColor="text-primary-600"
+            bgColor="bg-gradient-to-br from-purple-200 to-pink-200"
           />
           <FunctionCard
             href="/horoscope"
-            icon="♈"
+            icon="/assets/deepsoul/star.svg"
             title="Гороскоп"
-            bgColor="bg-pastel-blue"
-            iconColor="text-secondary-600"
+            bgColor="bg-gradient-to-br from-blue-100 to-purple-100"
           />
           <FunctionCard
             href="/chat"
-            icon={<ChatBubbleLeftRightIcon className="w-7 h-7" />}
+            icon="/assets/deepsoul/chat.svg"
             title="AI Астролог"
-            bgColor="bg-pastel-mint"
-            iconColor="text-emerald-600"
+            bgColor="bg-gradient-to-br from-teal-100 to-blue-100"
           />
           <FunctionCard
             href="/tarot"
-            icon="🎴"
+            icon="/assets/deepsoul/tarot.svg"
             title="Таро"
-            bgColor="bg-pastel-peach"
-            iconColor="text-orange-600"
+            bgColor="bg-gradient-to-br from-orange-100 to-pink-100"
           />
           <FunctionCard
             href="/compat"
-            icon={<HeartIcon className="w-7 h-7" />}
+            icon="/assets/deepsoul/hearts.svg"
             title="Совместимость"
-            bgColor="bg-pastel-pink"
-            iconColor="text-pink-600"
+            bgColor="bg-gradient-to-br from-pink-100 to-purple-100"
           />
           <FunctionCard
-            href="/shop"
-            icon={<ShoppingBagIcon className="w-7 h-7" />}
-            title="Магазин"
-            bgColor="bg-pastel-lavender"
-            iconColor="text-purple-600"
+            href="/premium"
+            icon="/assets/deepsoul/crown.svg"
+            title="Премиум"
+            bgColor="bg-gradient-to-br from-purple-100 to-orange-100"
           />
         </FunctionGrid>
       </section>
@@ -92,45 +82,39 @@ export default function FunctionsPage() {
         <FunctionGrid>
           <FunctionCard
             href="/calendar"
-            icon={<CalendarDaysIcon className="w-7 h-7" />}
+            icon={<CalendarDaysIcon className="w-7 h-7 text-secondary-600" />}
             title="Лунный календарь"
             bgColor="bg-secondary-50"
-            iconColor="text-secondary-600"
           />
           <FunctionCard
             href="/transits"
-            icon={<GlobeAltIcon className="w-7 h-7" />}
+            icon={<GlobeAltIcon className="w-7 h-7 text-emerald-600" />}
             title="Транзиты"
             bgColor="bg-emerald-50"
-            iconColor="text-emerald-600"
           />
           <FunctionCard
             href="/numerology"
-            icon="🔢"
+            icon={<span className="text-lg">🔢</span>}
             title="Нумерология"
             bgColor="bg-amber-50"
-            iconColor="text-amber-600"
           />
           <FunctionCard
             href="/dreams"
-            icon={<MoonIcon className="w-7 h-7" />}
+            icon={<MoonIcon className="w-7 h-7 text-indigo-600" />}
             title="Сонник"
             bgColor="bg-indigo-50"
-            iconColor="text-indigo-600"
           />
           <FunctionCard
             href="/meditation"
-            icon={<SparklesIcon className="w-7 h-7" />}
+            icon={<SparklesIcon className="w-7 h-7 text-purple-600" />}
             title="Медитации"
             bgColor="bg-purple-50"
-            iconColor="text-purple-600"
           />
           <FunctionCard
             href="/learn"
-            icon={<AcademicCapIcon className="w-7 h-7" />}
+            icon={<AcademicCapIcon className="w-7 h-7 text-rose-600" />}
             title="Обучение"
             bgColor="bg-rose-50"
-            iconColor="text-rose-600"
           />
         </FunctionGrid>
       </section>
