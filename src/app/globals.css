@@ -81,7 +81,7 @@ body {
 /* Main content area */
 .main-content {
   flex: 1;
-  padding-top: var(--safe-top);
+  padding-top: calc(var(--safe-top) + 44px); /* Добавлен отступ для кнопки закрыть */
   padding-bottom: calc(var(--nav-height) + var(--safe-bottom));
   overflow-y: auto;
   -webkit-overflow-scrolling: touch;

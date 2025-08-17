@@ -22,7 +22,7 @@ export default function FunctionCard({
       className="flex flex-col items-center justify-center p-4 rounded-2xl bg-white border border-neutral-100 hover:shadow-hover transition-all duration-300 hover:-translate-y-1 group"
     >
       <div
-        className={`w-14 h-14 rounded-xl ${bgColor} flex items-center justify-center mb-2 group-hover:scale-110 transition-transform duration-300`}
+        className={`w-14 h-14 rounded-2xl ${bgColor} flex items-center justify-center mb-2 group-hover:scale-110 transition-transform duration-300`}
       >
         {typeof icon === 'string' ? (
           // eslint-disable-next-line @next/next/no-img-element

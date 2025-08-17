@@ -135,7 +135,7 @@ export default function ProfilePage() {
           DeepSoul v1.0.0
         </p>
         <p className="text-xs text-neutral-400 mt-1">
-          Made with ❤️ for Telegram
+          Made with love for Telegram
         </p>
       </section>
     </div>

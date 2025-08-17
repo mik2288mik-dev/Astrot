@@ -36,7 +36,7 @@ export default function NavBar() {
               className="group flex flex-col items-center justify-center flex-1 py-2 px-3 transition-all duration-200"
             >
               <div
-                className={`p-2 rounded-xl transition-all duration-200 ${
+                className={`p-2 rounded-2xl transition-all duration-200 ${
                   isActive
                     ? 'bg-gradient-to-br from-purple-200 to-pink-200'
                     : 'group-hover:bg-neutral-50'
