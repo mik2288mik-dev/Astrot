@@ -1,6 +1,7 @@
 'use client';
 
 import React from 'react';
+import Image from 'next/image';
 import { useTelegramUser, useTelegram } from '@/hooks/useTelegram';
 import { useRouter } from 'next/navigation';
 import { BellIcon, ShieldCheckIcon, QuestionMarkCircleIcon, StarIcon, UserIcon } from '@heroicons/react/24/outline';
@@ -50,9 +51,12 @@ export default function ProfilePage() {
         <div className="bg-gradient-to-br from-pastel-purple via-pastel-pink to-pastel-peach p-6 rounded-2xl shadow-card">
           <div className="flex items-center gap-4 mb-4">
             {photoUrl ? (
-              <img 
-                src={photoUrl} 
+              <Image
+                src={photoUrl}
                 alt={fullName}
+                width={80}
+                height={80}
+                unoptimized
                 className="w-20 h-20 rounded-full border-4 border-white shadow-lg"
               />
             ) : (

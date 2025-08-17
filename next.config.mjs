@@ -12,7 +12,10 @@ const nextConfig = {
   transpilePackages: [
     '@telegram-apps/sdk',
     '@telegram-apps/sdk-react'
-  ]
+  ],
+  eslint: {
+    ignoreDuringBuilds: false,
+  }
 };
 
 export default nextConfig;

@@ -1,11 +1,12 @@
 'use client';
 
 import React, { useEffect, useState } from 'react';
+import Image from 'next/image';
 import { useTelegramUser, useTelegram } from '@/hooks/useTelegram';
 import { StarIcon, SparklesIcon } from '@heroicons/react/24/outline';
 
 export default function HomePage() {
-  const { firstName, lastName, photoUrl } = useTelegramUser();
+  const { firstName, photoUrl } = useTelegramUser();
   const { hapticFeedback } = useTelegram();
   const [greeting, setGreeting] = useState('');
 
@@ -30,9 +31,12 @@ export default function HomePage() {
         <div className="mb-6">
           {photoUrl ? (
             <div className="relative">
-              <img 
-                src={photoUrl} 
+              <Image
+                src={photoUrl}
                 alt={firstName}
+                width={96}
+                height={96}
+                unoptimized
                 className="w-24 h-24 rounded-full border-4 border-white shadow-lg mx-auto"
               />
               <div className="absolute -bottom-2 -right-2 w-8 h-8 bg-gradient-to-br from-purple-500 to-pink-500 rounded-full flex items-center justify-center border-2 border-white">
@@ -78,7 +82,7 @@ export default function HomePage() {
           <div className="flex items-center justify-center gap-2 text-purple-700">
             <StarIcon className="w-5 h-5" />
             <span className="text-sm font-medium">
-              Исследуйте все возможности в разделе "Функции"
+              Исследуйте все возможности в разделе &quot;Функции&quot;
             </span>
           </div>
         </div>
