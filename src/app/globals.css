@@ -8,41 +8,47 @@
   --safe-top: calc(env(safe-area-inset-top) + 16px);
   --safe-bottom: env(safe-area-inset-bottom);
   
-  /* Light theme colors */
-  --bg-primary: #FFFFFF;
-  --bg-secondary: #FAFAFA;
+  /* Light theme colors - Макет */
+  --bg-primary: #FAFBFC;
+  --bg-secondary: #F8F9FA;
   --bg-card: #FFFFFF;
+  --bg-card-hover: #FDFDFD;
   
-  --text-primary: #1A1A1A;
+  --text-primary: #1F2937;
   --text-secondary: #6B7280;
   --text-hint: #9CA3AF;
+  --text-muted: #D1D5DB;
   
-  --accent-primary: #D946EF;
-  --accent-secondary: #E879F9;
-  --accent-light: #F0ABFC;
+  --accent-primary: #7C4DFF;
+  --accent-secondary: #9C88FF;
+  --accent-light: #E1D5FF;
   
-  /* Pastel colors */
-  --pastel-pink: #FFE5EC;
-  --pastel-purple: #E8E3FF;
-  --pastel-blue: #E3F2FF;
-  --pastel-mint: #E5FFF7;
-  --pastel-peach: #FFF0E5;
+  /* Pastel colors - Светлая пастельная гамма */
+  --pastel-pink: #FDF2F8;
+  --pastel-purple: #F3F0FF;
+  --pastel-blue: #EFF6FF;
+  --pastel-mint: #ECFDF5;
+  --pastel-peach: #FEF3E2;
   
   /* Gradients */
   --gradient-primary: linear-gradient(135deg, #E879F9 0%, #C026D3 100%);
   --gradient-secondary: linear-gradient(135deg, #7DD3FC 0%, #0EA5E9 100%);
   --gradient-pastel: linear-gradient(135deg, #FFE5EC 0%, #E8E3FF 100%);
   
-  /* Shadows */
-  --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.04);
-  --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.06);
-  --shadow-lg: 0 8px 24px rgba(0, 0, 0, 0.08);
+  /* Shadows - Мягкие тени */
+  --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.02);
+  --shadow-md: 0 2px 8px rgba(0, 0, 0, 0.04);
+  --shadow-lg: 0 4px 16px rgba(0, 0, 0, 0.06);
   --shadow-hover: 0 6px 20px rgba(0, 0, 0, 0.08);
-  --shadow-nav: 0 -4px 20px rgba(0, 0, 0, 0.06);
+  --shadow-nav: 0 -2px 16px rgba(0, 0, 0, 0.04);
+  --shadow-card: 0 1px 3px rgba(0, 0, 0, 0.02);
   
-  /* Spacing */
-  --nav-height: 72px;
-  --radius: 16px;
+  /* Spacing - Радиусы по макету */
+  --nav-height: 80px;
+  --radius: 20px;
+  --radius-lg: 24px;
+  --radius-card: 16px;
+  --radius-button: 12px;
   
   /* Astrot components */
   --astrot-chip-bg: rgba(139, 69, 19, 0.1);
@@ -62,9 +68,9 @@ html {
 
 body {
   margin: 0;
-  background: var(--bg-primary);
+  background: linear-gradient(180deg, #FAFBFC 0%, #F8F9FA 100%);
   color: var(--text-primary);
-  font-family: 'SF Pro Display', 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  font-family: inherit;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   font-size: 16px;

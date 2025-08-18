@@ -1,25 +1,25 @@
 :root{
-  /* Цвета */
-  --bg-1:#B79CFF; --bg-2:#8EA8FF; --bg-3:#FF9AD6;
-  --text:#1F1F22; --text-2:#5E6170; --on-dark:#FFFFFF;
-  --glass: rgba(255,255,255,.82); --glass-weak: rgba(255,255,255,.68);
-  --accent-1:#7C4DFF; --accent-2:#FF5EAF;
+  /* Цвета - обновлено под макет */
+  --bg-1:#F3F0FF; --bg-2:#EFF6FF; --bg-3:#FDF2F8;
+  --text:#1F2937; --text-2:#6B7280; --on-dark:#FFFFFF;
+  --glass: rgba(255,255,255,.90); --glass-weak: rgba(255,255,255,.75);
+  --accent-1:#7C4DFF; --accent-2:#9C88FF;
 
-  /* Тени/радиусы/скорость */
-  --elev: 0 8px 24px rgba(176,130,255,.18);
-  --r-card:16px; --r-cta:18px; --r-chip:12px;
-  --tabbar-h:72px;
+  /* Тени/радиусы/скорость - мягче */
+  --elev: 0 2px 8px rgba(124,77,255,.08);
+  --r-card:16px; --r-cta:20px; --r-chip:12px;
+  --tabbar-h:80px;
 
-  /* Типографика */
-  --fz-h1:28px; --fz-h2:24px; --fz-body:17px; --fz-small:14px;
+  /* Типографика - Geist */
+  --fz-h1:32px; --fz-h2:24px; --fz-body:16px; --fz-small:14px;
 
   /* Безопасные зоны */
-  --safe-top: calc(env(safe-area-inset-top) + 32px);
-  --safe-bot: calc(env(safe-area-inset-bottom) + 12px);
+  --safe-top: calc(env(safe-area-inset-top) + 24px);
+  --safe-bot: calc(env(safe-area-inset-bottom) + 16px);
 }
 
 /* Базовые утилиты */
-.page{padding-top:var(--safe-top);padding-bottom:calc(var(--tabbar-h)+var(--safe-bot));}
-.h1{font-size:var(--fz-h1);font-weight:600;color:var(--text);}
-.h2{font-size:var(--fz-h2);font-weight:600;color:var(--text);}
-.p{font-size:var(--fz-body);color:var(--text-2);line-height:1.3;}
+.page{padding-top:var(--safe-top);padding-bottom:calc(var(--tabbar-h)+var(--safe-bot));padding-left:20px;padding-right:20px;}
+.h1{font-size:var(--fz-h1);font-weight:700;color:var(--text);line-height:1.2;}
+.h2{font-size:var(--fz-h2);font-weight:600;color:var(--text);line-height:1.3;}
+.p{font-size:var(--fz-body);color:var(--text-2);line-height:1.5;}
