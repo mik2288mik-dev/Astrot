@@ -1,19 +1,90 @@
 'use client';
 import BirthHeader from '../birth/BirthHeader';
-import { formatZodiacSign } from '../../../lib/zodiac/format';
-import { SUN, MOON, ASC } from '../../../lib/texts/signs';
-import { ELEMENT_TEXTS } from '../../../lib/texts/elements';
-import type { NatalResult } from '../../../lib/natal/types';
+import type { NatalResult } from '../../../lib/api/natal';
 import type { BirthData } from '../../../lib/birth/types';
-import { HelpCircle } from '@tabler/icons-react';
+import { IconHelpCircle } from '@tabler/icons-react';
 import { useState } from 'react';
 import { formatBirthLine } from '../../../lib/birth/format';
 
 interface NatalResultProps {
   result: NatalResult;
   birthData: BirthData;
+  onEditBirth?: () => void;
+}
 
-export default function NatalResult({ result, birthData }: NatalResultProps) {
+// Функция форматирования знаков зодиака
+const formatZodiacSign = (sign: string): string => {
+  const signs: Record<string, string> = {
+    'aries': 'Овне',
+    'taurus': 'Тельце',
+    'gemini': 'Близнецах',
+    'cancer': 'Раке',
+    'leo': 'Льве',
+    'virgo': 'Деве',
+    'libra': 'Весах',
+    'scorpio': 'Скорпионе',
+    'sagittarius': 'Стрельце',
+    'capricorn': 'Козероге',
+    'aquarius': 'Водолее',
+    'pisces': 'Рыбах'
+  };
+  return signs[sign] || sign;
+};
+
+// Тексты для знаков
+const SUN: Record<string, string> = {
+  'aries': 'Ты прирожденный лидер с огненной энергией и неукротимым духом.',
+  'taurus': 'Ты ценишь стабильность, красоту и умеешь наслаждаться жизнью.',
+  'gemini': 'Ты любознательный и общительный, всегда открыт новым идеям.',
+  'cancer': 'Ты чуткий и заботливый, семья и дом для тебя особенно важны.',
+  'leo': 'Ты яркая личность с щедрым сердцем и природным обаянием.',
+  'virgo': 'Ты практичный и внимательный к деталям, стремишься к совершенству.',
+  'libra': 'Ты ценишь гармонию, справедливость и красоту во всех проявлениях.',
+  'scorpio': 'Ты глубокий и интенсивный, обладаешь мощной внутренней силой.',
+  'sagittarius': 'Ты свободолюбивый философ, стремящийся к новым горизонтам.',
+  'capricorn': 'Ты целеустремленный и ответственный, умеешь достигать целей.',
+  'aquarius': 'Ты оригинальный мыслитель, стремящийся к прогрессу и свободе.',
+  'pisces': 'Ты творческая и чувствительная душа с богатым воображением.'
+};
+
+const MOON: Record<string, string> = {
+  'aries': 'Твои эмоции яркие и спонтанные, ты быстро реагируешь на события.',
+  'taurus': 'Тебе нужна стабильность и комфорт для эмоционального равновесия.',
+  'gemini': 'Твое настроение переменчиво, ты нуждаешься в общении и новизне.',
+  'cancer': 'Ты глубоко эмоциональный, семья дает тебе чувство безопасности.',
+  'leo': 'Тебе важно признание и восхищение, ты щедр в проявлении чувств.',
+  'virgo': 'Ты заботлив и практичен в эмоциях, помощь другим тебя успокаивает.',
+  'libra': 'Тебе нужна гармония в отношениях для внутреннего покоя.',
+  'scorpio': 'Твои эмоции глубоки и интенсивны, ты чувствуешь все очень остро.',
+  'sagittarius': 'Тебе нужна свобода и приключения для эмоционального благополучия.',
+  'capricorn': 'Ты сдержан в эмоциях, структура и порядок дают тебе покой.',
+  'aquarius': 'Ты независим эмоционально, дружба для тебя очень важна.',
+  'pisces': 'Ты чувствительный и интуитивный, искусство питает твою душу.'
+};
+
+const ASC: Record<string, string> = {
+  'aries': 'Ты производишь впечатление энергичного и решительного человека.',
+  'taurus': 'Ты кажешься спокойным, надежным и основательным.',
+  'gemini': 'Ты выглядишь общительным, любознательным и живым.',
+  'cancer': 'Ты производишь впечатление заботливого и чуткого человека.',
+  'leo': 'Ты выглядишь уверенным, ярким и харизматичным.',
+  'virgo': 'Ты кажешься аккуратным, скромным и внимательным.',
+  'libra': 'Ты производишь впечатление обаятельного и дипломатичного человека.',
+  'scorpio': 'Ты выглядишь загадочным, интенсивным и магнетичным.',
+  'sagittarius': 'Ты кажешься открытым, оптимистичным и авантюрным.',
+  'capricorn': 'Ты производишь впечатление серьезного и ответственного человека.',
+  'aquarius': 'Ты выглядишь оригинальным, независимым и дружелюбным.',
+  'pisces': 'Ты кажешься мечтательным, чувствительным и творческим.'
+};
+
+const ELEMENT_TEXTS: Record<string, string> = {
+  'fire': 'Огненная стихия делает тебя активным, вдохновенным и инициативным.',
+  'earth': 'Земная стихия дает тебе практичность, стабильность и надежность.',
+  'air': 'Воздушная стихия наделяет тебя общительностью, любознательностью и гибкостью ума.',
+  'water': 'Водная стихия дарит тебе чувствительность, интуицию и эмоциональную глубину.'
+};
+
+export default function NatalResult({ result, birthData, onEditBirth: _onEditBirth }: NatalResultProps) {
   const { big3, elements } = result;
   
   // Получаем тексты для знаков
@@ -23,7 +94,7 @@ export default function NatalResult({ result, birthData }: NatalResultProps) {
   
   // Находим доминирующий элемент
   const dominantElement = Object.entries(elements).reduce((max, [element, count]) => 
-    count > max.count ? { element, count } : max,
+    (count as number) > max.count ? { element, count: count as number } : max,
     { element: '', count: 0 }
   );
   
@@ -49,7 +120,7 @@ export default function NatalResult({ result, birthData }: NatalResultProps) {
       className="ml-2 text-neutral-400 hover:text-neutral-600 transition-colors"
       aria-label="Показать подсказку"
     >
-      <HelpCircle size={18} />
+      <IconHelpCircle size={18} />
     </button>
   );
   
