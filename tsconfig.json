@@ -24,7 +24,7 @@
       "@/shared/*": ["src/shared/*"],
       "@/config/*": ["src/config/*"],
       "@/types/*": ["types/*"],
-      "@/styles/*": ["styles/*"]
+      "@/styles/*": ["src/styles/*"]
     },
     "plugins": [{ "name": "next" }],
     "esModuleInterop": true
