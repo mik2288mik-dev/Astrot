@@ -1,30 +1,35 @@
-import { NextRequest, NextResponse } from 'next/server'
-import OpenAI from 'openai'
+import { getOpenAI, getModel, defaultChatOptions } from '@/lib/ai/openai';
 
-export const runtime = 'nodejs'
-export const dynamic = 'force-dynamic'
+export const runtime = 'nodejs';
+export const dynamic = 'force-dynamic';
+export const revalidate = 0;
 
-export async function POST(req: NextRequest) {
+export async function POST(req: Request) {
   try {
-    const body = await req.json()
-    const client = new OpenAI({ apiKey: process.env.OPENAI_API_KEY })
-    const resp = await client.chat.completions.create({
-      model: 'gpt-4o-mini',
-      temperature: 0.7,
+    const openai = getOpenAI();
+    const body = await req.json(); // { natal, topic, depth, locale? }
+
+    const system = [
+      'Пиши простым, тёплым языком.',
+      'Без домов, аспектов и жаргона.',
+      'Ответ строго JSON: { "title": string, "oneLine": string, "content": string[], "suggestions": [{ "label": string, "topic": string, "depth": number }], "wheelFocus"?: { "sign"?: string, "planet"?: "sun"|"moon"|"asc" } }',
+      'Чем выше depth, тем конкретнее советы.'
+    ].join(' ');
+
+    const resp = await openai.chat.completions.create({
+      model: getModel(),            // <-- gpt-4o-mini по умолчанию
+      ...defaultChatOptions,
       messages: [
-        {
-          role: 'system',
-          content:
-            'Ты дружелюбный астролог, объясняй простым языком, отвечай строго в JSON по схеме {summary,personality:{strengths,growth},work_money,love_social,health_energy,today_focus,disclaimers}',
-        },
-        { role: 'user', content: JSON.stringify(body) },
-      ],
-      response_format: { type: 'json_object' },
-    })
-    const text = resp.choices[0]?.message?.content || '{}'
-    return NextResponse.json({ ok: true, data: JSON.parse(text) })
+        { role: 'system', content: system },
+        { role: 'user', content: JSON.stringify(body) }
+      ]
+    });
+
+    const text = resp.choices?.[0]?.message?.content || '{}';
+    return Response.json(JSON.parse(text));
   } catch (e: unknown) {
-    const message = e instanceof Error ? e.message : String(e)
-    return NextResponse.json({ ok: false, error: message }, { status: 500 })
+    console.error('interpret error:', e);
+    const message = e instanceof Error ? e.message : 'OpenAI request failed';
+    return Response.json({ error: message }, { status: 502 });
   }
 }
