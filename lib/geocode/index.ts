@@ -30,7 +30,7 @@ export async function geocodePlace(place: string): Promise<GeocodeResult> {
     const timezone = tz || safeTzLookup(lat, lon);
     const warnings: string[] = [];
     if (!tz) warnings.push('timezone_inferred');
-    return { latitude: lat, longitude: lon, resolvedAddress: address, timezone, timezoneSource: tz ? 'provider' : 'inferred', warnings };
+    return { latitude: lat, longitude: lon, resolvedAddress: address || '', timezone: timezone || 'UTC', timezoneSource: tz ? 'provider' : 'inferred', warnings };
   }
 
   // Nominatim
@@ -45,7 +45,7 @@ export async function geocodePlace(place: string): Promise<GeocodeResult> {
   const address = best.display_name as string | undefined;
   // Nominatim does not return timezone
   const timezone = safeTzLookup(lat, lon);
-  return { latitude: lat, longitude: lon, resolvedAddress: address, timezone, timezoneSource: 'inferred' };
+  return { latitude: lat, longitude: lon, resolvedAddress: address || '', timezone: timezone || 'UTC', timezoneSource: 'inferred' };
 }
 
 export function safeTzLookup(lat: number, lon: number): string | undefined {
