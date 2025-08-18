@@ -43,7 +43,7 @@ export default function MyChartsPage() {
   };
 
   return (
-    <div className="page-wrapper animate-fadeIn min-h-[calc(100vh-140px)] flex flex-col">
+    <div className="page animate-fadeIn min-h-[calc(100vh-140px)] flex flex-col" style={{ ["--page-top" as any]: "calc(var(--safe-top) + 32px)" }}>
       {/* Заголовок */}
       <section className="mb-6 text-center">
         <h1 className="text-2xl font-bold text-neutral-900 mb-2">

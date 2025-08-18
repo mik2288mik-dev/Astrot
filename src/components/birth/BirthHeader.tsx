@@ -1,5 +1,5 @@
 'use client';
-import { formatBirthLine } from '../../../lib/birth/format';
+import { fmtBirth } from '../../../lib/birth/format';
 import type { BirthData } from '../../../lib/birth/types';
 
 export default function BirthHeader({ 
@@ -13,19 +13,21 @@ export default function BirthHeader({
   showEdit?: boolean;
   onEdit?: () => void;
 }) {
+  const handleEdit = () => {
+    if (onEdit) {
+      onEdit();
+    } else {
+      location.assign('/natal');
+    }
+  };
+
   return (
-    <div 
-      className={`rounded-xl flex items-center justify-between ${
-        mini ? 'py-2 px-3 text-sm' : 'py-3 px-4 text-base'
-      }`} 
-      style={{ background: 'var(--astrot-chip-bg)', color: 'var(--astrot-text)' }}
-    >
-      <span>{formatBirthLine(birth)}</span>
-      {showEdit && onEdit && (
+    <div className={`birth-card ${mini ? 'mini' : ''}`}>
+      <div className="birth-line">{fmtBirth(birth)}</div>
+      {(showEdit || !onEdit) && (
         <button 
-          onClick={onEdit}
-          className="text-xs opacity-70 hover:opacity-100 transition-opacity"
-          style={{ color: 'var(--astrot-text)' }}
+          className="birth-edit"
+          onClick={handleEdit}
         >
           Изменить
         </button>

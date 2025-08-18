@@ -63,18 +63,44 @@ export default function ChatPage() {
     setInputText('');
     setIsTyping(true);
 
-    // Имитация ответа AI
-    setTimeout(() => {
+    try {
+      // Получаем активную карту
+      const pinned = (await import('@/lib/charts/store')).ChartsStore.getPinned?.();
+      const payload = { 
+        messages: messages.concat(userMessage).map(m => ({ role: m.sender === 'user' ? 'user' : 'assistant', content: m.text })), 
+        natal: pinned?.result ?? null 
+      };
+      
+      const res = await fetch('/api/astro-chat', { 
+        method: 'POST', 
+        headers: { 'Content-Type': 'application/json' }, 
+        body: JSON.stringify(payload) 
+      });
+      
+      const { reply, error } = await res.json();
+      
       const aiMessage: Message = {
         id: (Date.now() + 1).toString(),
-        text: 'Это интересный вопрос! В данный момент я анализирую положение планет и звезд. Функция AI астролога будет доступна в ближайшем обновлении. А пока вы можете построить свою натальную карту или посмотреть гороскоп на сегодня.',
+        text: error || reply || 'Произошла ошибка при получении ответа',
+        sender: 'ai',
+        timestamp: new Date()
+      };
+      
+      setMessages(prev => [...prev, aiMessage]);
+      setIsTyping(false);
+      hapticFeedback('notification', 'success');
+    } catch (error) {
+      console.error('Chat error:', error);
+      const aiMessage: Message = {
+        id: (Date.now() + 1).toString(),
+        text: 'Извините, произошла ошибка. Попробуйте еще раз.',
         sender: 'ai',
         timestamp: new Date()
       };
       setMessages(prev => [...prev, aiMessage]);
       setIsTyping(false);
-      hapticFeedback('notification', 'success');
-    }, 2000);
+      hapticFeedback('notification', 'error');
+    }
   };
 
   const handleSubmit = (e: React.FormEvent) => {
@@ -88,7 +114,7 @@ export default function ChatPage() {
   };
 
   return (
-    <div className="page-wrapper animate-fadeIn min-h-[calc(100vh-140px)] flex flex-col bg-gradient-to-b from-neutral-50 to-white">
+    <div className="page animate-fadeIn min-h-[calc(100vh-140px)] flex flex-col bg-gradient-to-b from-neutral-50 to-white" style={{ ['--page-top' as any]: 'calc(var(--safe-top) + 32px)' }}>
       {/* Header */}
       <div className="bg-white border-b border-neutral-100 py-3 flex items-center gap-3">
         <div className="w-10 h-10 bg-gradient-to-br from-primary-400 to-primary-600 rounded-full flex items-center justify-center">
