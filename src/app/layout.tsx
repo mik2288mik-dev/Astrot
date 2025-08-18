@@ -1,7 +1,10 @@
 import Script from 'next/script';
 import '@/app/globals.css';
+import '@/styles/tokens.css';
+import '@/styles/safe.css';
 import { TelegramProvider } from '@/providers/telegram-provider';
 import { TelegramViewportProvider } from '@/providers/telegram-viewport';
+import SafeArea from '@/components/layout/SafeArea';
 import NavBar from '@/components/NavBar';
 import { Inter } from 'next/font/google';
 
@@ -27,12 +30,14 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       <body className={inter.className}>
         <TelegramProvider>
           <TelegramViewportProvider>
-            <div className="app-container">
-              <main className="main-content">
-                {children}
-              </main>
-              <NavBar />
-            </div>
+            <SafeArea>
+              <div className="app-container">
+                <main className="main-content">
+                  {children}
+                </main>
+                <NavBar />
+              </div>
+            </SafeArea>
           </TelegramViewportProvider>
         </TelegramProvider>
       </body>

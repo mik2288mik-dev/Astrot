@@ -1,0 +1,48 @@
+.safe-wrap {
+  padding-top: var(--safe-top);
+  padding-bottom: var(--safe-bot);
+}
+
+.page {
+  padding-top: var(--page-top, var(--safe-top));
+  padding-bottom: var(--page-bot, calc(var(--tabbar-h, 72px) + var(--safe-bot)));
+}
+
+.tabbar {
+  position: sticky;
+  bottom: 0;
+  height: var(--tabbar-h);
+  padding-bottom: env(safe-area-inset-bottom);
+  backdrop-filter: blur(10px);
+}
+
+/* Birth card styles */
+.birth-card {
+  position: relative;
+  border-radius: 16px;
+  padding: 14px 44px 14px 14px;
+  background: linear-gradient(180deg, rgba(255,255,255,.7), rgba(255,255,255,.5));
+  box-shadow: 0 8px 24px rgba(176,130,255,.18);
+  color: var(--astrot-text, #2B2B2E);
+}
+
+.birth-card.mini {
+  padding: 10px 40px 10px 12px;
+  font-size: 14px;
+}
+
+.birth-edit {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  font-size: 13px;
+  opacity: .9;
+  background: transparent;
+  border: 0;
+  text-decoration: underline;
+  cursor: pointer;
+}
+
+html, body {
+  overscroll-behavior-y: contain;
+}

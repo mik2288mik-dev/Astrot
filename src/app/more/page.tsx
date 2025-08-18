@@ -11,7 +11,7 @@ export default function Page() {
       initial={{ opacity: 0, y: 8 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.2 }}
-      className="page-wrapper animate-fadeIn min-h-[calc(100vh-140px)] flex flex-col space-y-4"
+      className="page animate-fadeIn min-h-[calc(100vh-140px)] flex flex-col space-y-4"
     >
       <ProfileCard />
       <Card className="py-5">

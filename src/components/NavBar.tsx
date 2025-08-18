@@ -24,11 +24,14 @@ export default function NavBar() {
   const pathname = usePathname();
 
   return (
-    <nav
-      className="fixed bottom-0 left-0 right-0 bg-gradient-to-r from-pink-100 to-purple-100 backdrop-blur-xl border-t border-purple-200 z-50 shadow-nav text-purple-700"
-      style={{ paddingBottom: 'env(safe-area-inset-bottom)' }}
-    >
-      <div className="flex items-center justify-around h-[72px] px-2">
+    <footer className="tabbar">
+      <nav className="fixed bottom-0 left-0 right-0 bg-gradient-to-r from-pink-100 to-purple-100 backdrop-blur-xl border-t border-purple-200 z-50 shadow-nav text-purple-700"
+        style={{ 
+          height: 'var(--tabbar-h)',
+          paddingBottom: 'env(safe-area-inset-bottom)'
+        }}
+      >
+        <div className="flex items-center justify-around h-full px-2">
         {navItems.map((item) => {
           const isActive =
             pathname === item.href || (item.href !== '/' && pathname.startsWith(item.href));
@@ -64,7 +67,8 @@ export default function NavBar() {
             </Link>
           );
         })}
-      </div>
-    </nav>
+        </div>
+      </nav>
+    </footer>
   );
 }
