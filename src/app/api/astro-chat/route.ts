@@ -1,4 +1,5 @@
 import { getOpenAI, getModel } from '@/lib/ai/openai';
+import { toMessage } from '@/lib/utils/errors';
 
 export const runtime = 'nodejs';
 export const dynamic = 'force-dynamic';
@@ -27,6 +28,6 @@ export async function POST(req: Request) {
     return Response.json({ reply: text });
   } catch (e: unknown) {
     console.error('astro-chat error:', e);
-    return Response.json({ error: e?.message || 'OpenAI request failed' }, { status: 502 });
+    return Response.json({ error: toMessage(e) }, { status: 502 });
   }
 }

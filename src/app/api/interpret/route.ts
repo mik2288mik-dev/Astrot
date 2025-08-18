@@ -1,4 +1,5 @@
 import { getOpenAI, getModel, defaultChatOptions } from '@/lib/ai/openai';
+import { toMessage } from '@/lib/utils/errors';
 
 export const runtime = 'nodejs';
 export const dynamic = 'force-dynamic';
@@ -29,7 +30,6 @@ export async function POST(req: Request) {
     return Response.json(JSON.parse(text));
   } catch (e: unknown) {
     console.error('interpret error:', e);
-    const message = e instanceof Error ? e.message : 'OpenAI request failed';
-    return Response.json({ error: message }, { status: 502 });
+    return Response.json({ error: toMessage(e) }, { status: 502 });
   }
 }
