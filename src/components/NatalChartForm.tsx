@@ -89,10 +89,10 @@ export default function NatalChartForm({ onSubmit }: NatalChartFormProps) {
   };
 
   const inputClass = (field: keyof NatalFormData, extra: string = '') =>
-    `w-full p-4 text-lg rounded-2xl border focus:outline-none focus:ring-2 focus:ring-purple-300 ${
+    `w-full px-4 py-2 text-lg rounded-2xl border min-h-[44px] placeholder:text-neutral-500 focus:outline-none focus:ring-2 focus:ring-pastel-purple ${
       touched[field] && errors[field]
-        ? 'border-pink-300 bg-pink-50'
-        : 'border-purple-200 bg-white'
+        ? 'border-pastel-pink bg-pastel-pink/30'
+        : 'border-pastel-purple bg-pastel-cream'
     } ${extra}`;
 
   const selectPlace = (s: PlaceSuggestion) => {
@@ -103,92 +103,119 @@ export default function NatalChartForm({ onSubmit }: NatalChartFormProps) {
   };
 
   return (
-    <form onSubmit={handleSubmit} className="space-y-6 bg-gradient-to-b from-purple-50 to-pink-50 p-8 rounded-3xl shadow-md">
-      <div>
-        <input
-          id="name"
-          type="text"
-          value={form.name}
-          onChange={e => handleChange('name', e.target.value)}
-          onBlur={() => setTouched(t => ({ ...t, name: true }))}
-          placeholder="Имя"
-          className={inputClass('name')}
-        />
-      </div>
-
-      <div>
-        <input
-          id="date"
-          type="date"
-          value={form.birthDate}
-          onChange={e => handleChange('birthDate', e.target.value)}
-          onBlur={() => setTouched(t => ({ ...t, birthDate: true }))}
-          className={inputClass('birthDate')}
-        />
-      </div>
-
-      <div>
-        <input
-          id="time"
-          type="time"
-          value={form.birthTime}
-          onChange={e => handleChange('birthTime', e.target.value)}
-          onBlur={() => setTouched(t => ({ ...t, birthTime: true }))}
-          disabled={form.timeUnknown}
-          className={inputClass('birthTime', form.timeUnknown ? 'disabled:bg-gray-100' : '')}
-        />
-        <label className="mt-2 flex items-center gap-2 text-sm">
+    <form
+      onSubmit={handleSubmit}
+      className="w-[90%] max-w-[320px] mx-auto p-6 pb-8 flex flex-col bg-gradient-to-b from-pastel-purple to-pastel-pink rounded-3xl shadow-soft"
+    >
+      <div className="flex flex-col space-y-5">
+        <div className="flex flex-col">
+          <label htmlFor="name" className="mb-1 text-base text-neutral-800">
+            Имя
+          </label>
           <input
-            type="checkbox"
-            checked={form.timeUnknown}
-            onChange={e => {
-              handleChange('timeUnknown', e.target.checked);
-              if (e.target.checked) handleChange('birthTime', '');
-            }}
+            id="name"
+            type="text"
+            value={form.name}
+            onChange={e => handleChange('name', e.target.value)}
+            onBlur={() => setTouched(t => ({ ...t, name: true }))}
+            placeholder="Введите имя"
+            className={inputClass('name')}
           />
-          <span>Не знаю время</span>
-        </label>
-        {form.timeUnknown && (
-          <p className="text-xs text-neutral-500 mt-1">Будет использовано 12:00</p>
-        )}
-      </div>
+        </div>
 
-      <div className="relative">
-        <input
-          id="place"
-          type="text"
-          value={query}
-          onChange={e => {
-            setQuery(e.target.value);
-            handleChange('location', null);
-          }}
-          onBlur={() => setTouched(t => ({ ...t, location: true }))}
-          placeholder="Место рождения"
-          className={inputClass('location')}
-        />
-        {showSuggestions && suggestions.length > 0 && (
-          <div
-            className="absolute z-10 w-full mt-2 bg-white border border-purple-100 rounded-xl shadow-lg"
-            data-testid="suggestions"
-          >
-            {suggestions.map((s, idx) => (
-              <button
-                key={idx}
-                type="button"
-                onClick={() => selectPlace(s)}
-                className="block w-full text-left px-4 py-2 hover:bg-purple-50"
-                data-testid="suggestion-item"
-              >
-                {s.display_name}
-              </button>
-            ))}
+        <div className="flex flex-col">
+          <label htmlFor="date" className="mb-1 text-base text-neutral-800">
+            Дата рождения
+          </label>
+          <input
+            id="date"
+            type="date"
+            value={form.birthDate}
+            onChange={e => handleChange('birthDate', e.target.value)}
+            onBlur={() => setTouched(t => ({ ...t, birthDate: true }))}
+            className={inputClass('birthDate')}
+          />
+        </div>
+
+        {!form.timeUnknown && (
+          <div className="flex flex-col">
+            <label htmlFor="time" className="mb-1 text-base text-neutral-800">
+              Время рождения
+            </label>
+            <input
+              id="time"
+              type="time"
+              value={form.birthTime}
+              onChange={e => handleChange('birthTime', e.target.value)}
+              onBlur={() => setTouched(t => ({ ...t, birthTime: true }))}
+              className={inputClass('birthTime')}
+            />
           </div>
         )}
+
+        <div className="flex flex-col">
+          <div className="flex items-center">
+            <input
+              id="timeUnknown"
+              type="checkbox"
+              checked={form.timeUnknown}
+              onChange={e => {
+                handleChange('timeUnknown', e.target.checked);
+                if (e.target.checked) handleChange('birthTime', '');
+              }}
+              className="mr-2"
+            />
+            <label htmlFor="timeUnknown" className="text-base text-neutral-800">
+              Не знаю время
+            </label>
+          </div>
+          {form.timeUnknown && (
+            <p className="mt-1 text-xs text-neutral-500">Будет использовано 12:00</p>
+          )}
+        </div>
+
+        <div className="flex flex-col">
+          <label htmlFor="place" className="mb-1 text-base text-neutral-800">
+            Место рождения
+          </label>
+          <div className="relative">
+            <input
+              id="place"
+              type="text"
+              value={query}
+              onChange={e => {
+                setQuery(e.target.value);
+                handleChange('location', null);
+              }}
+              onBlur={() => setTouched(t => ({ ...t, location: true }))}
+              placeholder="Город, страна"
+              className={inputClass('location')}
+            />
+            {showSuggestions && suggestions.length > 0 && (
+              <div
+                className="absolute z-10 w-full mt-2 bg-pastel-cream border border-pastel-purple rounded-xl shadow-lg"
+                data-testid="suggestions"
+              >
+                {suggestions.map((s, idx) => (
+                  <button
+                    key={idx}
+                    type="button"
+                    onClick={() => selectPlace(s)}
+                    className="block w-full text-left px-4 py-2 hover:bg-pastel-purple"
+                    data-testid="suggestion-item"
+                  >
+                    {s.display_name}
+                  </button>
+                ))}
+              </div>
+            )}
+          </div>
+        </div>
       </div>
 
       <button
         type="submit"
-        className="w-full py-4 text-lg font-semibold text-white bg-gradient-to-r from-purple-500 to-pink-500 rounded-2xl hover:from-purple-600 hover:to-pink-600 disabled:opacity-50"
+        className="w-full mt-6 min-h-[44px] text-lg font-semibold text-neutral-800 bg-gradient-to-r from-pastel-purple to-pastel-pink rounded-2xl disabled:opacity-50"
         disabled={errors.name || errors.birthDate || errors.birthTime || errors.location}
       >
         Рассчитать карту
