@@ -6,10 +6,12 @@ import NatalResult from '@/components/natal/NatalResult';
 import { calcNatal } from '../../../lib/api/natal';
 import { notificationOccurred } from '../../../lib/haptics';
 import type { NatalResult as NatalResultType } from '../../../lib/api/natal';
+import type { BirthData } from '../../../lib/birth/types';
 
 export default function NatalPage() {
   const [loading, setLoading] = useState(false);
   const [result, setResult] = useState<NatalResultType | null>(null);
+  const [birthData, setBirthData] = useState<BirthData | null>(null);
   const [error, setError] = useState<string | null>(null);
 
   const handleSubmit = async (data: NatalFormData) => {
@@ -19,7 +21,7 @@ export default function NatalPage() {
     setError(null);
     
     try {
-      const natalInput = {
+      const natalInput: BirthData = {
         name: data.name,
         date: data.birthDate,
         time: data.timeUnknown ? '12:00' : data.birthTime,
@@ -33,6 +35,7 @@ export default function NatalPage() {
       
       const result = await calcNatal(natalInput);
       setResult(result);
+      setBirthData(natalInput);
       notificationOccurred('success');
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Произошла ошибка при расчете');
@@ -67,7 +70,14 @@ export default function NatalPage() {
               ← Назад к форме
             </button>
             
-            <NatalResult result={result} />
+            <NatalResult 
+              result={result} 
+              birthData={birthData!} 
+              onEditBirth={() => {
+                setResult(null);
+                setBirthData(null);
+              }} 
+            />
           </div>
         )}
       </div>

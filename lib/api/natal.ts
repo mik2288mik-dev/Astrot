@@ -1,10 +1,7 @@
-export type NatalInput = {
-  name?: string;
-  date: string;           // 'YYYY-MM-DD'
-  time: string;           // 'HH:mm' (если unknownTime=true — '12:00')
-  unknownTime?: boolean;
-  place: { lat: number; lon: number; displayName: string; tz?: string };
-};
+import type { BirthData } from '../birth/types';
+
+// Используем единую модель BirthData
+export type NatalInput = BirthData;
 
 export type NatalResult = {
   big3: {

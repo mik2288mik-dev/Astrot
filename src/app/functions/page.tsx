@@ -12,7 +12,8 @@ import {
   GlobeAltIcon,
   BookOpenIcon,
   AcademicCapIcon,
-  GiftIcon
+  GiftIcon,
+  ChartBarIcon
 } from '@heroicons/react/24/outline';
 
 // Данные для карты дня
@@ -115,9 +116,15 @@ export default function FunctionsPage() {
         </h2>
         <FunctionGrid>
           <FunctionCard
-            href="/chart"
+            href="/natal"
             icon="/assets/deepsoul/zodiac.svg"
             title="Натальная карта"
+            bgColor="bg-gradient-to-br from-purple-100 to-pink-100"
+          />
+          <FunctionCard
+            href="/my-charts"
+            icon={<ChartBarIcon className="w-7 h-7 text-purple-600" />}
+            title="Мои карты"
             bgColor="bg-gradient-to-br from-purple-100 to-pink-100"
           />
           <FunctionCard
@@ -131,12 +138,6 @@ export default function FunctionsPage() {
             icon="/assets/deepsoul/chat.svg"
             title="AI Астролог"
             bgColor="bg-gradient-to-br from-teal-100 to-blue-100"
-          />
-          <FunctionCard
-            href="/tarot"
-            icon="/assets/deepsoul/tarot.svg"
-            title="Таро"
-            bgColor="bg-gradient-to-br from-orange-100 to-pink-100"
           />
           <FunctionCard
             href="/compat"
