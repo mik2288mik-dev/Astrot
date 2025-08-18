@@ -4,11 +4,15 @@ import React, { useEffect, useState } from 'react';
 import Image from 'next/image';
 import { useTelegramUser, useTelegram } from '@/hooks/useTelegram';
 import { StarIcon, SparklesIcon } from '@heroicons/react/24/outline';
+import BirthHeader from '@/components/birth/BirthHeader';
+import { getActiveChart } from '../../lib/birth/storage';
+import type { SavedChart } from '../../lib/birth/storage';
 
 export default function HomePage() {
   const { firstName, photoUrl } = useTelegramUser();
   const { hapticFeedback } = useTelegram();
   const [greeting, setGreeting] = useState('');
+  const [activeChart, setActiveChart] = useState<SavedChart | null>(null);
 
   useEffect(() => {
     const hour = new Date().getHours();
@@ -16,6 +20,9 @@ export default function HomePage() {
     else if (hour < 12) setGreeting('Доброе утро');
     else if (hour < 18) setGreeting('Добрый день');
     else setGreeting('Добрый вечер');
+    
+    // Загружаем активную карту
+    setActiveChart(getActiveChart());
   }, []);
 
   const handleNatalChartClick = () => {
@@ -60,20 +67,53 @@ export default function HomePage() {
           </p>
         </div>
 
-        {/* Основная кнопка */}
+        {/* Активная карта или основная кнопка */}
         <div className="w-full max-w-sm">
-          <button
-            onClick={handleNatalChartClick}
-            className="w-full bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-white font-semibold rounded-2xl shadow-lg hover:shadow-xl transform hover:scale-105 transition-all duration-300 flex items-center justify-center gap-3"
-            style={{ height: '56px', lineHeight: '1.3' }}
-          >
-            <SparklesIcon className="w-6 h-6" />
-            <span className="text-base">Рассчитать натальную карту</span>
-          </button>
-          
-          <p className="text-sm text-neutral-500 mt-3 px-4">
-            Персональный астрологический анализ на основе даты, времени и места рождения
-          </p>
+          {activeChart ? (
+            <div className="space-y-4">
+              <div className="text-center">
+                <h2 className="text-lg font-semibold text-neutral-800 mb-3">
+                  Моя карта
+                </h2>
+                <BirthHeader 
+                  birth={activeChart.input} 
+                  showEdit={true}
+                  onEdit={() => {
+                    hapticFeedback('impact', 'light');
+                    window.location.href = '/natal';
+                  }}
+                />
+              </div>
+              
+              <button
+                onClick={() => {
+                  hapticFeedback('impact', 'medium');
+                  // Переход к результатам карты или детальному просмотру
+                  window.location.href = '/natal';
+                }}
+                className="w-full bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-white font-semibold rounded-2xl shadow-lg hover:shadow-xl transform hover:scale-105 transition-all duration-300 flex items-center justify-center gap-3"
+                style={{ height: '48px' }}
+              >
+                <StarIcon className="w-5 h-5" />
+                <span className="text-sm">Посмотреть карту</span>
+              </button>
+            </div>
+          ) : (
+            <>
+              <button
+                onClick={handleNatalChartClick}
+                className="w-full bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-white font-semibold rounded-2xl shadow-lg hover:shadow-xl transform hover:scale-105 transition-all duration-300 flex items-center justify-center gap-3"
+                style={{ height: '56px', lineHeight: '1.3' }}
+              >
+                <SparklesIcon className="w-6 h-6" />
+                <span className="text-base">Рассчитать натальную карту</span>
+              </button>
+              
+              <p className="text-sm text-neutral-500 mt-3 px-4">
+                Персональный астрологический анализ на основе даты, времени и места рождения
+              </p>
+            </>
+          )}
         </div>
       </section>
 

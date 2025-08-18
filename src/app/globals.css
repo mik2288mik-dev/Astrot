@@ -43,6 +43,10 @@
   /* Spacing */
   --nav-height: 72px;
   --radius: 16px;
+  
+  /* Astrot components */
+  --astrot-chip-bg: rgba(139, 69, 19, 0.1);
+  --astrot-text: #8B4513;
 }
 
 * {

@@ -1,6 +1,8 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
+import { getLastSavedChart } from '../../lib/birth/storage';
+import type { BirthData } from '../../lib/birth/types';
 
 interface PlaceSuggestion {
   display_name: string;
@@ -25,9 +27,10 @@ export interface NatalFormData {
 interface NatalChartFormProps {
   onSubmit: (data: NatalFormData) => void;
   loading?: boolean;
+  initialData?: BirthData;
 }
 
-export default function NatalChartForm({ onSubmit, loading = false }: NatalChartFormProps) {
+export default function NatalChartForm({ onSubmit, loading = false, initialData }: NatalChartFormProps) {
   const [form, setForm] = useState<NatalFormData>({
     name: '',
     birthDate: '',
@@ -35,10 +38,48 @@ export default function NatalChartForm({ onSubmit, loading = false }: NatalChart
     timeUnknown: false,
     location: null,
   });
+  const [isFromSaved, setIsFromSaved] = useState(false);
   const [touched, setTouched] = useState<{ [K in keyof NatalFormData]?: boolean }>({});
   const [query, setQuery] = useState('');
   const [suggestions, setSuggestions] = useState<PlaceSuggestion[]>([]);
   const [showSuggestions, setShowSuggestions] = useState(false);
+
+  // Предзаполнение формы
+  useEffect(() => {
+    if (initialData) {
+      setForm({
+        name: initialData.name || '',
+        birthDate: initialData.date,
+        birthTime: initialData.unknownTime ? '' : initialData.time,
+        timeUnknown: initialData.unknownTime || false,
+        location: {
+          name: initialData.place.displayName,
+          lat: initialData.place.lat,
+          lon: initialData.place.lon
+        }
+      });
+      setQuery(initialData.place.displayName);
+      setIsFromSaved(true);
+    } else {
+      // Если нет initialData, проверяем последнюю сохранённую карту
+      const lastChart = getLastSavedChart();
+      if (lastChart) {
+        setForm({
+          name: lastChart.input.name || '',
+          birthDate: lastChart.input.date,
+          birthTime: lastChart.input.unknownTime ? '' : lastChart.input.time,
+          timeUnknown: lastChart.input.unknownTime || false,
+          location: {
+            name: lastChart.input.place.displayName,
+            lat: lastChart.input.place.lat,
+            lon: lastChart.input.place.lon
+          }
+        });
+        setQuery(lastChart.input.place.displayName);
+        setIsFromSaved(true);
+      }
+    }
+  }, [initialData]);
 
   // search places with debounce
   useEffect(() => {
@@ -105,12 +146,43 @@ export default function NatalChartForm({ onSubmit, loading = false }: NatalChart
     setSuggestions([]);
   };
 
+  const handleClearForm = () => {
+    setForm({
+      name: '',
+      birthDate: '',
+      birthTime: '',
+      timeUnknown: false,
+      location: null,
+    });
+    setQuery('');
+    setIsFromSaved(false);
+    setTouched({});
+  };
+
   return (
     <div className="min-h-screen flex items-center justify-center" style={{ paddingTop: '16px', paddingBottom: '16px' }}>
       <form
         onSubmit={handleSubmit}
         className="w-full max-w-[320px] mx-auto pt-6 pb-6 px-6 flex flex-col bg-gradient-to-b from-pastel-purple to-pastel-pink rounded-3xl shadow-soft"
       >
+      
+      {isFromSaved && (
+        <div className="mb-4 p-3 bg-blue-50 border border-blue-200 rounded-xl">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-2">
+              <span className="text-sm text-blue-700">📋 Из сохранённой карты</span>
+            </div>
+            <button
+              type="button"
+              onClick={handleClearForm}
+              className="text-xs text-blue-600 hover:text-blue-800 underline"
+            >
+              Очистить
+            </button>
+          </div>
+        </div>
+      )}
+      
       <div className="flex flex-col" style={{ marginTop: '16px', gap: '20px' }}>
         <div className="flex flex-col">
           <label htmlFor="name" className={labelClass}>

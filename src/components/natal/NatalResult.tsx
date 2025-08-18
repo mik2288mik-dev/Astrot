@@ -2,14 +2,20 @@
 
 import React from 'react';
 import type { NatalResult } from '../../../lib/api/natal';
+import type { BirthData } from '../../../lib/birth/types';
 import { SUN, MOON, ASC } from '../../../lib/copy/big3';
 import { notificationOccurred } from '../../../lib/haptics';
+import BirthHeader from '../birth/BirthHeader';
+import { saveChart, setActiveChart } from '../../../lib/birth/storage';
+import { formatBirthLine } from '../../../lib/birth/format';
 
 interface NatalResultProps {
   result: NatalResult;
+  birthData: BirthData;
+  onEditBirth?: () => void;
 }
 
-export default function NatalResult({ result }: NatalResultProps) {
+export default function NatalResult({ result, birthData, onEditBirth }: NatalResultProps) {
   const { big3, elements } = result;
   
   // Получаем тексты для знаков
@@ -22,7 +28,8 @@ export default function NatalResult({ result }: NatalResultProps) {
   
   const handleTelegramShare = () => {
     try {
-      const shareText = `🔮 Моя натальная карта:\n☀️ Солнце: ${big3.sun.sign}\n🌙 Луна: ${big3.moon.sign}${big3.asc.sign ? `\n↗️ Асцендент: ${big3.asc.sign}` : ''}\n\nРассчитано в @deepsoul_bot ✨`;
+      const birthLine = formatBirthLine(birthData);
+      const shareText = `🔮 ${birthLine}\n☀️ Солнце: ${big3.sun.sign}\n🌙 Луна: ${big3.moon.sign}${big3.asc.sign ? `\n↗️ Асцендент: ${big3.asc.sign}` : ''}\n\nРассчитано в @deepsoul_bot ✨`;
       
       const tg = (typeof window !== 'undefined' ? (window as { Telegram?: { WebApp?: { switchInlineQuery?: (text: string) => void } } })?.Telegram?.WebApp : null);
       if (tg?.switchInlineQuery) {
@@ -41,7 +48,8 @@ export default function NatalResult({ result }: NatalResultProps) {
   
   const handleSaveResult = () => {
     try {
-      localStorage.setItem('lastNatalResult', JSON.stringify(result));
+      const savedChart = saveChart(birthData, result);
+      setActiveChart(savedChart);
       notificationOccurred('success');
     } catch (error) {
       console.error('Save error:', error);
@@ -51,6 +59,13 @@ export default function NatalResult({ result }: NatalResultProps) {
   
   return (
     <div className="w-full max-w-[320px] mx-auto space-y-6">
+      {/* Birth Header */}
+      <BirthHeader 
+        birth={birthData} 
+        showEdit={!!onEditBirth} 
+        {...(onEditBirth && { onEdit: onEditBirth })}
+      />
+      
       {/* Секция Big-3 */}
       <section className="space-y-4">
         <h2 className="text-xl font-bold text-neutral-800 text-center mb-6">
