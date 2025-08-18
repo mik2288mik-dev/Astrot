@@ -43,29 +43,29 @@ export default function FunctionsPage() {
     <div className="page animate-fadeIn min-h-[calc(100vh-140px)] flex flex-col" style={{ ['--page-top' as any]: 'calc(var(--safe-top) + 32px)' }}>
       {/* Заголовок */}
       <section className="mb-6 text-center">
-        <h1 className="text-2xl font-bold text-neutral-900 mb-2">
+        <h1 className="h1 mb-2">
           Функции
         </h1>
-        <p className="text-neutral-600">
+        <p className="p">
           Исследуйте мир астрологии и эзотерики
         </p>
       </section>
 
       {/* Карта дня */}
       <section className="mb-8">
-        <div className="bg-gradient-to-br from-purple-100 via-pink-100 to-orange-100 p-5 rounded-2xl shadow-sm border border-purple-100/50">
+        <div className="glass p-5">
           <div className="flex items-center justify-between mb-4">
-            <h2 className="text-lg font-semibold text-neutral-800">
+            <h2 className="card-title">
               Карта дня
             </h2>
-            <span className="text-xs text-neutral-600 bg-white/70 px-3 py-1 rounded-full font-medium">
+            <span className="chip text-xs">
               {dailyCard.date}
             </span>
           </div>
           
           <div className="space-y-4">
             <div className="flex items-center gap-3">
-              <div className="w-12 h-12 bg-white/60 rounded-xl flex items-center justify-center shadow-sm">
+              <div className="w-12 h-12 glass-weak rounded-xl flex items-center justify-center">
                 <MoonIcon className="w-6 h-6 text-purple-600" />
               </div>
               <div>
@@ -76,7 +76,7 @@ export default function FunctionsPage() {
             
             <div className="flex gap-6">
               <div className="flex items-center gap-3">
-                <div className="w-10 h-10 bg-white/60 rounded-xl flex items-center justify-center shadow-sm">
+                <div className="w-10 h-10 glass-weak rounded-xl flex items-center justify-center">
                   <StarIcon className="w-5 h-5 text-purple-600" />
                 </div>
                 <div>
@@ -86,7 +86,7 @@ export default function FunctionsPage() {
               </div>
               
               <div className="flex items-center gap-3">
-                <div className="w-10 h-10 bg-white/60 rounded-xl flex items-center justify-center shadow-sm">
+                <div className="w-10 h-10 glass-weak rounded-xl flex items-center justify-center">
                   <SunIcon className="w-5 h-5 text-purple-600" />
                 </div>
                 <div>
@@ -102,7 +102,7 @@ export default function FunctionsPage() {
               hapticFeedback('impact', 'light');
               window.location.href = '/horoscope';
             }}
-            className="mt-4 w-full bg-white/70 hover:bg-white/90 text-purple-700 font-medium py-3 px-4 rounded-xl transition-all duration-200 shadow-sm hover:shadow-md"
+            className="mt-4 w-full cta"
           >
             Посмотреть гороскоп дня →
           </button>
@@ -111,7 +111,7 @@ export default function FunctionsPage() {
 
       {/* Основные функции */}
       <section className="mb-8">
-        <h2 className="text-lg font-semibold text-neutral-800 mb-4">
+        <h2 className="h2 mb-4">
           Популярные
         </h2>
         <FunctionGrid>
@@ -156,7 +156,7 @@ export default function FunctionsPage() {
 
       {/* Дополнительные функции */}
       <section className="mb-8">
-        <h2 className="text-lg font-semibold text-neutral-800 mb-4">
+        <h2 className="h2 mb-4">
           Дополнительные
         </h2>
         <FunctionGrid>
@@ -201,7 +201,7 @@ export default function FunctionsPage() {
 
       {/* Премиум блок */}
       <section className="mb-6">
-        <div className="bg-gradient-to-br from-purple-50 via-pink-50 to-orange-50 p-5 rounded-2xl border border-purple-100/50">
+        <div className="glass p-5">
           <div className="flex items-center gap-3 mb-4">
             <div className="w-12 h-12 bg-gradient-to-br from-purple-500 to-pink-500 rounded-xl flex items-center justify-center shadow-sm">
               <StarIcon className="w-6 h-6 text-white" />
@@ -217,15 +217,15 @@ export default function FunctionsPage() {
           </div>
           
           <div className="grid grid-cols-3 gap-3 mb-4">
-            <div className="bg-white/70 p-3 rounded-xl text-center">
+            <div className="glass-weak p-3 rounded-xl text-center">
               <GiftIcon className="w-6 h-6 text-purple-600 mx-auto mb-2" />
               <p className="text-xs font-medium text-neutral-700">Подарки</p>
             </div>
-            <div className="bg-white/70 p-3 rounded-xl text-center">
+            <div className="glass-weak p-3 rounded-xl text-center">
               <BookOpenIcon className="w-6 h-6 text-purple-600 mx-auto mb-2" />
               <p className="text-xs font-medium text-neutral-700">База знаний</p>
             </div>
-            <div className="bg-white/70 p-3 rounded-xl text-center">
+            <div className="glass-weak p-3 rounded-xl text-center">
               <StarIcon className="w-6 h-6 text-purple-600 mx-auto mb-2" />
               <p className="text-xs font-medium text-neutral-700">VIP поддержка</p>
             </div>
@@ -233,7 +233,7 @@ export default function FunctionsPage() {
           
           <button 
             onClick={() => hapticFeedback('impact', 'medium')}
-            className="w-full bg-gradient-to-r from-purple-600 to-pink-600 text-white font-semibold py-3 rounded-xl hover:shadow-lg transition-all duration-200 hover:from-purple-700 hover:to-pink-700"
+            className="w-full cta"
           >
             Попробовать бесплатно
           </button>

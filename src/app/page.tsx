@@ -31,7 +31,7 @@ export default function HomePage() {
   };
 
   return (
-    <div className="page-wrapper animate-fadeIn min-h-[calc(100vh-140px)] flex flex-col">
+    <div className="page animate-fadeIn min-h-[calc(100vh-140px)] flex flex-col">
       {/* Блок персонализации пользователя */}
       <section className="flex-1 flex flex-col justify-center items-center text-center px-4">
         {/* Аватар пользователя */}
@@ -59,10 +59,10 @@ export default function HomePage() {
 
         {/* Приветствие */}
         <div className="mb-8">
-          <h1 className="text-3xl font-bold text-neutral-900 mb-2">
+          <h1 className="h1 mb-2">
             {greeting}, {firstName}!
           </h1>
-          <p className="text-lg text-neutral-600 max-w-sm mx-auto leading-relaxed">
+          <p className="p max-w-sm mx-auto">
             Откройте тайны звёзд и узнайте больше о себе
           </p>
         </div>
@@ -71,8 +71,8 @@ export default function HomePage() {
         <div className="w-full max-w-sm">
           {activeChart ? (
             <div className="space-y-4">
-              <div className="text-center">
-                <h2 className="text-lg font-semibold text-neutral-800 mb-3">
+              <div className="glass p-4 text-center">
+                <h2 className="card-title mb-3">
                   Моя карта
                 </h2>
                 <BirthHeader 
@@ -91,8 +91,7 @@ export default function HomePage() {
                   // Переход к результатам карты или детальному просмотру
                   window.location.href = '/natal';
                 }}
-                className="w-full bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-white font-semibold rounded-2xl shadow-lg hover:shadow-xl transform hover:scale-105 transition-all duration-300 flex items-center justify-center gap-3"
-                style={{ height: '48px' }}
+                className="w-full cta"
               >
                 <StarIcon className="w-5 h-5" />
                 <span className="text-sm">Посмотреть карту</span>
@@ -102,14 +101,13 @@ export default function HomePage() {
             <>
               <button
                 onClick={handleNatalChartClick}
-                className="w-full bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-white font-semibold rounded-2xl shadow-lg hover:shadow-xl transform hover:scale-105 transition-all duration-300 flex items-center justify-center gap-3"
-                style={{ height: '56px', lineHeight: '1.3' }}
+                className="w-full cta"
               >
                 <SparklesIcon className="w-6 h-6" />
                 <span className="text-base">Рассчитать натальную карту</span>
               </button>
               
-              <p className="text-sm text-neutral-500 mt-3 px-4">
+              <p className="p mt-3 px-4" style={{fontSize:'var(--fz-small)'}}>
                 Персональный астрологический анализ на основе даты, времени и места рождения
               </p>
             </>
@@ -119,7 +117,7 @@ export default function HomePage() {
 
       {/* Дополнительная информация */}
       <section className="mt-8 mb-4">
-        <div className="bg-gradient-to-br from-purple-50 to-pink-50 p-4 rounded-2xl border border-purple-100/50">
+        <div className="glass-weak p-4">
           <div className="flex items-center justify-center gap-2 text-purple-700">
             <StarIcon className="w-5 h-5" />
             <span className="text-sm font-medium">
