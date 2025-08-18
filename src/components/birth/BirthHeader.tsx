@@ -4,30 +4,27 @@ import type { BirthData } from '../../../lib/birth/types';
 
 export default function BirthHeader({ 
   birth, 
-  mini = false,
-  showEdit = false,
-  onEdit 
+  mini = false
 }: { 
   birth: BirthData;
   mini?: boolean;
-  showEdit?: boolean;
-  onEdit?: () => void;
 }) {
-  const handleEdit = () => {
-    if (onEdit) {
-      onEdit();
-    } else {
-      location.assign('/natal');
-    }
-  };
-
   return (
-    <div className={`birth-card ${mini ? 'mini' : ''}`}>
-      <div className="birth-line">{fmtBirth(birth)}</div>
-      {(showEdit || !onEdit) && (
-        <button 
-          className="birth-edit"
-          onClick={handleEdit}
+    <div className={`glass ${mini ? 'py-2 px-3' : 'py-3 px-4'}`} style={{position:'relative'}}>
+      <div style={{color:'var(--text)', fontSize: mini ? '14px' : '17px'}}>{fmtBirth(birth)}</div>
+      {!mini && (
+        <button
+          onClick={() => location.assign('/natal')}
+          style={{
+            position:'absolute', 
+            right:12, 
+            top:10, 
+            fontSize:13, 
+            color:'var(--accent-1)', 
+            textDecoration:'underline', 
+            background:'transparent', 
+            border:0
+          }}
         >
           Изменить
         </button>

@@ -1,6 +1,8 @@
 import Script from 'next/script';
 import '@/app/globals.css';
 import '@/styles/tokens.css';
+import '@/styles/nebula.css';
+import '@/styles/ui-kit.css';
 import '@/styles/safe.css';
 import { TelegramProvider } from '@/providers/telegram-provider';
 import { TelegramViewportProvider } from '@/providers/telegram-viewport';
@@ -28,6 +30,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <Script src="https://telegram.org/js/telegram-web-app.js" strategy="beforeInteractive" />
       </head>
       <body className={inter.className}>
+        <div className="astrot-bg astrot-stars" />
         <TelegramProvider>
           <TelegramViewportProvider>
             <SafeArea>
