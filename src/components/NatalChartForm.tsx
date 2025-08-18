@@ -89,11 +89,13 @@ export default function NatalChartForm({ onSubmit }: NatalChartFormProps) {
   };
 
   const inputClass = (field: keyof NatalFormData, extra: string = '') =>
-    `w-full px-4 py-2 text-lg rounded-2xl border min-h-[44px] placeholder:text-neutral-500 focus:outline-none focus:ring-2 focus:ring-pastel-purple ${
+    `w-full px-4 py-3 text-base rounded-2xl border min-h-[44px] placeholder:text-neutral-500 focus:outline-none focus:ring-2 focus:ring-pastel-purple ${
       touched[field] && errors[field]
         ? 'border-pastel-pink bg-pastel-pink/30'
         : 'border-pastel-purple bg-pastel-cream'
     } ${extra}`;
+  
+  const labelClass = "mb-2 text-base font-medium text-neutral-800";
 
   const selectPlace = (s: PlaceSuggestion) => {
     setForm(prev => ({ ...prev, location: { name: s.display_name, lat: parseFloat(s.lat), lon: parseFloat(s.lon) } }));
@@ -103,13 +105,14 @@ export default function NatalChartForm({ onSubmit }: NatalChartFormProps) {
   };
 
   return (
-    <form
-      onSubmit={handleSubmit}
-      className="w-full max-w-[320px] mx-auto p-6 pb-8 flex flex-col bg-gradient-to-b from-pastel-purple to-pastel-pink rounded-3xl shadow-soft"
-    >
-      <div className="flex flex-col space-y-5">
+    <div className="min-h-screen flex items-center justify-center" style={{ paddingTop: '16px', paddingBottom: '16px' }}>
+      <form
+        onSubmit={handleSubmit}
+        className="w-full max-w-[320px] mx-auto pt-6 pb-6 px-6 flex flex-col bg-gradient-to-b from-pastel-purple to-pastel-pink rounded-3xl shadow-soft"
+      >
+      <div className="flex flex-col" style={{ marginTop: '16px', gap: '20px' }}>
         <div className="flex flex-col">
-          <label htmlFor="name" className="mb-1 text-base text-neutral-800">
+          <label htmlFor="name" className={labelClass}>
             Имя
           </label>
           <input
@@ -124,7 +127,7 @@ export default function NatalChartForm({ onSubmit }: NatalChartFormProps) {
         </div>
 
         <div className="flex flex-col">
-          <label htmlFor="date" className="mb-1 text-base text-neutral-800">
+          <label htmlFor="date" className={labelClass}>
             Дата рождения
           </label>
           <input
@@ -139,7 +142,7 @@ export default function NatalChartForm({ onSubmit }: NatalChartFormProps) {
 
         {!form.timeUnknown && (
           <div className="flex flex-col">
-            <label htmlFor="time" className="mb-1 text-base text-neutral-800">
+            <label htmlFor="time" className={labelClass}>
               Время рождения
             </label>
             <input
@@ -163,9 +166,10 @@ export default function NatalChartForm({ onSubmit }: NatalChartFormProps) {
                 handleChange('timeUnknown', e.target.checked);
                 if (e.target.checked) handleChange('birthTime', '');
               }}
-              className="mr-2"
+              className="w-4 h-4 rounded border-pastel-purple bg-pastel-cream focus:ring-2 focus:ring-pastel-purple"
+              style={{ marginRight: '10px' }}
             />
-            <label htmlFor="timeUnknown" className="text-base text-neutral-800">
+            <label htmlFor="timeUnknown" className="text-base font-medium text-neutral-800 flex items-center">
               Не знаю время
             </label>
           </div>
@@ -175,7 +179,7 @@ export default function NatalChartForm({ onSubmit }: NatalChartFormProps) {
         </div>
 
         <div className="flex flex-col">
-          <label htmlFor="place" className="mb-1 text-base text-neutral-800">
+          <label htmlFor="place" className={labelClass}>
             Место рождения
           </label>
           <div className="relative">
@@ -215,12 +219,14 @@ export default function NatalChartForm({ onSubmit }: NatalChartFormProps) {
 
       <button
         type="submit"
-        className="w-full mt-6 min-h-[44px] text-lg font-semibold text-neutral-800 bg-gradient-to-r from-pastel-purple to-pastel-pink rounded-2xl disabled:opacity-50"
+        className="w-full min-h-[44px] text-base font-semibold text-neutral-800 bg-gradient-to-r from-pastel-purple to-pastel-pink rounded-2xl disabled:opacity-50"
+        style={{ marginTop: '24px' }}
         disabled={errors.name || errors.birthDate || errors.birthTime || errors.location}
       >
         Рассчитать карту
       </button>
-    </form>
+      </form>
+    </div>
   );
 }
 
