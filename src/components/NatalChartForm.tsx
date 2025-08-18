@@ -105,7 +105,7 @@ export default function NatalChartForm({ onSubmit }: NatalChartFormProps) {
   return (
     <form
       onSubmit={handleSubmit}
-      className="w-[90%] max-w-[320px] mx-auto p-6 pb-8 flex flex-col bg-gradient-to-b from-pastel-purple to-pastel-pink rounded-3xl shadow-soft"
+      className="w-full max-w-[320px] mx-auto p-6 pb-8 flex flex-col bg-gradient-to-b from-pastel-purple to-pastel-pink rounded-3xl shadow-soft"
     >
       <div className="flex flex-col space-y-5">
         <div className="flex flex-col">
