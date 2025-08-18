@@ -1,3 +1,5 @@
-:root {
-  --tabbar-h: 72px;
+:root{
+  --astrot-text:#2B2B2E;
+  --astrot-chip-bg:rgba(255,255,255,.65);
+  --tabbar-h:72px;
 }
