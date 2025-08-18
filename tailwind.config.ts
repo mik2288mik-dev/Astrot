@@ -1,4 +1,5 @@
 import type { Config } from 'tailwindcss';
+import { pastel } from './styles/colors';
 
 const config: Config = {
   content: [
@@ -33,15 +34,7 @@ const config: Config = {
           800: '#075985',
           900: '#0c4a6e',
         },
-        pastel: {
-          pink: '#FFE5EC',
-          purple: '#E8E3FF',
-          blue: '#E3F2FF',
-          mint: '#E5FFF7',
-          peach: '#FFF0E5',
-          lavender: '#F3E8FF',
-          cream: '#FFF9F0',
-        },
+        pastel,
         neutral: {
           50: '#FAFAFA',
           100: '#F5F5F5',

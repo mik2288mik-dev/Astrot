@@ -23,7 +23,8 @@
       "@/providers/*": ["src/providers/*"],
       "@/shared/*": ["src/shared/*"],
       "@/config/*": ["src/config/*"],
-      "@/types/*": ["types/*"]
+      "@/types/*": ["types/*"],
+      "@/styles/*": ["styles/*"]
     },
     "plugins": [{ "name": "next" }],
     "esModuleInterop": true
@@ -36,7 +37,8 @@
     "__tests__/**/*.ts",
     "__tests__/**/*.tsx",
     "types/**/*.d.ts",
-    "types/**/*.ts"
+    "types/**/*.ts",
+    "styles/**/*.ts"
   ],
   "exclude": ["node_modules"]
 }
