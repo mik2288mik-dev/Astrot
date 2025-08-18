@@ -4,7 +4,6 @@ import { getEphemerisAdapter, signFromLongitude } from '../../../../lib/ephemeri
 import { safeTzLookup } from '../../../../lib/geocode';
 import type { ComputeInput } from '../../../../lib/ephemeris/adapter';
 import type { NatalInput, NatalResult } from '../../../../lib/api/natal';
-import type { BirthData } from '../../../../lib/birth/types';
 import { DateTime } from 'luxon';
 
 export const runtime = 'nodejs';
