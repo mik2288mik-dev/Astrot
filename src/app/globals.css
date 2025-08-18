@@ -266,6 +266,10 @@ p {
   animation: slideUp 0.3s ease-out;
 }
 
+.animate-fill-forwards {
+  animation-fill-mode: forwards;
+}
+
 .animate-scaleIn {
   animation: scaleIn 0.2s ease-out;
 }

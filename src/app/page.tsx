@@ -20,7 +20,7 @@ export default function HomePage() {
 
   const handleNatalChartClick = () => {
     hapticFeedback('impact', 'medium');
-    window.location.href = '/chart';
+    window.location.href = '/natal';
   };
 
   return (
@@ -64,10 +64,11 @@ export default function HomePage() {
         <div className="w-full max-w-sm">
           <button
             onClick={handleNatalChartClick}
-            className="w-full bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-white font-semibold py-4 px-6 rounded-2xl shadow-xl hover:shadow-2xl transform hover:scale-105 transition-all duration-300 flex items-center justify-center gap-3"
+            className="w-full bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-white font-semibold rounded-2xl shadow-lg hover:shadow-xl transform hover:scale-105 transition-all duration-300 flex items-center justify-center gap-3"
+            style={{ height: '56px', lineHeight: '1.3' }}
           >
             <SparklesIcon className="w-6 h-6" />
-            <span className="text-lg">Рассчитать натальную карту</span>
+            <span className="text-base">Рассчитать натальную карту</span>
           </button>
           
           <p className="text-sm text-neutral-500 mt-3 px-4">

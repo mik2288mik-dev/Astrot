@@ -24,9 +24,10 @@ export interface NatalFormData {
 
 interface NatalChartFormProps {
   onSubmit: (data: NatalFormData) => void;
+  loading?: boolean;
 }
 
-export default function NatalChartForm({ onSubmit }: NatalChartFormProps) {
+export default function NatalChartForm({ onSubmit, loading = false }: NatalChartFormProps) {
   const [form, setForm] = useState<NatalFormData>({
     name: '',
     birthDate: '',
@@ -157,7 +158,7 @@ export default function NatalChartForm({ onSubmit }: NatalChartFormProps) {
         )}
 
         <div className="flex flex-col">
-          <div className="flex items-center">
+          <div className="flex items-baseline">
             <input
               id="timeUnknown"
               type="checkbox"
@@ -166,10 +167,10 @@ export default function NatalChartForm({ onSubmit }: NatalChartFormProps) {
                 handleChange('timeUnknown', e.target.checked);
                 if (e.target.checked) handleChange('birthTime', '');
               }}
-              className="w-4 h-4 rounded border-pastel-purple bg-pastel-cream focus:ring-2 focus:ring-pastel-purple"
+              className="w-4 h-4 rounded border-pastel-purple bg-pastel-cream focus:ring-2 focus:ring-pastel-purple mt-1"
               style={{ marginRight: '10px' }}
             />
-            <label htmlFor="timeUnknown" className="text-base font-medium text-neutral-800 flex items-center">
+            <label htmlFor="timeUnknown" className="text-base font-medium text-neutral-800">
               Не знаю время
             </label>
           </div>
@@ -219,11 +220,18 @@ export default function NatalChartForm({ onSubmit }: NatalChartFormProps) {
 
       <button
         type="submit"
-        className="w-full min-h-[44px] text-base font-semibold text-neutral-800 bg-gradient-to-r from-pastel-purple to-pastel-pink rounded-2xl disabled:opacity-50"
+        className="w-full min-h-[44px] text-base font-semibold text-neutral-800 bg-gradient-to-r from-pastel-purple to-pastel-pink rounded-2xl disabled:opacity-65 disabled:text-neutral-600 transition-all"
         style={{ marginTop: '24px' }}
-        disabled={errors.name || errors.birthDate || errors.birthTime || errors.location}
+        disabled={loading || errors.name || errors.birthDate || errors.birthTime || errors.location}
       >
-        Рассчитать карту
+        {loading ? (
+          <div className="flex items-center justify-center gap-2">
+            <div className="w-4 h-4 border-2 border-neutral-800 border-t-transparent rounded-full animate-spin" />
+            Рассчитываем...
+          </div>
+        ) : (
+          'Рассчитать карту'
+        )}
       </button>
       </form>
     </div>
