@@ -3,7 +3,7 @@
 import React, { useEffect, useState } from 'react';
 import Image from 'next/image';
 import { useTelegramUser, useTelegram } from '@/hooks/useTelegram';
-import { StarIcon, SparklesIcon } from '@heroicons/react/24/outline';
+import { ArrowLeftIcon } from '@heroicons/react/24/outline';
 import BirthHeader from '@/components/birth/BirthHeader';
 import { getActiveChart } from '../../lib/birth/storage';
 import type { SavedChart } from '../../lib/birth/storage';
@@ -31,107 +31,85 @@ export default function HomePage() {
   };
 
   return (
-    <div className="page animate-fadeIn min-h-[calc(100vh-140px)] flex flex-col">
-      {/* Блок персонализации пользователя */}
-      <section className="flex-1 flex flex-col justify-center items-center text-center px-4">
+    <div className="page animate-fadeIn min-h-screen flex flex-col">
+      {/* Шапка как на макете */}
+      <header className="flex items-center justify-between mb-8">
+        <button className="w-10 h-10 rounded-full bg-white/80 backdrop-blur flex items-center justify-center shadow-sm">
+          <ArrowLeftIcon className="w-5 h-5 text-gray-600" />
+        </button>
+        <div className="flex items-center gap-2">
+          <div className="w-2 h-2 rounded-full bg-gray-300"></div>
+          <div className="w-2 h-2 rounded-full bg-gray-300"></div>
+          <div className="w-2 h-2 rounded-full bg-accent-1"></div>
+        </div>
+      </header>
+
+      {/* Основное содержимое */}
+      <div className="flex-1 flex flex-col items-center justify-center text-center">
         {/* Аватар пользователя */}
-        <div className="mb-6">
+        <div className="mb-8">
           {photoUrl ? (
-            <div className="relative">
-              <Image
-                src={photoUrl}
-                alt={firstName}
-                width={96}
-                height={96}
-                unoptimized
-                className="w-24 h-24 rounded-full border-4 border-white shadow-lg mx-auto"
-              />
-              <div className="absolute -bottom-2 -right-2 w-8 h-8 bg-gradient-to-br from-purple-500 to-pink-500 rounded-full flex items-center justify-center border-2 border-white">
-                <StarIcon className="w-4 h-4 text-white" />
-              </div>
-            </div>
+            <Image
+              src={photoUrl}
+              alt={firstName || 'Emily'}
+              width={120}
+              height={120}
+              unoptimized
+              className="w-[120px] h-[120px] rounded-full border-4 border-white shadow-lg mx-auto"
+            />
           ) : (
-            <div className="w-24 h-24 bg-gradient-to-br from-purple-200 to-pink-200 rounded-full flex items-center justify-center border-4 border-white shadow-lg mx-auto">
-              <StarIcon className="w-8 h-8 text-purple-600" />
+            <div className="w-[120px] h-[120px] bg-gradient-to-br from-purple-100 to-pink-100 rounded-full flex items-center justify-center border-4 border-white shadow-lg mx-auto">
+              <div className="text-4xl">🥰</div>
             </div>
           )}
         </div>
 
-        {/* Приветствие */}
-        <div className="mb-8">
-          <h1 className="h1 mb-2">
-            {greeting}, {firstName}!
+        {/* Приветствие как на макете */}
+        <div className="mb-12">
+          <h1 className="text-4xl font-bold text-gray-800 mb-4 leading-tight">
+            Welcome,<br />Emily
           </h1>
-          <p className="p max-w-sm mx-auto">
-            Откройте тайны звёзд и узнайте больше о себе
+          <p className="text-gray-600 text-lg">
+            June 12, 1994
           </p>
         </div>
 
-        {/* Активная карта или основная кнопка */}
-        <div className="w-full max-w-sm">
-          {activeChart ? (
-            <div className="space-y-4">
-              <div className="glass p-4 text-center">
-                <h2 className="card-title mb-3">
-                  Моя карта
-                </h2>
-                <div className="flex items-center justify-between gap-3">
-                  <BirthHeader birth={activeChart.input} />
-                  <button
-                    type="button"
-                    onClick={() => {
-                      hapticFeedback('impact', 'light');
-                      window.location.href = '/natal';
-                    }}
-                    className="shrink-0 rounded-xl px-4 py-2 text-sm font-medium border border-white/15 bg-white/5 backdrop-blur hover:bg-white/10 active:bg-white/15 transition focus:outline-none focus:ring-2 focus:ring-white/30"
-                    aria-label="Редактировать данные рождения"
-                  >
-                    ✎ Редактировать
-                  </button>
-                </div>
-              </div>
-              
-              <button
-                onClick={() => {
-                  hapticFeedback('impact', 'medium');
-                  // Переход к результатам карты или детальному просмотру
-                  window.location.href = '/natal';
-                }}
-                className="w-full cta"
-              >
-                <StarIcon className="w-5 h-5" />
-                <span className="text-sm">Посмотреть карту</span>
-              </button>
-            </div>
-          ) : (
-            <>
-              <button
-                onClick={handleNatalChartClick}
-                className="w-full cta"
-              >
-                <SparklesIcon className="w-6 h-6" />
-                <span className="text-base">Рассчитать натальную карту</span>
-              </button>
-              
-              <p className="p mt-3 px-4" style={{fontSize:'var(--fz-small)'}}>
-                Персональный астрологический анализ на основе даты, времени и места рождения
-              </p>
-            </>
-          )}
-        </div>
-      </section>
+        {/* Кнопка View Details */}
+        <button
+          onClick={handleNatalChartClick}
+          className="w-full max-w-sm bg-gradient-to-r from-purple-400 to-pink-300 text-white py-4 rounded-3xl font-semibold text-lg shadow-lg hover:shadow-xl transition-all duration-200"
+        >
+          View Details
+        </button>
+      </div>
 
-      {/* Дополнительная информация */}
-      <section className="mt-8 mb-4">
-        <div className="glass-weak p-4">
-          <div className="flex items-center justify-center gap-2 text-purple-700">
-            <StarIcon className="w-5 h-5" />
-            <span className="text-sm font-medium">
-              Исследуйте все возможности в разделе &quot;Функции&quot;
-            </span>
+      {/* Астрологическая карта */}
+      <div className="relative mb-20">
+        <div className="absolute left-1/2 top-1/2 transform -translate-x-1/2 -translate-y-1/2">
+          <div className="w-80 h-80 relative">
+            {/* Основной круг */}
+            <div className="w-full h-full border-2 border-purple-200 rounded-full bg-white/50 backdrop-blur">
+              {/* Зодиакальные знаки */}
+              <div className="absolute inset-2 border border-purple-100 rounded-full">
+                {/* Линии аспектов */}
+                <svg className="absolute inset-0 w-full h-full" viewBox="0 0 300 300">
+                  <line x1="150" y1="50" x2="150" y2="250" stroke="#E5E7EB" strokeWidth="1" />
+                  <line x1="50" y1="150" x2="250" y2="150" stroke="#E5E7EB" strokeWidth="1" />
+                  <line x1="85" y1="85" x2="215" y2="215" stroke="#E5E7EB" strokeWidth="1" />
+                  <line x1="215" y1="85" x2="85" y2="215" stroke="#E5E7EB" strokeWidth="1" />
+                  
+                  {/* Планеты */}
+                  <circle cx="150" cy="80" r="4" fill="#FCD34D" />
+                  <circle cx="120" cy="100" r="3" fill="#F87171" />
+                  <circle cx="180" cy="120" r="3" fill="#60A5FA" />
+                  <circle cx="200" cy="180" r="4" fill="#A78BFA" />
+                  <circle cx="100" cy="200" r="3" fill="#34D399" />
+                </svg>
+              </div>
+            </div>
           </div>
         </div>
-      </section>
+      </div>
     </div>
   );
 }

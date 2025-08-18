@@ -58,40 +58,44 @@
   color:var(--text-2); 
 }
 
-/* Таб-бар */
+/* Таб-бар - по макету */
 .tabbar{
-  position: sticky; 
-  bottom: 0; 
-  height: var(--tabbar-h);
-  display:grid; 
-  grid-template-columns: repeat(4,1fr); 
+  position: fixed; 
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: var(--nav-height);
+  display:flex; 
   align-items:center;
-  padding: 8px 8px calc(env(safe-area-inset-bottom) + 6px);
-  gap: 4px;
-  background: rgba(255,255,255,.6);
-  backdrop-filter: blur(10px); 
-  -webkit-backdrop-filter: blur(10px);
-  box-shadow: 0 -8px 24px rgba(0,0,0,.06);
+  justify-content: space-around;
+  padding: 12px 20px calc(env(safe-area-inset-bottom) + 12px);
+  background: rgba(255, 255, 255, 0.95);
+  backdrop-filter: blur(20px); 
+  -webkit-backdrop-filter: blur(20px);
+  box-shadow: var(--shadow-nav);
   z-index:100;
-  border-top: 1px solid rgba(255,255,255,.4);
+  border-top: 1px solid rgba(0, 0, 0, 0.04);
 }
 
 .tabbar .item{
   display:flex;
   flex-direction:column;
   align-items:center;
-  gap:4px;
-  color:var(--text-2);
-  font-size:12px;
+  gap:6px;
+  color:var(--text-secondary);
+  font-size:11px;
+  font-weight: 500;
+  min-width: 60px;
+  padding: 4px 8px;
+  border-radius: var(--radius-button);
+  transition: all 0.2s ease;
 }
 
 .tabbar .item.active{ 
-  color: var(--accent-1); 
+  color: var(--accent-primary);
+  background: var(--accent-light);
 }
 
 .tabbar .item.active .dot{ 
-  width:6px;
-  height:6px;
-  border-radius:50%; 
-  background: linear-gradient(90deg,var(--accent-1),var(--accent-2));
+  display: none;
 }

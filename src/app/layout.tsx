@@ -8,16 +8,10 @@ import { TelegramProvider } from '@/providers/telegram-provider';
 import { TelegramViewportProvider } from '@/providers/telegram-viewport';
 import SafeArea from '@/components/layout/SafeArea';
 import NavBar from '@/components/NavBar';
-import { Inter } from 'next/font/google';
+import { GeistSans } from 'geist/font/sans';
 
 export const runtime = 'nodejs';
 export const dynamic = 'force-dynamic';
-
-const inter = Inter({
-  subsets: ['latin', 'cyrillic'],
-  weight: ['400', '500', '600', '700'],
-  display: 'swap',
-});
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
@@ -29,7 +23,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <meta name="apple-mobile-web-app-status-bar-style" content="default" />
         <Script src="https://telegram.org/js/telegram-web-app.js" strategy="beforeInteractive" />
       </head>
-      <body className={inter.className}>
+      <body className={GeistSans.className}>
         <div className="astrot-bg astrot-stars" />
         <TelegramProvider>
           <TelegramViewportProvider>
