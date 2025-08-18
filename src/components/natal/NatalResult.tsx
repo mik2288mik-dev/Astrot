@@ -1,21 +1,19 @@
 'use client';
-
-import React from 'react';
-import type { NatalResult } from '../../../lib/api/natal';
-import type { BirthData } from '../../../lib/birth/types';
-import { SUN, MOON, ASC } from '../../../lib/copy/big3';
-import { notificationOccurred } from '../../../lib/haptics';
 import BirthHeader from '../birth/BirthHeader';
-import { saveChart, setActiveChart } from '../../../lib/birth/storage';
+import { formatZodiacSign } from '../../../lib/zodiac/format';
+import { SUN, MOON, ASC } from '../../../lib/texts/signs';
+import { ELEMENT_TEXTS } from '../../../lib/texts/elements';
+import type { NatalResult } from '../../../lib/natal/types';
+import type { BirthData } from '../../../lib/birth/types';
+import { HelpCircle } from '@tabler/icons-react';
+import { useState } from 'react';
 import { formatBirthLine } from '../../../lib/birth/format';
 
 interface NatalResultProps {
   result: NatalResult;
   birthData: BirthData;
-  onEditBirth?: () => void;
-}
 
-export default function NatalResult({ result, birthData, onEditBirth }: NatalResultProps) {
+export default function NatalResult({ result, birthData }: NatalResultProps) {
   const { big3, elements } = result;
   
   // Получаем тексты для знаков
@@ -23,47 +21,51 @@ export default function NatalResult({ result, birthData, onEditBirth }: NatalRes
   const moonText = MOON[big3.moon.sign] || "Твоя лунная природа глубока и интуитивна.";
   const ascText = big3.asc.sign ? (ASC[big3.asc.sign] || "Твоя подача естественна и притягательна.") : "";
   
-  // Максимальное значение для стихий (для нормализации баров)
-  const maxElement = Math.max(elements.fire, elements.earth, elements.air, elements.water, 1);
+  // Находим доминирующий элемент
+  const dominantElement = Object.entries(elements).reduce((max, [element, count]) => 
+    count > max.count ? { element, count } : max,
+    { element: '', count: 0 }
+  );
   
-  const handleTelegramShare = () => {
-    try {
-      const birthLine = formatBirthLine(birthData);
-      const shareText = `🔮 ${birthLine}\n☀️ Солнце: ${big3.sun.sign}\n🌙 Луна: ${big3.moon.sign}${big3.asc.sign ? `\n↗️ Асцендент: ${big3.asc.sign}` : ''}\n\nРассчитано в @deepsoul_bot ✨`;
-      
-      const tg = (typeof window !== 'undefined' ? (window as { Telegram?: { WebApp?: { switchInlineQuery?: (text: string) => void } } })?.Telegram?.WebApp : null);
-      if (tg?.switchInlineQuery) {
-        tg.switchInlineQuery(shareText);
-        return;
-      }
-      
-      // Fallback - copy to clipboard
-      navigator.clipboard?.writeText(shareText);
-      notificationOccurred('success');
-    } catch (error) {
-      console.error('Share error:', error);
-      notificationOccurred('error');
-    }
+  const elementText = ELEMENT_TEXTS[dominantElement.element] || "";
+  
+  // Состояние для подсказок
+  const [activeHelp, setActiveHelp] = useState<string | null>(null);
+  
+  const helpTexts = {
+    sun: "Солнце — это твоя суть, центр личности. Знак Солнца показывает, кто ты есть на самом глубоком уровне.",
+    moon: "Луна — это твои эмоции и подсознание. Знак Луны раскрывает, как ты чувствуешь и что тебе нужно для комфорта.",
+    asc: "Асцендент — это твоя внешняя маска, первое впечатление. Показывает, как тебя видят другие.",
+    elements: "Стихии показывают баланс энергий в твоей карте. Доминирующая стихия определяет твой основной способ взаимодействия с миром."
   };
   
-  const handleSaveResult = () => {
-    try {
-      const savedChart = saveChart(birthData, result);
-      setActiveChart(savedChart);
-      notificationOccurred('success');
-    } catch (error) {
-      console.error('Save error:', error);
-      notificationOccurred('error');
-    }
+  const toggleHelp = (key: string) => {
+    setActiveHelp(activeHelp === key ? null : key);
   };
+  
+  const renderHelpIcon = (key: string) => (
+    <button
+      onClick={() => toggleHelp(key)}
+      className="ml-2 text-neutral-400 hover:text-neutral-600 transition-colors"
+      aria-label="Показать подсказку"
+    >
+      <HelpCircle size={18} />
+    </button>
+  );
+  
+  const renderHelpText = (key: string) => (
+    activeHelp === key && (
+      <div className="mt-2 p-3 bg-purple-50 rounded-lg text-sm text-purple-700">
+        {helpTexts[key as keyof typeof helpTexts]}
+      </div>
+    )
+  );
   
   return (
     <div className="w-full max-w-[320px] mx-auto space-y-6">
       {/* Birth Header */}
       <BirthHeader 
         birth={birthData} 
-        showEdit={!!onEditBirth} 
-        {...(onEditBirth && { onEdit: onEditBirth })}
       />
       
       {/* Секция Big-3 */}
@@ -72,142 +74,132 @@ export default function NatalResult({ result, birthData, onEditBirth }: NatalRes
           Твои три кита
         </h2>
         
-        {/* Карточка Солнца */}
-        <div className="bg-gradient-to-br from-orange-50 to-yellow-50 p-4 rounded-2xl border border-orange-200/50 shadow-soft animate-slide-up">
-          <div className="flex items-start gap-3">
-            <div className="text-3xl">☀️</div>
-            <div className="flex-1">
-              <h3 className="font-semibold text-orange-800 text-lg">
-                Солнце в {big3.sun.sign}
+        {/* Солнце */}
+        <div className="glass p-5">
+          <div className="flex items-center justify-between mb-3">
+            <div className="flex items-center">
+              <span className="text-2xl mr-2">☉</span>
+              <h3 className="text-lg font-semibold text-neutral-800">
+                Солнце в {formatZodiacSign(big3.sun.sign)}
               </h3>
-              <p className="text-sm text-orange-700 mt-1 leading-relaxed">
-                {sunText}
-              </p>
+              {renderHelpIcon('sun')}
             </div>
           </div>
+          {renderHelpText('sun')}
+          <p className="text-sm text-neutral-600 leading-relaxed">
+            {sunText}
+          </p>
         </div>
         
-        {/* Карточка Луны */}
-        <div className="bg-gradient-to-br from-blue-50 to-indigo-50 p-4 rounded-2xl border border-blue-200/50 shadow-soft animate-slide-up" style={{ animationDelay: '0.1s' }}>
-          <div className="flex items-start gap-3">
-            <div className="text-3xl">🌙</div>
-            <div className="flex-1">
-              <h3 className="font-semibold text-blue-800 text-lg">
-                Луна в {big3.moon.sign}
+        {/* Луна */}
+        <div className="glass p-5">
+          <div className="flex items-center justify-between mb-3">
+            <div className="flex items-center">
+              <span className="text-2xl mr-2">☽</span>
+              <h3 className="text-lg font-semibold text-neutral-800">
+                Луна в {formatZodiacSign(big3.moon.sign)}
               </h3>
-              <p className="text-sm text-blue-700 mt-1 leading-relaxed">
-                {moonText}
-              </p>
+              {renderHelpIcon('moon')}
             </div>
           </div>
+          {renderHelpText('moon')}
+          <p className="text-sm text-neutral-600 leading-relaxed">
+            {moonText}
+          </p>
         </div>
         
-        {/* Карточка Асцендента */}
-        <div className="bg-gradient-to-br from-purple-50 to-pink-50 p-4 rounded-2xl border border-purple-200/50 shadow-soft animate-slide-up" style={{ animationDelay: '0.2s' }}>
-          <div className="flex items-start gap-3">
-            <div className="text-3xl">↗️</div>
-            <div className="flex-1">
-              <div className="flex items-center gap-2 mb-1">
-                <h3 className="font-semibold text-purple-800 text-lg">
-                  {big3.asc.sign ? `Асцендент в ${big3.asc.sign}` : 'Асцендент'}
+        {/* Асцендент */}
+        {big3.asc.sign && (
+          <div className="glass p-5">
+            <div className="flex items-center justify-between mb-3">
+              <div className="flex items-center">
+                <span className="text-2xl mr-2">↑</span>
+                <h3 className="text-lg font-semibold text-neutral-800">
+                  Асцендент в {formatZodiacSign(big3.asc.sign)}
                 </h3>
-                {big3.asc.approx && (
-                  <span className="text-xs bg-purple-100 text-purple-700 px-2 py-1 rounded-full">
-                    приблизительно
-                  </span>
-                )}
+                {renderHelpIcon('asc')}
               </div>
-              <p className="text-sm text-purple-700 leading-relaxed">
-                {big3.asc.sign 
-                  ? ascText 
-                  : "Без точного времени рождения асцендент определить невозможно."
-                }
+            </div>
+            {renderHelpText('asc')}
+            <p className="text-sm text-neutral-600 leading-relaxed">
+              {ascText}
+            </p>
+          </div>
+        )}
+      </section>
+      
+      {/* Секция Стихий */}
+      <section className="space-y-4">
+        <div className="flex items-center justify-center">
+          <h2 className="text-xl font-bold text-neutral-800">
+            Баланс стихий
+          </h2>
+          {renderHelpIcon('elements')}
+        </div>
+        {renderHelpText('elements')}
+        
+        <div className="glass p-5">
+          <div className="space-y-3">
+            {Object.entries(elements).map(([element, count]) => {
+              const percentage = Math.round((count / 10) * 100);
+              const isMax = element === dominantElement.element;
+              
+              const elementEmojis: Record<string, string> = {
+                'fire': '🔥',
+                'earth': '🌍',
+                'air': '💨',
+                'water': '💧'
+              };
+              
+              const elementNames: Record<string, string> = {
+                'fire': 'Огонь',
+                'earth': 'Земля',
+                'air': 'Воздух',
+                'water': 'Вода'
+              };
+              
+              return (
+                <div key={element}>
+                  <div className="flex items-center justify-between mb-1">
+                    <span className="text-sm font-medium text-neutral-700 flex items-center">
+                      <span className="mr-1">{elementEmojis[element]}</span>
+                      {elementNames[element]}
+                    </span>
+                    <span className={`text-sm font-bold ${isMax ? 'text-purple-600' : 'text-neutral-600'}`}>
+                      {percentage}%
+                    </span>
+                  </div>
+                  <div className="w-full bg-neutral-200 rounded-full h-2">
+                    <div
+                      className={`h-2 rounded-full transition-all ${
+                        isMax ? 'bg-gradient-to-r from-purple-500 to-purple-600' : 'bg-neutral-400'
+                      }`}
+                      style={{ width: `${percentage}%` }}
+                    />
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+          
+          {dominantElement.element && (
+            <div className="mt-4 pt-4 border-t border-neutral-200">
+              <p className="text-sm text-neutral-600 leading-relaxed">
+                {elementText}
               </p>
             </div>
-          </div>
+          )}
         </div>
       </section>
       
-      {/* Секция баланса стихий */}
-      <section className="space-y-4">
-        <h2 className="text-xl font-bold text-neutral-800 text-center mb-6">
-          Баланс стихий
-        </h2>
-        
-        <div className="space-y-3">
-          {/* Огонь */}
-          <div className="space-y-1">
-            <div className="flex justify-between items-center">
-              <span className="text-sm font-medium text-red-800">🔥 Огонь</span>
-              <span className="text-sm text-red-600">{elements.fire}</span>
-            </div>
-            <div className="h-2 bg-red-100 rounded-full overflow-hidden">
-              <div 
-                className="h-full bg-gradient-to-r from-red-400 to-red-500 rounded-full transition-all duration-700 ease-out"
-                style={{ width: `${(elements.fire / maxElement) * 100}%` }}
-              />
-            </div>
-          </div>
-          
-          {/* Земля */}
-          <div className="space-y-1">
-            <div className="flex justify-between items-center">
-              <span className="text-sm font-medium text-green-800">🌍 Земля</span>
-              <span className="text-sm text-green-600">{elements.earth}</span>
-            </div>
-            <div className="h-2 bg-green-100 rounded-full overflow-hidden">
-              <div 
-                className="h-full bg-gradient-to-r from-green-400 to-green-500 rounded-full transition-all duration-700 ease-out delay-100"
-                style={{ width: `${(elements.earth / maxElement) * 100}%` }}
-              />
-            </div>
-          </div>
-          
-          {/* Воздух */}
-          <div className="space-y-1">
-            <div className="flex justify-between items-center">
-              <span className="text-sm font-medium text-sky-800">💨 Воздух</span>
-              <span className="text-sm text-sky-600">{elements.air}</span>
-            </div>
-            <div className="h-2 bg-sky-100 rounded-full overflow-hidden">
-              <div 
-                className="h-full bg-gradient-to-r from-sky-400 to-sky-500 rounded-full transition-all duration-700 ease-out delay-200"
-                style={{ width: `${(elements.air / maxElement) * 100}%` }}
-              />
-            </div>
-          </div>
-          
-          {/* Вода */}
-          <div className="space-y-1">
-            <div className="flex justify-between items-center">
-              <span className="text-sm font-medium text-blue-800">💧 Вода</span>
-              <span className="text-sm text-blue-600">{elements.water}</span>
-            </div>
-            <div className="h-2 bg-blue-100 rounded-full overflow-hidden">
-              <div 
-                className="h-full bg-gradient-to-r from-blue-400 to-blue-500 rounded-full transition-all duration-700 ease-out delay-300"
-                style={{ width: `${(elements.water / maxElement) * 100}%` }}
-              />
-            </div>
-          </div>
-        </div>
-      </section>
-      
-      {/* Кнопки действий */}
-      <section className="space-y-3 pt-4">
-        <button
-          onClick={handleTelegramShare}
-          className="w-full bg-blue-500 hover:bg-blue-600 text-white font-medium py-3 px-4 rounded-2xl transition-colors flex items-center justify-center gap-2"
-        >
-          📱 Поделиться в Telegram
-        </button>
-        
-        <button
-          onClick={handleSaveResult}
-          className="w-full bg-neutral-500 hover:bg-neutral-600 text-white font-medium py-3 px-4 rounded-2xl transition-colors flex items-center justify-center gap-2"
-        >
-          💾 Сохранить результат
-        </button>
+      {/* Дополнительная информация */}
+      <section className="glass p-5 text-center">
+        <p className="text-xs text-neutral-500">
+          Расчёт выполнен для
+        </p>
+        <p className="text-sm font-medium text-neutral-700 mt-1">
+          {formatBirthLine(birthData)}
+        </p>
       </section>
     </div>
   );

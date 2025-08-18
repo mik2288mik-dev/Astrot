@@ -75,14 +75,20 @@ export default function HomePage() {
                 <h2 className="card-title mb-3">
                   Моя карта
                 </h2>
-                <BirthHeader 
-                  birth={activeChart.input} 
-                  showEdit={true}
-                  onEdit={() => {
-                    hapticFeedback('impact', 'light');
-                    window.location.href = '/natal';
-                  }}
-                />
+                <div className="flex items-center justify-between gap-3">
+                  <BirthHeader birth={activeChart.input} />
+                  <button
+                    type="button"
+                    onClick={() => {
+                      hapticFeedback('impact', 'light');
+                      window.location.href = '/natal';
+                    }}
+                    className="shrink-0 rounded-xl px-4 py-2 text-sm font-medium border border-white/15 bg-white/5 backdrop-blur hover:bg-white/10 active:bg-white/15 transition focus:outline-none focus:ring-2 focus:ring-white/30"
+                    aria-label="Редактировать данные рождения"
+                  >
+                    ✎ Редактировать
+                  </button>
+                </div>
               </div>
               
               <button
