@@ -1,6 +1,11 @@
 'use client';
 import React, { useCallback, useMemo } from 'react';
 
+const UI = {
+  ink:'#1F2937', sub:'#6B7280', line:'#EAEAF2',
+  lilac:'#C1B2FF', lilacDark:'#8B7CFF', lavender:'#EEF0FF', haze:'#F7F7FB'
+};
+
 type PlanetId =
   | 'Sun'|'Moon'|'Mercury'|'Venus'|'Mars'|'Jupiter'|'Saturn'
   | 'Uranus'|'Neptune'|'Pluto'|'Node'|'ASC'|'MC';
@@ -90,11 +95,24 @@ export default function NatalWheel({ data, size=320, showAspects=true, className
         aria-label="Natal wheel"
         style={{ willChange: 'transform' }}
       >
+        <defs>
+          <radialGradient id="ringGrad" cx="50%" cy="50%" r="65%">
+            <stop offset="0%" stopColor="#FFFFFF"/>
+            <stop offset="100%" stopColor={UI.haze}/>
+          </radialGradient>
+          <filter id="ds" x="-50%" y="-50%" width="200%" height="200%">
+            <feOffset dy="1" result="o"/>
+            <feGaussianBlur in="o" stdDeviation="1.5" result="b"/>
+            <feColorMatrix in="b" type="matrix"
+              values="0 0 0 0 0.05  0 0 0 0 0.1  0 0 0 0 0.35  0 0 0 0.25 0" result="s"/>
+            <feMerge><feMergeNode in="s"/><feMergeNode in="SourceGraphic"/></feMerge>
+          </filter>
+        </defs>
         {/* Фон и кольца */}
-        <circle cx={cx} cy={cy} r={R_outer} fill="#FFF" stroke="#EAEAF2" strokeWidth="1"/>
-        <circle cx={cx} cy={cy} r={R_z_in}  fill="#F7F7FB" stroke="#EAEAF2" strokeWidth="1"/>
-        <circle cx={cx} cy={cy} r={R_h_out} fill="#FFF" stroke="#EAEAF2" strokeWidth="1"/>
-        <circle cx={cx} cy={cy} r={R_h_in}  fill="#F9FAFB" stroke="#EAEAF2" strokeWidth="1"/>
+        <circle cx={cx} cy={cy} r={R_outer} fill="url(#ringGrad)" stroke={UI.line} strokeWidth="1"/>
+        <circle cx={cx} cy={cy} r={R_z_in} fill={UI.haze} stroke={UI.line} strokeWidth="1"/>
+        <circle cx={cx} cy={cy} r={R_h_out} fill="#FFF" stroke={UI.line} strokeWidth="1"/>
+        <circle cx={cx} cy={cy} r={R_h_in} fill="#FFF" stroke={UI.line} strokeWidth="1"/>
 
         {/* Деления знаков каждые 30° */}
         {signs.map(s => {
@@ -104,7 +122,7 @@ export default function NatalWheel({ data, size=320, showAspects=true, className
               key={`sign-div-${s.i}`} 
               x1={cx} y1={cy} 
               x2={p.x} y2={p.y} 
-              stroke="#E5E7EB" 
+              stroke={UI.line} 
               strokeWidth="1"
             />
           );
@@ -120,7 +138,8 @@ export default function NatalWheel({ data, size=320, showAspects=true, className
               fontSize={12} 
               textAnchor="middle" 
               dominantBaseline="middle" 
-              fill="#6B7280"
+              fill={UI.sub}
+              fontWeight={500}
               onClick={() => handleSignClick(s.name, s.lonMid)}
               style={{ cursor: 'pointer', userSelect: 'none' }}
               className="hover:fill-purple-600 transition-colors"
@@ -138,7 +157,7 @@ export default function NatalWheel({ data, size=320, showAspects=true, className
               key={`house-${h.index}`} 
               x1={cx} y1={cy} 
               x2={a.x} y2={a.y} 
-              stroke="#D1D5DB" 
+              stroke={UI.line} 
               strokeWidth={1.2}
               onClick={() => handleHouseClick(h.index, h.lon)}
               style={{ cursor: 'pointer' }}
@@ -162,8 +181,8 @@ export default function NatalWheel({ data, size=320, showAspects=true, className
               x1={p1.x} y1={p1.y} 
               x2={p2.x} y2={p2.y} 
               stroke={ASPECT_COLOR[as.type] || '#6B7280'} 
-              strokeWidth={1.2} 
-              opacity={0.35}
+              strokeWidth={1.4} 
+              opacity={0.4}
               style={{ pointerEvents: 'none' }}
             />
           );
@@ -179,22 +198,25 @@ export default function NatalWheel({ data, size=320, showAspects=true, className
               key={pl.id} 
               transform={`translate(${p.x},${p.y})`} 
               onClick={() => handlePlanetClick(pl.id, pl.lon)}
-              style={{ cursor: 'pointer' }}
+              style={{ cursor: 'pointer', opacity: 1 }}
               className="hover:scale-110 transition-transform"
+              filter="url(#ds)"
+              onPointerDown={(e) => { e.currentTarget.style.opacity = '0.9'; }}
+              onPointerUp={(e) => { e.currentTarget.style.opacity = '1'; }}
+              onPointerLeave={(e) => { e.currentTarget.style.opacity = '1'; }}
             >
               <circle 
-                r={9} 
+                r={10} 
                 fill="#FFF" 
-                stroke="#C7D2FE" 
-                strokeWidth="1.2"
-                className="hover:fill-purple-50 hover:stroke-purple-400 transition-colors"
+                stroke={UI.lilac} 
+                strokeWidth="1.4"
               />
               <text 
                 x={0} y={0.5} 
-                fontSize={12} 
+                fontSize={12.5} 
                 textAnchor="middle" 
                 dominantBaseline="middle" 
-                fill="#4F46E5"
+                fill={UI.lilacDark}
                 style={{ pointerEvents: 'none' }}
               >
                 {glyph}

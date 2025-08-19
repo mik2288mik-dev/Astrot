@@ -1,5 +1,7 @@
 import { getOpenAI, getModel } from '@/lib/ai/openai';
 import { toMessage } from '@/lib/utils/errors';
+import { isAllowed } from '@/lib/chat/guard';
+import { systemPrompt } from '@/lib/chat/system';
 
 export const runtime = 'nodejs';
 export const dynamic = 'force-dynamic';
