@@ -214,7 +214,7 @@ export default function HomePage() {
             <NatalWheel
               data={chart}
               size={320}
-              art={{ src: '/art/natal-wheel-bg.svg', rotate: true, opacity: 0.9 }}
+              art={{ src: '/art/astrot-natal-wheel.svg', rotate: true, opacity: 0.9 }}
               onSelect={(e) => {
                 console.log('select', e);
                 hapticFeedback('impact', 'light');
