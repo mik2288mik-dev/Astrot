@@ -1,212 +1,94 @@
 'use client';
+import React from 'react';
 
-import React, { useState, useRef, useCallback } from 'react';
-import { motion } from 'framer-motion';
-import type { ChartData } from '../../../lib/astro/types';
-import { ZodiacLayer } from './layers/ZodiacLayer';
-import { HousesLayer } from './layers/HousesLayer';
-import { PlanetsLayer } from './layers/PlanetsLayer';
-import { AspectsLayer } from './layers/AspectsLayer';
+type PlanetId =
+  | 'Sun'|'Moon'|'Mercury'|'Venus'|'Mars'|'Jupiter'|'Saturn'
+  | 'Uranus'|'Neptune'|'Pluto'|'Node'|'ASC'|'MC';
 
-interface NatalWheelProps {
-  chartData: ChartData | null;
-  onSelect?: (entity: SelectedEntity) => void;
+export type PlanetPos = { id: PlanetId | string; lon: number; speed?: number };
+export type HouseCusp = { index: number; lon: number };
+export type Aspect = {
+  a: string; b: string;
+  type: 'conjunction'|'opposition'|'trine'|'square'|'sextile';
+  orb?: number;
+};
+export type ChartData = { planets: PlanetPos[]; houses?: HouseCusp[]; aspects?: Aspect[] };
+
+export type SelectEntity =
+  | { kind: 'planet'; id: string; lon: number }
+  | { kind: 'house'; id: string; lon: number }
+  | { kind: 'sign';  id: string; lon: number };
+
+type Props = {
+  data: ChartData;
+  size?: number;
+  showAspects?: boolean;
   className?: string;
-}
-
-export type SelectedEntity = {
-  type: 'planet' | 'house' | 'aspect';
-  data: any;
-  name: string;
-  position?: { x: number; y: number };
+  onSelect?: (e: SelectEntity) => void;
 };
 
-export default function NatalWheel({ chartData, onSelect, className = '' }: NatalWheelProps) {
-  const [scale, setScale] = useState(1);
-  const [showAspects, setShowAspects] = useState(true);
-  const [selectedEntity, setSelectedEntity] = useState<SelectedEntity | null>(null);
-  const wheelRef = useRef<SVGSVGElement>(null);
+const PLANET_GLYPH: Record<string, string> = {
+  Sun:'☉', Moon:'☾', Mercury:'☿', Venus:'♀', Mars:'♂',
+  Jupiter:'♃', Saturn:'♄', Uranus:'♅', Neptune:'♆', Pluto:'♇',
+  Node:'☊', ASC:'↑', MC:'⊥'
+};
+const ASPECT_COLOR = {
+  conjunction:'#6B7280', opposition:'#EF4444', square:'#F59E0B', trine:'#22C55E', sextile:'#3B82F6'
+} as const;
 
-  // Размеры колеса
-  const wheelSize = 320;
-  const center = wheelSize / 2;
+const d2r = (d:number)=> d*Math.PI/180;
+const pt = (cx:number,cy:number,r:number,lon:number)=>{
+  const a = d2r(90 - lon); return { x: cx + r*Math.cos(a), y: cy - r*Math.sin(a) };
+};
 
-  // Обработка выбора сущности
-  const handleEntitySelect = useCallback((entity: SelectedEntity) => {
-    setSelectedEntity(entity);
-    onSelect?.(entity);
-  }, [onSelect]);
-
-  // Обработка масштабирования (pinch)
-  const handleWheel = useCallback((e: React.WheelEvent) => {
-    e.preventDefault();
-    const delta = e.deltaY * -0.01;
-    const newScale = Math.max(0.5, Math.min(2, scale + delta));
-    setScale(newScale);
-  }, [scale]);
-
-  // Toggle аспектов
-  const toggleAspects = useCallback(() => {
-    setShowAspects(prev => !prev);
-  }, []);
-
-  if (!chartData) {
-    return (
-      <div className={`flex items-center justify-center ${className}`}>
-        <div className="w-80 h-80 border-2 border-dashed border-gray-300 rounded-full flex items-center justify-center">
-          <p className="text-gray-500">Загрузите данные рождения</p>
-        </div>
-      </div>
-    );
-  }
+export default function NatalWheel({ data, size=320, showAspects=true, className, onSelect }: Props) {
+  const cx=size/2, cy=size/2;
+  const R_outer=size*0.48, R_z_in=R_outer-28, R_h_out=R_z_in-6, R_h_in=R_h_out-26, R_pl=R_h_in-10;
+  const signs = Array.from({length:12},(_,i)=>({i, name:['Ar','Ta','Ge','Cn','Le','Vi','Li','Sc','Sg','Cp','Aq','Pi'][i], lonStart:i*30, lonMid:i*30+15}));
 
   return (
-    <div className={`relative ${className}`}>
-      {/* Контролы */}
-      <div className="absolute top-4 right-4 z-10 flex flex-col gap-2">
-        <button
-          onClick={toggleAspects}
-          className={`px-3 py-1 rounded-full text-xs font-medium transition-colors ${
-            showAspects 
-              ? 'bg-purple-100 text-purple-700 border border-purple-200' 
-              : 'bg-gray-100 text-gray-600 border border-gray-200'
-          }`}
-        >
-          Аспекты
-        </button>
-        <div className="text-xs text-gray-500 text-center">
-          {(scale * 100).toFixed(0)}%
-        </div>
-      </div>
+    <div className={className} style={{width:size,height:size}}>
+      <svg viewBox={`0 0 ${size} ${size}`} width={size} height={size} role="img" aria-label="Natal wheel">
+        <circle cx={cx} cy={cy} r={R_outer} fill="#FFF" stroke="#EAEAF2" strokeWidth="1"/>
+        <circle cx={cx} cy={cy} r={R_z_in}  fill="#F7F7FB" stroke="#EAEAF2" strokeWidth="1"/>
+        <circle cx={cx} cy={cy} r={R_h_out} fill="#FFF" stroke="#EAEAF2" strokeWidth="1"/>
+        <circle cx={cx} cy={cy} r={R_h_in}  fill="#F9FAFB" stroke="#EAEAF2" strokeWidth="1"/>
 
-      {/* Основное колесо */}
-      <motion.div
-        className="relative"
-        style={{ scale }}
-        transition={{ type: 'spring', stiffness: 300, damping: 30 }}
-      >
-        <svg
-          ref={wheelRef}
-          width={wheelSize}
-          height={wheelSize}
-          viewBox={`0 0 ${wheelSize} ${wheelSize}`}
-          className="drop-shadow-lg"
-          onWheel={handleWheel}
-          style={{ touchAction: 'none' }}
-        >
-          {/* Градиентные определения */}
-          <defs>
-            <radialGradient id="wheelGradient" cx="50%" cy="50%" r="50%">
-              <stop offset="0%" stopColor="#ffffff" stopOpacity="0.9" />
-              <stop offset="100%" stopColor="#f8fafc" stopOpacity="0.95" />
-            </radialGradient>
-            <filter id="softShadow">
-              <feDropShadow dx="0" dy="2" stdDeviation="4" floodOpacity="0.1"/>
-            </filter>
-          </defs>
+        {signs.map(s=>{ const p=pt(cx,cy,R_z_in,s.lonStart);
+          return <line key={`sign-${s.i}`} x1={cx} y1={cy} x2={p.x} y2={p.y} stroke="#E5E7EB" strokeWidth="1"/>;
+        })}
+        {signs.map(s=>{ const m=pt(cx,cy,(R_outer+R_z_in)/2,s.lonMid);
+          return (
+            <text key={`label-${s.i}`} x={m.x} y={m.y} fontSize={12} textAnchor="middle" dominantBaseline="middle" fill="#6B7280"
+              onClick={()=>onSelect?.({kind:'sign', id:s.name || `sign-${s.i}`, lon:s.lonMid})} style={{cursor:'pointer',userSelect:'none'}}>
+              {s.name}
+            </text>
+          );
+        })}
 
-          {/* Фон колеса */}
-          <circle
-            cx={center}
-            cy={center}
-            r={center - 10}
-            fill="url(#wheelGradient)"
-            stroke="#e2e8f0"
-            strokeWidth="2"
-            filter="url(#softShadow)"
-          />
+        {data.houses?.length===12 && data.houses.map(h=>{ const a=pt(cx,cy,R_h_out,h.lon);
+          return (
+            <line key={`house-${h.index}`} x1={cx} y1={cy} x2={a.x} y2={a.y} stroke="#D1D5DB" strokeWidth={1.2}
+              onClick={()=>onSelect?.({kind:'house', id:String(h.index), lon:h.lon})} style={{cursor:'pointer'}}/>
+          );
+        })}
 
-          {/* Слой зодиака (внешний) */}
-          <ZodiacLayer
-            center={center}
-            radius={center - 20}
-            chartData={chartData}
-            onSelect={handleEntitySelect}
-            isSelected={selectedEntity?.type === 'house'}
-          />
+        {showAspects && data.aspects?.map((as,i)=>{
+          const A=data.planets.find(p=>p.id===as.a), B=data.planets.find(p=>p.id===as.b);
+          if(!A||!B) return null;
+          const p1=pt(cx,cy,R_pl,A.lon), p2=pt(cx,cy,R_pl,B.lon);
+          return <line key={`asp-${i}`} x1={p1.x} y1={p1.y} x2={p2.x} y2={p2.y} stroke={ASPECT_COLOR[as.type] || '#6B7280'} strokeWidth={1.2} opacity={0.35}/>;
+        })}
 
-          {/* Слой домов */}
-          <HousesLayer
-            center={center}
-            innerRadius={center - 80}
-            outerRadius={center - 20}
-            chartData={chartData}
-            onSelect={handleEntitySelect}
-            isSelected={selectedEntity?.type === 'house'}
-          />
-
-          {/* Слой аспектов (если включён) */}
-          {showAspects && (
-            <AspectsLayer
-              center={center}
-              radius={center - 100}
-              chartData={chartData}
-              onSelect={handleEntitySelect}
-              isSelected={selectedEntity?.type === 'aspect'}
-            />
-          )}
-
-          {/* Слой планет (внутренний) */}
-          <PlanetsLayer
-            center={center}
-            radius={center - 90}
-            chartData={chartData}
-            onSelect={handleEntitySelect}
-            selectedPlanet={selectedEntity?.type === 'planet' ? selectedEntity.name : null}
-          />
-
-          {/* Центральный круг */}
-          <circle
-            cx={center}
-            cy={center}
-            r="30"
-            fill="#fefefe"
-            stroke="#e2e8f0"
-            strokeWidth="1"
-          />
-
-          {/* Центральная информация */}
-          <text
-            x={center}
-            y={center - 5}
-            textAnchor="middle"
-            className="fill-gray-600 text-xs font-medium"
-          >
-            {chartData.sunSign}
-          </text>
-          <text
-            x={center}
-            y={center + 8}
-            textAnchor="middle"
-            className="fill-gray-400 text-xs"
-          >
-            {chartData.risingSign} ASC
-          </text>
-        </svg>
-      </motion.div>
-
-      {/* Информационная панель */}
-      {selectedEntity && (
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          exit={{ opacity: 0, y: 20 }}
-          className="absolute bottom-4 left-4 right-4 bg-white/90 backdrop-blur rounded-lg p-3 shadow-lg border border-gray-200"
-        >
-          <div className="flex items-center justify-between">
-            <div>
-              <h4 className="font-medium text-gray-800">{selectedEntity.name}</h4>
-              <p className="text-sm text-gray-600 capitalize">{selectedEntity.type}</p>
-            </div>
-            <button
-              onClick={() => setSelectedEntity(null)}
-              className="w-6 h-6 rounded-full bg-gray-100 flex items-center justify-center text-gray-500 hover:bg-gray-200 transition-colors"
-            >
-              ×
-            </button>
-          </div>
-        </motion.div>
-      )}
+        {data.planets.map(pl=>{ const p=pt(cx,cy,R_pl,pl.lon); const g=PLANET_GLYPH[pl.id] ?? '•';
+          return (
+            <g key={pl.id} transform={`translate(${p.x},${p.y})`} onClick={()=>onSelect?.({kind:'planet', id:pl.id, lon:pl.lon})} style={{cursor:'pointer'}}>
+              <circle r={9} fill="#FFF" stroke="#C7D2FE" strokeWidth="1.2"/>
+              <text x={0} y={0.5} fontSize={12} textAnchor="middle" dominantBaseline="middle" fill="#4F46E5">{g}</text>
+            </g>
+          );
+        })}
+      </svg>
     </div>
   );
 }

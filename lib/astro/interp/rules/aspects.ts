@@ -120,7 +120,7 @@ function getAspectAnalysis(aspect: Aspect) {
   const reverseKey = `${planet2}-${planet1}-${type}`;
   
   const specificAnalyses = getSpecificAspectAnalyses();
-  let analysis = specificAnalyses[key] || specificAnalyses[reverseKey];
+  let analysis = (specificAnalyses as any)[key] || (specificAnalyses as any)[reverseKey];
   
   if (!analysis) {
     // Общий анализ по типу аспекта и планетам
