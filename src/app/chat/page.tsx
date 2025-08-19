@@ -2,6 +2,8 @@
 
 import React, { useState, useRef, useEffect } from 'react';
 import { useTelegram } from '@/hooks/useTelegram';
+import { useKeyboardInsets } from '@/hooks/useKeyboardInsets';
+import { type Domain } from '@/lib/chat/guard';
 import { 
   PaperAirplaneIcon,
   SparklesIcon,
@@ -18,6 +20,11 @@ interface Message {
   options?: Array<{ label: string; prompt: string }>;
 }
 
+interface ChatState {
+  domain: Domain | null;
+  lastWasGuard: boolean;
+}
+
 const suggestedQuestions = [
   'Расскажи о моем знаке зодиака',
   'Что ждет меня сегодня?',
@@ -27,6 +34,7 @@ const suggestedQuestions = [
 
 export default function ChatPage() {
   const { hapticFeedback } = useTelegram();
+  useKeyboardInsets();
   const [messages, setMessages] = useState<Message[]>([
     {
       id: '1',
@@ -37,6 +45,10 @@ export default function ChatPage() {
   ]);
   const [inputText, setInputText] = useState('');
   const [isTyping, setIsTyping] = useState(false);
+  const [chatState, setChatState] = useState<ChatState>({
+    domain: null,
+    lastWasGuard: false
+  });
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
 
@@ -48,7 +60,7 @@ export default function ChatPage() {
     scrollToBottom();
   }, [messages]);
 
-  const sendMessage = async (text: string) => {
+  const sendMessage = async (text: string, _opts?: { domainHint?: boolean }) => {
     if (!text.trim()) return;
 
     hapticFeedback('impact', 'light');
@@ -66,40 +78,38 @@ export default function ChatPage() {
     setIsTyping(true);
 
     try {
-      // Получаем активную карту
-      const pinned = (await import('@/lib/charts/store')).ChartsStore.getPinned?.();
-      const payload = { 
-        messages: messages.concat(userMessage).map(m => ({ role: m.sender === 'user' ? 'user' : 'assistant', content: m.text })), 
-        natal: pinned?.result ?? null 
-      };
-      
-      const res = await fetch('/api/astro-chat', { 
-        method: 'POST', 
-        headers: { 'Content-Type': 'application/json' }, 
-        body: JSON.stringify(payload) 
+      const res = await fetch('/api/chat', {
+        method: 'POST',
+        headers: { 'content-type': 'application/json' },
+        body: JSON.stringify({
+          message: text,
+          domain: chatState.domain,
+          lastWasGuard: chatState.lastWasGuard,
+        }),
       });
       
-      const response = await res.json();
+      const data = await res.json();
       
-      // Если гвард заблокировал - показываем отказ с кнопками
-      if (response.type === 'guard') {
+      if (data.type === 'guard') {
         const aiMessage: Message = {
           id: (Date.now() + 1).toString(),
-          text: response.text,
+          text: data.text,
           sender: 'ai',
           timestamp: new Date(),
           type: 'guard',
-          options: response.options
+          options: data.options
         };
         setMessages(prev => [...prev, aiMessage]);
+        setChatState(s => ({ ...s, lastWasGuard: true }));
       } else {
         const aiMessage: Message = {
           id: (Date.now() + 1).toString(),
-          text: response.error || response.reply || 'Произошла ошибка при получении ответа',
+          text: data.error || data.text || 'Произошла ошибка при получении ответа',
           sender: 'ai',
           timestamp: new Date()
         };
         setMessages(prev => [...prev, aiMessage]);
+        setChatState(s => ({ ...s, lastWasGuard: false, domain: data.domain ?? s.domain }));
       }
       setIsTyping(false);
       hapticFeedback('notification', 'success');
@@ -175,10 +185,10 @@ export default function ChatPage() {
               <p className="text-sm leading-relaxed">{message.text}</p>
               {message.type === 'guard' && Array.isArray(message.options) && (
                 <div className="mt-2 flex flex-wrap gap-2">
-                  {message.options.map((option: any) => (
+                  {message.options.map((option: { label: string; prompt: string }) => (
                     <button
                       key={option.label}
-                      onClick={() => sendMessage(option.prompt)}
+                      onClick={() => sendMessage(option.prompt, { domainHint: true })}
                       className="rounded-2xl px-4 py-2 bg-white border border-[#EAEAF2] text-[#1F2937] hover:bg-gray-50 transition-colors"
                     >
                       {option.label}
@@ -216,7 +226,7 @@ export default function ChatPage() {
       </div>
 
       {/* Input */}
-      <form onSubmit={handleSubmit} className="bg-white border-t border-neutral-100 py-3 pb-safe">
+      <form onSubmit={handleSubmit} className="chat-composer bg-white border-t border-neutral-100 py-3">
         <div className="flex items-center gap-2">
           <button
             type="button"

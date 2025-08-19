@@ -7,6 +7,7 @@
   --tg-viewport-height: 100dvh;
   --safe-top: calc(env(safe-area-inset-top) + 16px);
   --safe-bottom: env(safe-area-inset-bottom);
+  --kb: 0px;
   
   /* Light theme colors - Макет */
   --bg-primary: #FAFBFC;
@@ -388,5 +389,13 @@ p {
 /* Safe page wrapper with proper safe-area handling */
 .safe-page {
   padding-top: max(env(safe-area-inset-top), 12px);
-  padding-bottom: max(env(safe-area-inset-bottom), 12px);
+  padding-bottom: max(env(safe-area-inset-bottom), var(--kb));
+}
+
+/* Chat composer with keyboard support */
+.chat-composer {
+  position: sticky;
+  bottom: 0;
+  padding-bottom: max(env(safe-area-inset-bottom), var(--kb));
+  background: #fff;
 }
