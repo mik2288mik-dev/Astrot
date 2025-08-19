@@ -1,5 +1,5 @@
-import type { ComputeInput, ComputeOutput, EphemerisAdapter } from '@/lib/ephemeris/adapter';
-import { getEphemerisAdapter } from '@/lib/ephemeris/adapter';
+import type { ComputeInput, ComputeOutput, EphemerisAdapter } from './ephemeris/adapter';
+import { getEphemerisAdapter } from './ephemeris/adapter';
 
 /**
  * Compute a natal chart using Swiss Ephemeris when available.
@@ -11,4 +11,4 @@ export async function computeNatalChart(input: ComputeInput): Promise<ComputeOut
   return adapter.compute(input);
 }
 
-export type { ComputeInput, ComputeOutput } from '@/lib/ephemeris/adapter';
+export type { ComputeInput, ComputeOutput } from './ephemeris/adapter';
