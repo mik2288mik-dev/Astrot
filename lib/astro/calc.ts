@@ -47,7 +47,7 @@ export async function calculateNatalChart(birthData: BirthData): Promise<ChartDa
       symbol,
       lon: planet.lon,
       lat: planet.lat,
-      dist: planet.dist,
+      ...(planet.dist !== undefined && { dist: planet.dist }),
       sign,
       signDegree,
       isRetrograde: false // TODO: добавить расчёт ретроградности
@@ -121,8 +121,13 @@ function findHouseForPlanet(planetLon: number, cusps: HouseCusp[]): number {
   if (cusps.length === 0) return 1;
 
   for (let i = 0; i < cusps.length; i++) {
-    const currentCusp = cusps[i].degree;
-    const nextCusp = cusps[(i + 1) % cusps.length].degree;
+    const currentCuspObj = cusps[i];
+    const nextCuspObj = cusps[(i + 1) % cusps.length];
+    
+    if (!currentCuspObj || !nextCuspObj) continue;
+    
+    const currentCusp = currentCuspObj.degree;
+    const nextCusp = nextCuspObj.degree;
     
     // Обрабатываем переход через 0°
     if (currentCusp > nextCusp) {

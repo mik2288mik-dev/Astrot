@@ -203,7 +203,7 @@ export function PlanetsLayer({
                       dominantBaseline="middle"
                       className="fill-gray-600 text-xs"
                     >
-                      {Math.floor(planet.signDegree)}°{Math.floor((planet.signDegree % 1) * 60)}'
+                      {Math.floor(planet.signDegree)}°{Math.floor((planet.signDegree % 1) * 60)}&#39;
                     </text>
                   )}
                 </g>
