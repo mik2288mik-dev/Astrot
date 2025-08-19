@@ -30,6 +30,7 @@ type Props = {
   showAspects?: boolean;
   className?: string;
   onSelect?: (e: SelectEntity) => void;
+  art?: { src: string; rotate?: boolean; opacity?: number };
 };
 
 const PLANET_GLYPH: Record<string, string> = {
@@ -46,7 +47,7 @@ const pt = (cx:number,cy:number,r:number,lon:number)=>{
   const a = d2r(90 - lon); return { x: cx + r*Math.cos(a), y: cy - r*Math.sin(a) };
 };
 
-export default function NatalWheel({ data, size=320, showAspects=true, className, onSelect }: Props) {
+export default function NatalWheel({ data, size=320, showAspects=true, className, onSelect, art }: Props) {
   // Мемоизация геометрических параметров
   const geometry = useMemo(() => {
     const cx = size / 2;
@@ -96,6 +97,16 @@ export default function NatalWheel({ data, size=320, showAspects=true, className
         style={{ willChange: 'transform' }}
       >
         <defs>
+          <clipPath id="clipWheel"><circle cx={cx} cy={cy} r={R_outer} /></clipPath>
+          <filter id="outerGlow" x="-50%" y="-50%" width="200%" height="200%">
+            <feGaussianBlur stdDeviation="6" result="b"/>
+            <feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge>
+          </filter>
+          <radialGradient id="aurora" cx="50%" cy="50%" r="70%">
+            <stop offset="0%" stopColor="#C1B2FF" stopOpacity=".8"/>
+            <stop offset="60%" stopColor="#F5A8E9" stopOpacity=".5"/>
+            <stop offset="100%" stopColor="#F5A8E9" stopOpacity="0"/>
+          </radialGradient>
           <radialGradient id="ringGrad" cx="50%" cy="50%" r="65%">
             <stop offset="0%" stopColor="#FFFFFF"/>
             <stop offset="100%" stopColor={UI.haze}/>
@@ -108,6 +119,24 @@ export default function NatalWheel({ data, size=320, showAspects=true, className
             <feMerge><feMergeNode in="s"/><feMergeNode in="SourceGraphic"/></feMerge>
           </filter>
         </defs>
+
+        {/* арт-фон из макета, под всеми слоями */}
+        {art?.src && (
+          <image
+            href={art.src}
+            x={cx - R_outer} y={cy - R_outer}
+            width={R_outer * 2} height={R_outer * 2}
+            clipPath="url(#clipWheel)"
+            opacity={art.opacity ?? 0.92}
+            style={{ transformOrigin: `${cx}px ${cy}px` }}
+            className={art.rotate ? 'animate-slow-spin' : ''}
+            pointerEvents="none"
+          />
+        )}
+
+        {/* тонкое свечение по краю */}
+        <circle cx={cx} cy={cy} r={R_outer-1} fill="none" stroke="url(#aurora)" strokeWidth="3" filter="url(#outerGlow)" opacity=".65" pointerEvents="none"/>
+
         {/* Фон и кольца */}
         <circle cx={cx} cy={cy} r={R_outer} fill="url(#ringGrad)" stroke={UI.line} strokeWidth="1"/>
         <circle cx={cx} cy={cy} r={R_z_in} fill={UI.haze} stroke={UI.line} strokeWidth="1"/>

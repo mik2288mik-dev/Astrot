@@ -211,13 +211,14 @@ export default function HomePage() {
         {/* Натальный круг или CTA */}
         {chart ? (
           <div className="mt-4 flex justify-center">
-            <NatalWheel 
-              data={chart} 
-              size={320} 
+            <NatalWheel
+              data={chart}
+              size={320}
+              art={{ src: '/art/natal-wheel-bg.svg', rotate: true, opacity: 0.9 }}
               onSelect={(e) => {
                 console.log('select', e);
                 hapticFeedback('impact', 'light');
-              }} 
+              }}
             />
           </div>
         ) : birth ? (
