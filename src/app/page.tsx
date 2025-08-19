@@ -211,7 +211,7 @@ export default function HomePage() {
             <NatalWheel data={chart} size={320} onSelect={(e) => openInsight(e)} />
           ) : (
             <img
-              src="/art/astrot-wheel-classic.svg" 
+              src="/art/astrot-natal-wheel.svg" 
               alt="Astrot wheel"
               width={320} 
               height={320}
