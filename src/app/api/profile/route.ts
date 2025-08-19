@@ -8,6 +8,7 @@ export const dynamic = 'force-dynamic';
 const ProfileSchema = z.object({
   tgId: z.number(),
   name: z.string().min(1).max(100),
+  preferredName: z.string().max(100).optional(),
   birthDate: z.string().regex(/^\d{4}-\d{2}-\d{2}$/),
   birthTime: z.string().regex(/^\d{2}:\d{2}$/).optional(),
   timeUnknown: z.boolean().default(false),
