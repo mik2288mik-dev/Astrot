@@ -1,8 +1,8 @@
 // Адаптер для расчёта натальной карты с использованием Swiss Ephemeris
 
-import type { ComputeInput, ComputeOutput } from '@/lib/ephemeris/adapter';
-import { computeNatalChart } from '@/lib/natal';
-import { signFromLongitude } from '@/lib/ephemeris/adapter';
+import type { ComputeInput, ComputeOutput } from '../ephemeris/adapter';
+import { computeNatalChart } from '../natal';
+import { signFromLongitude } from '../ephemeris/adapter';
 import type { 
   BirthData, 
   ChartData, 
