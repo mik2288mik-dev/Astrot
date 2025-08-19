@@ -1,8 +1,8 @@
-export function impactLight(): void {
+export function impactOccurred(style: 'light' | 'medium' | 'heavy' = 'light'): void {
   try {
     const tg = (typeof window !== 'undefined' ? (window as any)?.Telegram?.WebApp : null);
     if (tg?.HapticFeedback?.impactOccurred) {
-      tg.HapticFeedback.impactOccurred('light');
+      tg.HapticFeedback.impactOccurred(style);
       return;
     }
   } catch {
@@ -10,11 +10,17 @@ export function impactLight(): void {
   }
   if (typeof navigator !== 'undefined' && 'vibrate' in navigator) {
     try {
-      navigator.vibrate?.(10);
+      const patterns = { light: 10, medium: 50, heavy: 100 };
+      navigator.vibrate?.(patterns[style]);
     } catch {
       // noop
     }
   }
+}
+
+// Backward compatibility
+export function impactLight(): void {
+  impactOccurred('light');
 }
 
 export function selectionChanged(): void {

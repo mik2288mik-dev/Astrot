@@ -2,14 +2,14 @@
 
 import React from 'react';
 import type { ChartData } from '../../../../lib/astro/types';
-import type { SelectedEntity } from '../NatalWheel';
+import type { SelectEntity } from '../NatalWheel';
 import { SIGN_SYMBOLS } from '../../../../lib/astro/types';
 
 interface ZodiacLayerProps {
   center: number;
   radius: number;
   chartData: ChartData;
-  onSelect: (entity: SelectedEntity) => void;
+  onSelect: (entity: SelectEntity) => void;
   isSelected: boolean;
 }
 
@@ -92,10 +92,9 @@ export function ZodiacLayer({ center, radius, chartData, onSelect, isSelected }:
   const handleSignClick = (sign: string, event: React.MouseEvent) => {
     event.stopPropagation();
     onSelect({
-      type: 'house',
-      data: { sign },
-      name: sign,
-      position: { x: event.clientX, y: event.clientY }
+      kind: 'sign',
+      id: sign,
+      lon: 0
     });
   };
 

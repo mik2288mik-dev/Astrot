@@ -2,14 +2,14 @@
 
 import React from 'react';
 import type { ChartData, PlanetPos } from '../../../../lib/astro/types';
-import type { SelectedEntity } from '../NatalWheel';
+import type { SelectEntity } from '../NatalWheel';
 import { PLANET_SYMBOLS } from '../../../../lib/astro/types';
 
 interface PlanetsLayerProps {
   center: number;
   radius: number;
   chartData: ChartData;
-  onSelect: (entity: SelectedEntity) => void;
+  onSelect: (entity: SelectEntity) => void;
   selectedPlanet: string | null;
 }
 
@@ -57,10 +57,9 @@ export function PlanetsLayer({
   const handlePlanetClick = (planet: PlanetPos, event: React.MouseEvent) => {
     event.stopPropagation();
     onSelect({
-      type: 'planet',
-      data: planet,
-      name: `${planet.name} в ${planet.sign}`,
-      position: { x: event.clientX, y: event.clientY }
+      kind: 'planet',
+      id: planet.name,
+      lon: planet.lon
     });
   };
 

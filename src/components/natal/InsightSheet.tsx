@@ -3,14 +3,14 @@
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { XMarkIcon, ArrowRightIcon, SparklesIcon } from '@heroicons/react/24/outline';
-import type { SelectedEntity } from './NatalWheel';
+import type { SelectEntity } from './NatalWheel';
 import type { ChartData, Interpretation } from '../../../lib/astro/types';
 import { getQuickInsight, interpretNatalChart } from '../../../lib/astro/interp';
 
 interface InsightSheetProps {
   isOpen: boolean;
   onClose: () => void;
-  selectedEntity: SelectedEntity | null;
+  selectedEntity: SelectEntity | null;
   chartData: ChartData | null;
   onFullAnalysis?: () => void;
 }
@@ -46,7 +46,7 @@ export default function InsightSheet({
 
   if (!isOpen) return null;
 
-  const quickInsight = selectedEntity ? getQuickInsight(selectedEntity.type, selectedEntity.data) : null;
+  const quickInsight = selectedEntity && selectedEntity.kind !== 'sign' ? getQuickInsight(selectedEntity.kind, selectedEntity) : null;
 
   return (
     <AnimatePresence>
@@ -91,7 +91,7 @@ export default function InsightSheet({
                   <SparklesIcon className="w-4 h-4 text-purple-600" />
                 </div>
                 <h2 className="text-lg font-semibold text-gray-800">
-                  {showFullInterpretation ? 'Полный анализ карты' : (selectedEntity?.name || 'Инсайт')}
+                  {showFullInterpretation ? 'Полный анализ карты' : (selectedEntity?.id || 'Инсайт')}
                 </h2>
               </div>
               <button
