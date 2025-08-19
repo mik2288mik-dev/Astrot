@@ -4,7 +4,7 @@ import React, { useState, useEffect } from 'react';
 import Image from 'next/image';
 import { useTelegramUser, useTelegram } from '@/hooks/useTelegram';
 import { useRouter } from 'next/navigation';
-import { BellIcon, ShieldCheckIcon, QuestionMarkCircleIcon, StarIcon, UserIcon, PencilIcon } from '@heroicons/react/24/outline';
+import { BellIcon, ShieldCheckIcon, QuestionMarkCircleIcon, StarIcon, UserIcon, PencilIcon, Cog6ToothIcon } from '@heroicons/react/24/outline';
 
 interface MenuItem {
   icon: React.ComponentType<React.SVGProps<SVGSVGElement>>;
@@ -81,6 +81,12 @@ export default function ProfilePage() {
   };
 
   const menuItems: MenuItem[] = [
+    {
+      icon: Cog6ToothIcon,
+      label: 'Данные для расчётов',
+      value: profile ? 'Заполнено' : 'Не заполнено',
+      action: () => router.push('/profile/form'),
+    },
     {
       icon: UserIcon,
       label: 'Имя для обращений',

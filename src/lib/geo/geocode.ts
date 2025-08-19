@@ -1,3 +1,5 @@
+import { getTimezoneInfo } from './timezone';
+
 interface NominatimResult {
   place_id: number;
   licence: string;
@@ -28,6 +30,8 @@ export interface PlaceResult {
   lon: number;
   country: string;
   cityLikeLabel: string;
+  timezone: string;
+  tzOffset: number;
 }
 
 export async function searchPlace(query: string): Promise<PlaceResult[]> {
@@ -40,7 +44,7 @@ export async function searchPlace(query: string): Promise<PlaceResult[]> {
     
     const response = await fetch(url, {
       headers: {
-        'User-Agent': 'NatalChart/1.0 (https://example.com)',
+        'User-Agent': 'DeepSoul/1.0 (https://deepsoul.app)',
       },
     });
 
@@ -55,12 +59,18 @@ export async function searchPlace(query: string): Promise<PlaceResult[]> {
       const city = address?.city || address?.town || address?.village || address?.municipality;
       const country = address?.country || 'Unknown';
       
+      const lat = parseFloat(result.lat);
+      const lon = parseFloat(result.lon);
+      const timezoneInfo = getTimezoneInfo(lat, lon);
+      
       return {
         displayName: result.display_name,
-        lat: parseFloat(result.lat),
-        lon: parseFloat(result.lon),
+        lat,
+        lon,
         country,
         cityLikeLabel: city ? `${city}, ${country}` : country,
+        timezone: timezoneInfo.timezone,
+        tzOffset: timezoneInfo.tzOffset,
       };
     });
   } catch (error) {

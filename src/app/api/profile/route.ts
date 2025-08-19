@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { kv } from '@vercel/kv';
 import { z } from 'zod';
+import { extractTelegramUser, extractTelegramUserFromBody } from '@/lib/auth/telegram';
 
 export const runtime = 'nodejs';
 export const dynamic = 'force-dynamic';
@@ -29,11 +30,21 @@ type Profile = z.infer<typeof ProfileSchema>;
 // GET - получить профиль по tgId
 export async function GET(request: NextRequest) {
   try {
-    const { searchParams } = new URL(request.url);
-    const tgId = searchParams.get('tgId');
+    // Try to authenticate via Telegram
+    const telegramUser = extractTelegramUser(request);
+    let tgId: string;
     
-    if (!tgId) {
-      return NextResponse.json({ error: 'tgId is required' }, { status: 400 });
+    if (telegramUser) {
+      tgId = telegramUser.id.toString();
+    } else {
+      // Fallback to query parameter for backward compatibility
+      const { searchParams } = new URL(request.url);
+      const tgIdParam = searchParams.get('tgId');
+      
+      if (!tgIdParam) {
+        return NextResponse.json({ error: 'Authentication required' }, { status: 401 });
+      }
+      tgId = tgIdParam;
     }
     
     const profile = await kv.get(`profile:${tgId}`);
@@ -53,8 +64,17 @@ export async function GET(request: NextRequest) {
 export async function POST(request: NextRequest) {
   try {
     const data = await request.json();
+    
+    // Extract Telegram user for authentication
+    const telegramUser = extractTelegramUser(request) || extractTelegramUserFromBody(data);
+    
+    if (!telegramUser) {
+      return NextResponse.json({ error: 'Telegram authentication required' }, { status: 401 });
+    }
+    
     const profile = ProfileSchema.parse({
       ...data,
+      tgId: telegramUser.id, // Use authenticated user ID
       createdAt: new Date().toISOString(),
       updatedAt: new Date().toISOString()
     });
@@ -81,8 +101,17 @@ export async function POST(request: NextRequest) {
 export async function PUT(request: NextRequest) {
   try {
     const data = await request.json();
+    
+    // Extract Telegram user for authentication
+    const telegramUser = extractTelegramUser(request) || extractTelegramUserFromBody(data);
+    
+    if (!telegramUser) {
+      return NextResponse.json({ error: 'Telegram authentication required' }, { status: 401 });
+    }
+    
     const updatedData = {
       ...data,
+      tgId: telegramUser.id, // Use authenticated user ID
       updatedAt: new Date().toISOString()
     };
     
@@ -115,11 +144,21 @@ export async function PUT(request: NextRequest) {
 // DELETE - удалить профиль
 export async function DELETE(request: NextRequest) {
   try {
-    const { searchParams } = new URL(request.url);
-    const tgId = searchParams.get('tgId');
+    // Try to authenticate via Telegram
+    const telegramUser = extractTelegramUser(request);
+    let tgId: string;
     
-    if (!tgId) {
-      return NextResponse.json({ error: 'tgId is required' }, { status: 400 });
+    if (telegramUser) {
+      tgId = telegramUser.id.toString();
+    } else {
+      // Fallback to query parameter for backward compatibility
+      const { searchParams } = new URL(request.url);
+      const tgIdParam = searchParams.get('tgId');
+      
+      if (!tgIdParam) {
+        return NextResponse.json({ error: 'Authentication required' }, { status: 401 });
+      }
+      tgId = tgIdParam;
     }
     
     const profile = await kv.get(`profile:${tgId}`);
