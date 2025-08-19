@@ -1,33 +1,76 @@
-import tzlookup from 'tz-lookup';
+import find from 'tz-lookup';
+import { DateTime } from 'luxon';
 
-export function getTimezone(lat: number, lon: number): string {
+export interface TimezoneInfo {
+  timezone: string;
+  tzOffset: number;
+}
+
+/**
+ * Get timezone information for given coordinates
+ */
+export function getTimezoneInfo(lat: number, lon: number): TimezoneInfo {
   try {
-    // Валидация входных параметров
-    if (isNaN(lat) || isNaN(lon)) {
-      return 'UTC';
-    }
+    const timezone = find(lat, lon);
     
-    if (lat < -90 || lat > 90 || lon < -180 || lon > 180) {
-      return 'UTC';
+    if (!timezone) {
+      // Fallback to UTC if timezone not found
+      return {
+        timezone: 'UTC',
+        tzOffset: 0
+      };
     }
 
-    const timezone = tzlookup(lat, lon);
-    return timezone || 'UTC';
+    // Get current offset for the timezone
+    const now = DateTime.now().setZone(timezone);
+    const tzOffset = now.offset / 60; // Convert minutes to hours
+
+    return {
+      timezone,
+      tzOffset
+    };
   } catch (error) {
-    console.error('Timezone lookup error:', error);
-    return 'UTC';
+    console.error('Error getting timezone info:', error);
+    // Fallback to UTC
+    return {
+      timezone: 'UTC',
+      tzOffset: 0
+    };
   }
 }
 
-export function getTimezoneOffset(timezone: string): number {
+/**
+ * Get timezone offset for a specific date and location
+ * This accounts for daylight saving time changes
+ */
+export function getTimezoneOffsetForDate(
+  lat: number, 
+  lon: number, 
+  date: string
+): TimezoneInfo {
   try {
-    const now = new Date();
-    const utc = new Date(now.getTime() + now.getTimezoneOffset() * 60000);
-    const targetTime = new Date(utc.toLocaleString('en-US', { timeZone: timezone }));
-    const offset = (targetTime.getTime() - utc.getTime()) / (1000 * 60 * 60);
-    return Math.round(offset * 100) / 100; // Округляем до 2 знаков
+    const timezone = find(lat, lon);
+    
+    if (!timezone) {
+      return {
+        timezone: 'UTC',
+        tzOffset: 0
+      };
+    }
+
+    // Parse the date and set timezone
+    const dateTime = DateTime.fromISO(date).setZone(timezone);
+    const tzOffset = dateTime.offset / 60; // Convert minutes to hours
+
+    return {
+      timezone,
+      tzOffset
+    };
   } catch (error) {
-    console.error('Timezone offset error:', error);
-    return 0;
+    console.error('Error getting timezone offset for date:', error);
+    return {
+      timezone: 'UTC',
+      tzOffset: 0
+    };
   }
 }
