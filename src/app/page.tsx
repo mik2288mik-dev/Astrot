@@ -207,7 +207,7 @@ export default function HomePage() {
 
         {/* Всегда показываем колесо */}
         <div className="mt-6 flex justify-center">
-          {chart && chart !== 'error' ? (
+          {chart && chart !== 'error' && chart !== 'loading' && typeof chart === 'object' ? (
             <NatalWheel data={chart} size={320} onSelect={(e) => openInsight(e)} />
           ) : (
             <img
