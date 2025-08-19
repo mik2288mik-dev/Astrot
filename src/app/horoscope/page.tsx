@@ -1,169 +1,63 @@
 'use client';
+import { useEffect, useState } from 'react';
+import { getActiveChart } from '../../../lib/birth/storage';
 
-import React, { useState, useEffect } from 'react';
-import { ArrowLeftIcon } from '@heroicons/react/24/outline';
-import { useTelegramUser } from '@/hooks/useTelegram';
-import HoroscopeCard, { HoroscopeSkeleton } from '@/components/HoroscopeCard';
-import { useRouter } from 'next/navigation';
-
-interface HoroscopeData {
-  general: string;
-  love: string;
-  career: string;
-  health: string;
-  lucky_numbers: number[];
-  lucky_color: string;
-  advice: string;
-  energy_level: number;
-  zodiac_sign: string;
-  date: string;
-}
+type State = 'loading' | 'ready' | 'error';
 
 export default function HoroscopePage() {
-  const { userId } = useTelegramUser();
-  const router = useRouter();
-  const [horoscope, setHoroscope] = useState<HoroscopeData | null>(null);
-  const [isLoading, setIsLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
+  const activeChart = getActiveChart();
+  const birth = activeChart?.input;
+  const [state, setState] = useState<State>('loading');
+  const [data, setData] = useState<any>(null);
 
-  useEffect(() => {
-    const fetchHoroscope = async () => {
-      if (!userId) {
-        setError('Необходима авторизация через Telegram');
-        setIsLoading(false);
-        return;
-      }
-
-      try {
-        setIsLoading(true);
-        setError(null);
-
-        const response = await fetch(`/api/horoscope?tgId=${userId}`);
-        const data = await response.json();
-
-        if (data.success) {
-          setHoroscope(data.horoscope);
-        } else {
-          if (response.status === 404) {
-            setError('Сначала создайте профиль в разделе "Натальная карта"');
-          } else {
-            setError(data.error || 'Ошибка загрузки гороскопа');
-          }
-        }
-      } catch (error) {
-        console.error('Error fetching horoscope:', error);
-        setError('Ошибка соединения. Попробуйте позже.');
-      } finally {
-        setIsLoading(false);
-      }
-    };
-
-    fetchHoroscope();
-  }, [userId]);
-
-  const handleRetry = () => {
-    if (userId) {
-      setError(null);
-      setIsLoading(true);
-      // Перезагружаем компонент
-      window.location.reload();
+  async function load() {
+    try {
+      setState('loading');
+      const r = await fetch('/api/horoscope', {
+        method: 'POST',
+        headers: { 'content-type': 'application/json' },
+        body: JSON.stringify({ birth })
+      });
+      if (!r.ok) throw 0;
+      const d = await r.json();
+      setData(d);
+      setState('ready');
+    } catch {
+      setState('error');
     }
-  };
-
-  const handleGoBack = () => {
-    router.back();
-  };
-
-  const handleGoToProfile = () => {
-    router.push('/chart');
-  };
-
-  if (error) {
-    return (
-      <div className="page animate-fadeIn min-h-[calc(100vh-140px)] flex flex-col" style={{ ["--page-top" as any]: "calc(var(--safe-top) + 32px)" }}>
-        <div className="flex items-center mb-6">
-          <button
-            onClick={handleGoBack}
-            className="p-2 rounded-full hover:bg-neutral-100 transition-colors mr-3"
-          >
-            <ArrowLeftIcon className="w-6 h-6 text-neutral-700" />
-          </button>
-          <h1 className="text-xl font-bold text-neutral-900">Гороскоп дня</h1>
-        </div>
-
-        <div className="max-w-md mx-auto">
-          <div className="bg-white rounded-2xl shadow-lg p-6 text-center animate-fadeIn">
-            <div className="w-16 h-16 bg-red-100 rounded-full flex items-center justify-center mx-auto mb-4">
-              <span className="text-2xl">😔</span>
-            </div>
-            
-            <h2 className="text-lg font-semibold text-neutral-900 mb-2">
-              Упс! Что-то пошло не так
-            </h2>
-            
-            <p className="text-neutral-600 mb-6 text-sm">
-              {error}
-            </p>
-
-            <div className="space-y-3">
-              {error.includes('профиль') ? (
-                <button
-                  onClick={handleGoToProfile}
-                  className="w-full bg-gradient-to-r from-purple-600 to-pink-600 text-white font-semibold py-3 px-6 rounded-xl hover:from-purple-700 hover:to-pink-700 transition-all"
-                >
-                  Создать профиль
-                </button>
-              ) : (
-                <button
-                  onClick={handleRetry}
-                  className="w-full bg-gradient-to-r from-purple-600 to-pink-600 text-white font-semibold py-3 px-6 rounded-xl hover:from-purple-700 hover:to-pink-700 transition-all"
-                >
-                  Попробовать снова
-                </button>
-              )}
-              
-              <button
-                onClick={handleGoBack}
-                className="w-full bg-neutral-100 text-neutral-700 font-semibold py-3 px-6 rounded-xl hover:bg-neutral-200 transition-all"
-              >
-                Назад
-              </button>
-            </div>
-          </div>
-        </div>
-      </div>
-    );
   }
 
+  useEffect(() => {
+    load();
+  }, []);
+
   return (
-    <div className="page animate-fadeIn min-h-[calc(100vh-140px)] flex flex-col" style={{ ["--page-top" as any]: "calc(var(--safe-top) + 32px)" }}>
-      <div className="flex items-center mb-6">
-        <button
-          onClick={handleGoBack}
-          className="p-2 rounded-full hover:bg-neutral-100 transition-colors mr-3"
-        >
-          <ArrowLeftIcon className="w-6 h-6 text-neutral-700" />
-        </button>
-        <h1 className="text-xl font-bold text-neutral-900">Гороскоп дня</h1>
-      </div>
+    <main className="safe-page px-4 pb-24">
+      <h1 className="text-2xl font-semibold mb-4">Гороскоп дня</h1>
 
-      {isLoading ? (
-        <HoroscopeSkeleton />
-      ) : horoscope ? (
-        <HoroscopeCard horoscope={horoscope} />
-      ) : null}
-
-      {/* Кнопка обновления */}
-      {horoscope && !isLoading && (
-        <div className="mt-8 text-center animate-fadeIn" style={{ animationDelay: '800ms' }}>
-          <button
-            onClick={handleRetry}
-            className="text-sm text-purple-600 hover:text-purple-700 transition-colors"
-          >
-            Обновить гороскоп
-          </button>
+      {state === 'loading' && (
+        <div className="rounded-2xl p-6 bg-white border border-[#EAEAF2] shadow">
+          Генерируем ваш прогноз…
         </div>
       )}
-    </div>
+
+      {state === 'ready' && (
+        <div className="rounded-2xl p-6 bg-white border border-[#EAEAF2] shadow">
+          <p className="text-[15px] leading-6 whitespace-pre-line">{data.text}</p>
+        </div>
+      )}
+
+      {state === 'error' && (
+        <div className="rounded-2xl p-6 bg-white border border-[#EAEAF2] shadow text-center">
+          <div className="text-lg font-medium mb-3">Упс! Что-то пошло не так</div>
+          <button onClick={load} className="btn-primary w-full mb-2">
+            Попробовать снова
+          </button>
+          <a href="/" className="w-full block text-center rounded-2xl px-5 py-3 bg-[#F7F7FB] border border-[#EAEAF2]">
+            На главную
+          </a>
+        </div>
+      )}
+    </main>
   );
 }
