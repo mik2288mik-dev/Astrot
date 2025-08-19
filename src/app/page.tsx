@@ -4,23 +4,15 @@ import React, { useEffect, useState } from 'react';
 import Image from 'next/image';
 import { useTelegramUser, useTelegram } from '@/hooks/useTelegram';
 import { ArrowLeftIcon } from '@heroicons/react/24/outline';
-import BirthHeader from '@/components/birth/BirthHeader';
 import { getActiveChart } from '../../lib/birth/storage';
 import type { SavedChart } from '../../lib/birth/storage';
 
 export default function HomePage() {
-  const { firstName, photoUrl } = useTelegramUser();
+  const { firstName, photoUrl, userId } = useTelegramUser();
   const { hapticFeedback } = useTelegram();
-  const [greeting, setGreeting] = useState('');
   const [activeChart, setActiveChart] = useState<SavedChart | null>(null);
 
   useEffect(() => {
-    const hour = new Date().getHours();
-    if (hour < 6) setGreeting('Доброй ночи');
-    else if (hour < 12) setGreeting('Доброе утро');
-    else if (hour < 18) setGreeting('Добрый день');
-    else setGreeting('Добрый вечер');
-    
     // Загружаем активную карту
     setActiveChart(getActiveChart());
   }, []);
@@ -51,7 +43,7 @@ export default function HomePage() {
           {photoUrl ? (
             <Image
               src={photoUrl}
-              alt={firstName || 'Emily'}
+              alt={firstName || 'User'}
               width={120}
               height={120}
               unoptimized
@@ -64,22 +56,40 @@ export default function HomePage() {
           )}
         </div>
 
-        {/* Приветствие как на макете */}
+        {/* Приветствие */}
         <div className="mb-12">
           <h1 className="text-4xl font-bold text-gray-800 mb-4 leading-tight">
-            Welcome,<br />Emily
+            Привет,<br />{firstName || 'Друг'}!
           </h1>
-          <p className="text-gray-600 text-lg">
-            June 12, 1994
-          </p>
+          {activeChart?.input?.date ? (
+            <p className="text-gray-600 text-lg">
+              {new Date(activeChart.input.date).toLocaleDateString('ru-RU', {
+                year: 'numeric',
+                month: 'long', 
+                day: 'numeric'
+              })}
+            </p>
+          ) : (
+            <button
+              onClick={() => window.location.href = '/natal'}
+              className="text-purple-600 text-lg underline hover:text-purple-700 transition-colors"
+            >
+              Указать дату рождения
+            </button>
+          )}
+          {userId && (
+            <p className="text-gray-400 text-sm mt-2">
+              ID: {userId}
+            </p>
+          )}
         </div>
 
-        {/* Кнопка View Details */}
+        {/* Кнопка натальной карты */}
         <button
           onClick={handleNatalChartClick}
           className="w-full max-w-sm bg-gradient-to-r from-purple-400 to-pink-300 text-white py-4 rounded-3xl font-semibold text-lg shadow-lg hover:shadow-xl transition-all duration-200"
         >
-          View Details
+          {activeChart ? 'Моя натальная карта' : 'Создать натальную карту'}
         </button>
       </div>
 

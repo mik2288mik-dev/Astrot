@@ -19,16 +19,15 @@ interface NavItem {
 const navItems: NavItem[] = [
   { href: '/', label: 'Home', icon: HomeIcon, activeIcon: HomeIconSolid },
   { href: '/functions', label: 'Functions', icon: Squares2X2Icon, activeIcon: Squares2X2IconSolid },
-  { href: '/prisokon', label: 'Prisokon', icon: ChatBubbleLeftRightIcon, activeIcon: ChatBubbleLeftRightIconSolid },
-  { href: '/subscription', label: 'Subscription', icon: UserIcon, activeIcon: UserIconSolid },
+  { href: '/chat', label: 'Chat', icon: ChatBubbleLeftRightIcon, activeIcon: ChatBubbleLeftRightIconSolid },
   { href: '/profile', label: 'Profile', icon: UserIcon, activeIcon: UserIconSolid },
 ];
 
 export default function NavBar() {
   const pathname = usePathname();
 
-  // Показываем только 4 основные вкладки как на макете
-  const mainNavItems = navItems.slice(0, 4);
+  // Показываем все 4 вкладки
+  const mainNavItems = navItems;
 
   return (
     <nav className="tabbar">
