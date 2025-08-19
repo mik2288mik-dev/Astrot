@@ -2,13 +2,13 @@
 
 import React from 'react';
 import type { ChartData, Aspect } from '../../../../lib/astro/types';
-import type { SelectedEntity } from '../NatalWheel';
+import type { SelectEntity } from '../NatalWheel';
 
 interface AspectsLayerProps {
   center: number;
   radius: number;
   chartData: ChartData;
-  onSelect: (entity: SelectedEntity) => void;
+  onSelect: (entity: SelectEntity) => void;
   isSelected: boolean;
 }
 
@@ -57,10 +57,9 @@ export function AspectsLayer({
   const handleAspectClick = (aspect: Aspect, event: React.MouseEvent) => {
     event.stopPropagation();
     onSelect({
-      type: 'aspect',
-      data: aspect,
-      name: `${aspect.planet1} ${getAspectName(aspect.type)} ${aspect.planet2}`,
-      position: { x: event.clientX, y: event.clientY }
+      kind: 'planet',
+      id: `${aspect.planet1}-${aspect.planet2}`,
+      lon: 0
     });
   };
 

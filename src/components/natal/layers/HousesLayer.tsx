@@ -2,14 +2,14 @@
 
 import React from 'react';
 import type { ChartData } from '../../../../lib/astro/types';
-import type { SelectedEntity } from '../NatalWheel';
+import type { SelectEntity } from '../NatalWheel';
 
 interface HousesLayerProps {
   center: number;
   innerRadius: number;
   outerRadius: number;
   chartData: ChartData;
-  onSelect: (entity: SelectedEntity) => void;
+  onSelect: (entity: SelectEntity) => void;
   isSelected: boolean;
 }
 
@@ -60,10 +60,9 @@ export function HousesLayer({
   const handleHouseClick = (houseData: any, event: React.MouseEvent) => {
     event.stopPropagation();
     onSelect({
-      type: 'house',
-      data: houseData,
-      name: `${houseData.houseNumber} дом`,
-      position: { x: event.clientX, y: event.clientY }
+      kind: 'house',
+      id: `${houseData.houseNumber}`,
+      lon: houseData.lon || 0
     });
   };
 
