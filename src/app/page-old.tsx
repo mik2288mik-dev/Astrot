@@ -6,16 +6,42 @@ import { useTelegramUser, useTelegram } from '@/hooks/useTelegram';
 import { ArrowLeftIcon } from '@heroicons/react/24/outline';
 import { getActiveChart } from '../../lib/birth/storage';
 import type { SavedChart } from '../../lib/birth/storage';
+import NatalWheel from '@/components/natal/NatalWheel';
+import type { SelectedEntity } from '@/components/natal/NatalWheel';
+import { useNatalChart } from '@/hooks/useNatalChart';
 
 export default function HomePage() {
   const { firstName, photoUrl, userId } = useTelegramUser();
   const { hapticFeedback } = useTelegram();
   const [activeChart, setActiveChart] = useState<SavedChart | null>(null);
+  const { chartData, loading, calculateChart } = useNatalChart();
+  const [selectedEntity, setSelectedEntity] = useState<SelectedEntity | null>(null);
 
   useEffect(() => {
     // Загружаем активную карту
-    setActiveChart(getActiveChart());
-  }, []);
+    const chart = getActiveChart();
+    setActiveChart(chart);
+    
+    // Если есть сохранённая карта, рассчитываем натальные данные
+    if (chart?.input) {
+      const date = new Date(chart.input.date);
+      const [hours, minutes] = chart.input.time.split(':').map(Number);
+      
+      const birthData = {
+        year: date.getFullYear(),
+        month: date.getMonth() + 1,
+        day: date.getDate(),
+        hour: hours || 12,
+        minute: minutes || 0,
+        lat: chart.input.place?.lat || 0,
+        lon: chart.input.place?.lon || 0,
+        tz: chart.input.place?.tz || 'UTC',
+        place: chart.input.place?.displayName
+      };
+      
+      calculateChart(birthData).catch(console.error);
+    }
+  }, [calculateChart]);
 
   const handleNatalChartClick = () => {
     hapticFeedback('impact', 'medium');
@@ -93,32 +119,37 @@ export default function HomePage() {
         </button>
       </div>
 
-      {/* Астрологическая карта */}
+      {/* Интерактивная натальная карта */}
       <div className="relative mb-20">
-        <div className="absolute left-1/2 top-1/2 transform -translate-x-1/2 -translate-y-1/2">
-          <div className="w-80 h-80 relative">
-            {/* Основной круг */}
-            <div className="w-full h-full border-2 border-purple-200 rounded-full bg-white/50 backdrop-blur">
-              {/* Зодиакальные знаки */}
-              <div className="absolute inset-2 border border-purple-100 rounded-full">
-                {/* Линии аспектов */}
-                <svg className="absolute inset-0 w-full h-full" viewBox="0 0 300 300">
-                  <line x1="150" y1="50" x2="150" y2="250" stroke="#E5E7EB" strokeWidth="1" />
-                  <line x1="50" y1="150" x2="250" y2="150" stroke="#E5E7EB" strokeWidth="1" />
-                  <line x1="85" y1="85" x2="215" y2="215" stroke="#E5E7EB" strokeWidth="1" />
-                  <line x1="215" y1="85" x2="85" y2="215" stroke="#E5E7EB" strokeWidth="1" />
-                  
-                  {/* Планеты */}
-                  <circle cx="150" cy="80" r="4" fill="#FCD34D" />
-                  <circle cx="120" cy="100" r="3" fill="#F87171" />
-                  <circle cx="180" cy="120" r="3" fill="#60A5FA" />
-                  <circle cx="200" cy="180" r="4" fill="#A78BFA" />
-                  <circle cx="100" cy="200" r="3" fill="#34D399" />
-                </svg>
+        <div className="flex justify-center">
+          {loading ? (
+            <div className="w-80 h-80 border-2 border-dashed border-purple-200 rounded-full flex items-center justify-center bg-white/50 backdrop-blur">
+              <div className="text-center">
+                <div className="animate-spin w-8 h-8 border-2 border-purple-500 border-t-transparent rounded-full mx-auto mb-2"></div>
+                <p className="text-gray-600 text-sm">Рассчитываем карту...</p>
               </div>
             </div>
-          </div>
+          ) : (
+            <NatalWheel 
+              chartData={chartData}
+              onSelect={(entity) => {
+                setSelectedEntity(entity);
+                hapticFeedback('impact', 'light');
+              }}
+              className="w-80 h-80"
+            />
+          )}
         </div>
+        
+        {/* Краткая информация о выбранном элементе */}
+        {selectedEntity && (
+          <div className="mt-4 mx-4 p-3 bg-white/90 backdrop-blur rounded-lg border border-purple-100 shadow-sm">
+            <h4 className="font-medium text-gray-800 mb-1">{selectedEntity.name}</h4>
+            <p className="text-sm text-gray-600">
+              Нажмите для подробной интерпретации
+            </p>
+          </div>
+        )}
       </div>
     </div>
   );
