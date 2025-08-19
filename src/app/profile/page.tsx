@@ -52,7 +52,7 @@ export default function ProfilePage() {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           ...profile,
-          tgId: parseInt(userId),
+          tgId: userId,
           name: fullName || 'Пользователь',
           preferredName: preferredName.trim() || undefined,
           // Если профиля нет, создаем минимальные данные
