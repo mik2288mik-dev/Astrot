@@ -3,54 +3,7 @@
 import React, { useState, useEffect } from 'react';
 import { z } from 'zod';
 import { useTelegramUser } from '@/hooks/useTelegram';
-
-interface PlaceResult {
-  displayName: string;
-  lat: number;
-  lon: number;
-  country: string;
-  cityLikeLabel: string;
-  timezone: string;
-  tzOffset: number;
-}
-
-interface ProfileFormData {
-  name: string;
-  birthDate: string;
-  birthTime: string;
-  unknownTime: boolean;
-  location: {
-    name: string;
-    lat: number;
-    lon: number;
-    timezone: string;
-    tzOffset: number;
-  } | null;
-  houseSystem: 'P' | 'W';
-}
-
-const ProfileFormSchema = z.object({
-  name: z.string().min(1, 'Имя обязательно').max(100, 'Имя слишком длинное'),
-  birthDate: z.string().regex(/^\d{4}-\d{2}-\d{2}$/, 'Неверный формат даты'),
-  birthTime: z.string().regex(/^\d{2}:\d{2}$/, 'Неверный формат времени').optional(),
-  unknownTime: z.boolean(),
-  location: z.object({
-    name: z.string().min(1, 'Место рождения обязательно'),
-    lat: z.number().min(-90).max(90),
-    lon: z.number().min(-180).max(180),
-    timezone: z.string(),
-    tzOffset: z.number().min(-14).max(14)
-  }),
-  houseSystem: z.enum(['P', 'W'])
-}).refine((data) => {
-  if (!data.unknownTime && !data.birthTime) {
-    return false;
-  }
-  return true;
-}, {
-  message: 'Время рождения обязательно, если не отмечено "Не знаю время"',
-  path: ['birthTime']
-});
+import { ProfileFormData, ProfileFormSchema, PlaceResult, GeocodeResponse } from '@/types/profile';
 
 interface ProfileFormProps {
   onSubmit: (data: ProfileFormData) => void;
@@ -80,12 +33,12 @@ export default function ProfileForm({ onSubmit, loading = false, initialData, on
   // Initialize form with initial data or Telegram user data
   useEffect(() => {
     if (initialData) {
-      setForm(prev => ({ ...prev, ...initialData }));
+      setForm((prev: ProfileFormData) => ({ ...prev, ...initialData }));
       if (initialData.location) {
         setLocationQuery(initialData.location.name);
       }
     } else if (fullName) {
-      setForm(prev => ({ ...prev, name: fullName }));
+      setForm((prev: ProfileFormData) => ({ ...prev, name: fullName }));
     }
   }, [initialData, fullName]);
 
@@ -104,12 +57,12 @@ export default function ProfileForm({ onSubmit, loading = false, initialData, on
         });
         
         if (res.ok) {
-          const data = await res.json();
+          const data: GeocodeResponse = await res.json();
           setLocationSuggestions(data.places || []);
           setShowLocationSuggestions(true);
         }
       } catch (error) {
-        if (error.name !== 'AbortError') {
+        if (error instanceof Error && error.name !== 'AbortError') {
           console.error('Location search error:', error);
         }
       }
@@ -157,14 +110,14 @@ export default function ProfileForm({ onSubmit, loading = false, initialData, on
     field: K,
     value: ProfileFormData[K]
   ) => {
-    setForm(prev => ({ ...prev, [field]: value }));
-    setTouched(prev => ({ ...prev, [field]: true }));
+    setForm((prev: ProfileFormData) => ({ ...prev, [field]: value }));
+    setTouched((prev: { [K in keyof ProfileFormData]?: boolean }) => ({ ...prev, [field]: true }));
     
     // Clear validation error for this field
-    if (validationErrors[field]) {
-      setValidationErrors(prev => {
+    if (validationErrors[field as string]) {
+      setValidationErrors((prev: { [key: string]: string }) => {
         const newErrors = { ...prev };
-        delete newErrors[field];
+        delete newErrors[field as string];
         return newErrors;
       });
     }
@@ -179,11 +132,11 @@ export default function ProfileForm({ onSubmit, loading = false, initialData, on
       tzOffset: place.tzOffset
     };
     
-    setForm(prev => ({ ...prev, location }));
+    setForm((prev: ProfileFormData) => ({ ...prev, location }));
     setLocationQuery(place.displayName);
     setShowLocationSuggestions(false);
     setLocationSuggestions([]);
-    setTouched(prev => ({ ...prev, location: true }));
+    setTouched((prev: { [K in keyof ProfileFormData]?: boolean }) => ({ ...prev, location: true }));
   };
 
   const handleSubmit = (e: React.FormEvent) => {

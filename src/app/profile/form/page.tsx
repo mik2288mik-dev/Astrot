@@ -4,21 +4,7 @@ import React, { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import ProfileForm from '@/components/profile/ProfileForm';
 import { useTelegramUser, useTelegram } from '@/hooks/useTelegram';
-
-interface ProfileFormData {
-  name: string;
-  birthDate: string;
-  birthTime: string;
-  unknownTime: boolean;
-  location: {
-    name: string;
-    lat: number;
-    lon: number;
-    timezone: string;
-    tzOffset: number;
-  } | null;
-  houseSystem: 'P' | 'W';
-}
+import { ProfileFormData, ProfileResponse } from '@/types/profile';
 
 export default function ProfileFormPage() {
   const router = useRouter();
@@ -41,7 +27,7 @@ export default function ProfileFormPage() {
     try {
       const res = await fetch(`/api/profile?tgId=${userId}`);
       if (res.ok) {
-        const data = await res.json();
+        const data: ProfileResponse = await res.json();
         if (data.profile) {
           setInitialData({
             name: data.profile.name,

@@ -2,30 +2,10 @@ import { NextRequest, NextResponse } from 'next/server';
 import { kv } from '@vercel/kv';
 import { z } from 'zod';
 import { extractTelegramUser, extractTelegramUserFromBody } from '@/lib/auth/telegram';
+import { ProfileApiSchema, Profile } from '@/types/profile';
 
 export const runtime = 'nodejs';
 export const dynamic = 'force-dynamic';
-
-const ProfileSchema = z.object({
-  tgId: z.number(),
-  name: z.string().min(1).max(100),
-  preferredName: z.string().max(100).optional(),
-  birthDate: z.string().regex(/^\d{4}-\d{2}-\d{2}$/),
-  birthTime: z.string().regex(/^\d{2}:\d{2}$/).optional(),
-  timeUnknown: z.boolean().default(false),
-  location: z.object({
-    name: z.string(),
-    lat: z.number().min(-90).max(90),
-    lon: z.number().min(-180).max(180),
-    timezone: z.string(),
-    tzOffset: z.number().min(-14).max(14)
-  }),
-  houseSystem: z.enum(['P', 'W']).default('P'),
-  createdAt: z.string().optional(),
-  updatedAt: z.string().optional()
-});
-
-type Profile = z.infer<typeof ProfileSchema>;
 
 // GET - получить профиль по tgId
 export async function GET(request: NextRequest) {
@@ -72,7 +52,7 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: 'Telegram authentication required' }, { status: 401 });
     }
     
-    const profile = ProfileSchema.parse({
+    const profile = ProfileApiSchema.parse({
       ...data,
       tgId: telegramUser.id, // Use authenticated user ID
       createdAt: new Date().toISOString(),
@@ -115,7 +95,7 @@ export async function PUT(request: NextRequest) {
       updatedAt: new Date().toISOString()
     };
     
-    const profile = ProfileSchema.parse(updatedData);
+    const profile = ProfileApiSchema.parse(updatedData);
     
     // Проверяем, существует ли профиль
     const existingProfile = await kv.get(`profile:${profile.tgId}`);

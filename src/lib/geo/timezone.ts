@@ -1,4 +1,4 @@
-import { find } from 'tz-lookup';
+import find from 'tz-lookup';
 import { DateTime } from 'luxon';
 
 export interface TimezoneInfo {
