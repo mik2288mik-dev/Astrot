@@ -15,7 +15,7 @@ export default function HomePage() {
   const pathname = usePathname();
   const showBack = pathname !== '/';
   const [activeChart, setActiveChart] = useState<SavedChart | null>(null);
-  const [chart, setChart] = useState<ChartData | null>(null);
+  const [chart, setChart] = useState<ChartData | 'loading' | 'error' | null>(null);
   const [loading, setLoading] = useState(false);
   const [profile, setProfile] = useState<any>(null);
 
@@ -54,17 +54,17 @@ export default function HomePage() {
   }, []);
 
   useEffect(() => {
-    let cancelled = false;
+    if (!birth) { 
+      setChart(null); 
+      return; 
+    }
     
-    async function load() {
-      if (!birth) {
-        setChart(null);
-        return;
-      }
-
-      setLoading(true);
-      
+    let stop = false;
+    
+    (async () => {
       try {
+        setChart('loading');
+        
         // Преобразуем данные рождения в формат API
         const date = new Date(birth.date);
         const [hours, minutes] = birth.time.split(':').map(Number);
@@ -81,19 +81,17 @@ export default function HomePage() {
           place: birth.place?.displayName
         };
 
-        const res = await fetch('/api/natal/compute', {
+        const r = await fetch('/api/natal/compute', {
           method: 'POST',
           headers: { 'content-type': 'application/json' },
           body: JSON.stringify({ birth: birthData })
         });
 
-        if (!res.ok) {
-          throw new Error(`HTTP error! status: ${res.status}`);
-        }
-
-        const response = await res.json();
+        if (!r.ok) throw 0;
         
-        if (!cancelled && response.success && response.data) {
+        const response = await r.json();
+        
+        if (!stop && response.success && response.data) {
           // Преобразуем данные из API в формат компонента NatalWheel
           const apiData = response.data;
           
@@ -116,31 +114,30 @@ export default function HomePage() {
             orb: aspect.orb
           }));
 
-          setChart({
+          const d = {
             planets,
             houses,
             aspects
-          });
+          };
+          
+          if (!stop) setChart(d);
         }
-      } catch (error) {
-        console.error('Error loading natal chart:', error);
-        if (!cancelled) {
-          setChart(null);
-        }
-      } finally {
-        if (!cancelled) {
-          setLoading(false);
-        }
+      } catch { 
+        if (!stop) setChart('error'); 
       }
-    }
-
-    load();
-    return () => { cancelled = true; };
+    })();
+    
+    return () => { stop = true; };
   }, [birth]);
 
   const handleNatalChartClick = () => {
     hapticFeedback('impact', 'medium');
     window.location.href = '/natal';
+  };
+
+  const openInsight = (e: any) => {
+    console.log('select', e);
+    hapticFeedback('impact', 'light');
   };
 
   return (
@@ -208,55 +205,34 @@ export default function HomePage() {
           )}
         </div>
 
-        {/* Натальный круг или CTA */}
-        {chart ? (
-          <div className="mt-4 flex justify-center">
-            <NatalWheel
-              data={chart}
-              size={320}
-              art={{ src: '/art/astrot-natal-wheel.svg', rotate: true, opacity: 0.9 }}
-              onSelect={(e) => {
-                console.log('select', e);
-                hapticFeedback('impact', 'light');
-              }}
-            />
-          </div>
-        ) : birth ? (
-          loading ? (
-            <div className="mt-4 flex justify-center">
-              <div className="w-80 h-80 border-2 border-dashed border-purple-200 rounded-full flex items-center justify-center bg-white/50 backdrop-blur">
-                <div className="text-center">
-                  <div className="animate-spin w-8 h-8 border-2 border-purple-500 border-t-transparent rounded-full mx-auto mb-2"></div>
-                  <p className="text-gray-600 text-sm">Рассчитываем карту...</p>
-                </div>
-              </div>
-            </div>
+        {/* Всегда показываем колесо */}
+        <div className="mt-6 flex justify-center">
+          {chart && chart !== 'error' ? (
+            <NatalWheel data={chart} size={320} onSelect={(e) => openInsight(e)} />
           ) : (
-            <div className="mt-4 flex justify-center">
-              <button
-                onClick={handleNatalChartClick}
-                className="rounded-2xl px-5 py-3 border border-white/15 bg-white/60 backdrop-blur hover:bg-white/80 transition-colors"
-              >
-                Попробовать снова
-              </button>
-            </div>
-          )
-        ) : (
-          <div className="mt-4 flex justify-center">
-            <button
-              onClick={() => window.location.href = '/natal'}
-              className="rounded-2xl px-5 py-3 border border-white/15 bg-white/60 backdrop-blur hover:bg-white/80 transition-colors"
-            >
-              Указать дату рождения
-            </button>
-          </div>
-        )}
+            <img
+              src="/art/astrot-wheel-classic.svg" 
+              alt="Astrot wheel"
+              width={320} 
+              height={320}
+              className="rounded-full select-none" 
+              draggable={false}
+            />
+          )}
+        </div>
+
+        {/* Кнопка гороскопа */}
+        <div className="mt-6">
+          <a href="/horoscope" className="btn-primary w-full block text-center">
+            Гороскоп дня
+          </a>
+        </div>
 
         {/* Кнопка натальной карты */}
-        <div className="mt-8">
+        <div className="mt-4">
           <button
             onClick={handleNatalChartClick}
-            className="btn-primary w-full max-w-sm py-4 text-lg"
+            className="btn-secondary w-full max-w-sm py-4 text-lg"
           >
             {activeChart ? 'Моя натальная карта' : 'Создать натальную карту'}
           </button>
