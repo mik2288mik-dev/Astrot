@@ -1,1 +1,0 @@
-These SVGs under /public/assets are lightweight pastel placeholders for backgrounds and icons used in the mock. Replace with production assets when ready.
