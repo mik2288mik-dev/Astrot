@@ -1,10 +1,10 @@
 'use client';
 
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import Image from 'next/image';
 import { useTelegramUser, useTelegram } from '@/hooks/useTelegram';
 import { useRouter } from 'next/navigation';
-import { BellIcon, ShieldCheckIcon, QuestionMarkCircleIcon, StarIcon, UserIcon } from '@heroicons/react/24/outline';
+import { BellIcon, ShieldCheckIcon, QuestionMarkCircleIcon, StarIcon, UserIcon, PencilIcon } from '@heroicons/react/24/outline';
 
 interface MenuItem {
   icon: React.ComponentType<React.SVGProps<SVGSVGElement>>;
@@ -18,8 +18,75 @@ export default function ProfilePage() {
   const router = useRouter();
   const { fullName, username, photoUrl, userId } = useTelegramUser();
   const { hapticFeedback } = useTelegram();
+  const [profile, setProfile] = useState<any>(null);
+  const [isEditingName, setIsEditingName] = useState(false);
+  const [preferredName, setPreferredName] = useState('');
+
+  // Загружаем профиль пользователя
+  useEffect(() => {
+    if (userId) {
+      loadProfile();
+    }
+  }, [userId]);
+
+  const loadProfile = async () => {
+    try {
+      const res = await fetch(`/api/profile?tgId=${userId}`);
+      if (res.ok) {
+        const data = await res.json();
+        setProfile(data.profile);
+        setPreferredName(data.profile?.preferredName || '');
+      }
+    } catch (error) {
+      console.error('Error loading profile:', error);
+    }
+  };
+
+  const savePreferredName = async () => {
+    if (!userId) return;
+    
+    try {
+      const method = profile ? 'PUT' : 'POST';
+      const res = await fetch('/api/profile', {
+        method,
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          ...profile,
+          tgId: parseInt(userId),
+          name: fullName || 'Пользователь',
+          preferredName: preferredName.trim() || undefined,
+          // Если профиля нет, создаем минимальные данные
+          ...(!profile && {
+            birthDate: '2000-01-01',
+            location: {
+              name: 'Москва',
+              lat: 55.7558,
+              lon: 37.6176,
+              timezone: 'Europe/Moscow',
+              tzOffset: 3
+            }
+          })
+        })
+      });
+
+      if (res.ok) {
+        await loadProfile();
+        setIsEditingName(false);
+        hapticFeedback('notification', 'success');
+      }
+    } catch (error) {
+      console.error('Error saving preferred name:', error);
+      hapticFeedback('notification', 'error');
+    }
+  };
 
   const menuItems: MenuItem[] = [
+    {
+      icon: UserIcon,
+      label: 'Имя для обращений',
+      value: preferredName || 'Не указано',
+      action: () => setIsEditingName(true),
+    },
     {
       icon: BellIcon,
       label: 'Уведомления',
@@ -132,6 +199,37 @@ export default function ProfilePage() {
           })}
         </div>
       </section>
+
+      {/* Модальное окно редактирования имени */}
+      {isEditingName && (
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
+          <div className="bg-white rounded-2xl p-6 w-full max-w-sm">
+            <h3 className="text-lg font-semibold mb-4">Имя для обращений</h3>
+            <input
+              type="text"
+              value={preferredName}
+              onChange={(e) => setPreferredName(e.target.value)}
+              placeholder="Как к вам обращаться?"
+              className="w-full border border-gray-200 rounded-xl px-4 py-3 mb-4 focus:outline-none focus:border-primary-400"
+              maxLength={100}
+            />
+            <div className="flex gap-3">
+              <button
+                onClick={() => setIsEditingName(false)}
+                className="flex-1 py-3 px-4 bg-gray-100 rounded-xl text-gray-700 font-medium"
+              >
+                Отмена
+              </button>
+              <button
+                onClick={savePreferredName}
+                className="flex-1 py-3 px-4 bg-primary-500 rounded-xl text-white font-medium"
+              >
+                Сохранить
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* Версия приложения */}
       <section className="text-center pb-24">

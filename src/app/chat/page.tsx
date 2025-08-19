@@ -14,6 +14,8 @@ interface Message {
   text: string;
   sender: 'user' | 'ai';
   timestamp: Date;
+  type?: 'guard';
+  options?: Array<{ label: string; prompt: string }>;
 }
 
 const suggestedQuestions = [
@@ -83,21 +85,13 @@ export default function ChatPage() {
       if (response.type === 'guard') {
         const aiMessage: Message = {
           id: (Date.now() + 1).toString(),
-          text: response.reply,
+          text: response.text,
           sender: 'ai',
-          timestamp: new Date()
+          timestamp: new Date(),
+          type: 'guard',
+          options: response.options
         };
         setMessages(prev => [...prev, aiMessage]);
-        
-        // Добавляем кнопки-предложения после сообщения отказа
-        setTimeout(() => {
-          setMessages(prev => [...prev, {
-            id: (Date.now() + 2).toString(),
-            text: 'suggestions',
-            sender: 'ai',
-            timestamp: new Date()
-          }]);
-        }, 500);
       } else {
         const aiMessage: Message = {
           id: (Date.now() + 1).toString(),
@@ -134,7 +128,8 @@ export default function ChatPage() {
   };
 
   return (
-    <div className="page animate-fadeIn min-h-[calc(100vh-140px)] flex flex-col bg-gradient-to-b from-neutral-50 to-white" style={{ ['--page-top' as any]: 'calc(var(--safe-top) + 32px)' }}>
+    <main className="safe-page px-4 pb-24">
+      <div className="page animate-fadeIn min-h-[calc(100vh-140px)] flex flex-col bg-gradient-to-b from-neutral-50 to-white" style={{ ['--page-top' as any]: 'calc(var(--safe-top) + 32px)' }}>
       {/* Header */}
       <div className="bg-white border-b border-neutral-100 py-3 flex items-center gap-3">
         <div className="w-10 h-10 bg-gradient-to-br from-primary-400 to-primary-600 rounded-full flex items-center justify-center">
@@ -173,11 +168,24 @@ export default function ChatPage() {
             <div
               className={`max-w-[80%] px-4 py-3 rounded-2xl ${
                 message.sender === 'user'
-                  ? 'bg-gradient-to-r from-primary-500 to-primary-600 text-white'
-                  : 'bg-white border border-neutral-100 text-neutral-800'
+                  ? 'bg-[linear-gradient(90deg,#C1B2FF_0%,#F5A8E9_100%)] text-white'
+                  : 'bg-white border border-[#EAEAF2] text-[#1F2937]'
               }`}
             >
               <p className="text-sm leading-relaxed">{message.text}</p>
+              {message.type === 'guard' && Array.isArray(message.options) && (
+                <div className="mt-2 flex flex-wrap gap-2">
+                  {message.options.map((option: any) => (
+                    <button
+                      key={option.label}
+                      onClick={() => sendMessage(option.prompt)}
+                      className="rounded-2xl px-4 py-2 bg-white border border-[#EAEAF2] text-[#1F2937] hover:bg-gray-50 transition-colors"
+                    >
+                      {option.label}
+                    </button>
+                  ))}
+                </div>
+              )}
               <p 
                 className={`text-xs mt-1 ${
                   message.sender === 'user' ? 'text-white/70' : 'text-neutral-400'
@@ -248,6 +256,7 @@ export default function ChatPage() {
           </button>
         </div>
       </form>
-    </div>
+      </div>
+    </main>
   );
 }

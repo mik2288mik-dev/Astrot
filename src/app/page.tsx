@@ -2,6 +2,7 @@
 
 import React, { useEffect, useState } from 'react';
 import Image from 'next/image';
+import { usePathname } from 'next/navigation';
 import { useTelegramUser, useTelegram } from '@/hooks/useTelegram';
 import { ArrowLeftIcon } from '@heroicons/react/24/outline';
 import { getActiveChart } from '../../lib/birth/storage';
@@ -11,11 +12,40 @@ import NatalWheel, { type ChartData } from '@/components/natal/NatalWheel';
 export default function HomePage() {
   const { firstName, photoUrl, userId } = useTelegramUser();
   const { hapticFeedback } = useTelegram();
+  const pathname = usePathname();
+  const showBack = pathname !== '/';
   const [activeChart, setActiveChart] = useState<SavedChart | null>(null);
   const [chart, setChart] = useState<ChartData | null>(null);
   const [loading, setLoading] = useState(false);
+  const [profile, setProfile] = useState<any>(null);
+
+  // Загружаем профиль для получения предпочитаемого имени
+  useEffect(() => {
+    if (userId) {
+      loadProfile();
+    }
+  }, [userId]);
+
+  const loadProfile = async () => {
+    try {
+      const res = await fetch(`/api/profile?tgId=${userId}`);
+      if (res.ok) {
+        const data = await res.json();
+        setProfile(data.profile);
+      }
+    } catch (error) {
+      console.error('Error loading profile:', error);
+    }
+  };
 
   const birth = activeChart?.input;
+  
+  // Определяем имя для отображения
+  const tg = (typeof window !== 'undefined') ? (window as any).Telegram?.WebApp?.initDataUnsafe?.user : null;
+  const displayName = profile?.preferredName || 
+    [tg?.first_name, tg?.last_name].filter(Boolean).join(' ') || 
+    firstName || 
+    'Гость';
 
   useEffect(() => {
     // Загружаем активную карту
@@ -114,12 +144,15 @@ export default function HomePage() {
   };
 
   return (
-    <div className="page animate-fadeIn min-h-screen flex flex-col">
-      {/* Шапка как на макете */}
-      <header className="flex items-center justify-between mb-8">
-        <button className="w-10 h-10 rounded-full bg-white/80 backdrop-blur flex items-center justify-center shadow-sm">
-          <ArrowLeftIcon className="w-5 h-5 text-gray-600" />
-        </button>
+    <main className="safe-page px-4 pb-20">
+      <div className="page animate-fadeIn min-h-screen flex flex-col">
+        {/* Шапка как на макете */}
+        <header className="flex items-center justify-between mb-8">
+          {showBack && (
+            <button className="w-10 h-10 rounded-full bg-white/80 backdrop-blur flex items-center justify-center shadow-sm">
+              <ArrowLeftIcon className="w-5 h-5 text-gray-600" />
+            </button>
+          )}
         <div className="flex items-center gap-2">
           <div className="w-2 h-2 rounded-full bg-gray-300"></div>
           <div className="w-2 h-2 rounded-full bg-gray-300"></div>
@@ -150,7 +183,7 @@ export default function HomePage() {
         {/* Приветствие */}
         <div className="mb-12">
           <h1 className="text-4xl font-bold text-gray-800 mb-4 leading-tight">
-            Привет,<br />{firstName || 'Друг'}!
+            Привет,<br />{displayName}!
           </h1>
           {activeChart?.input?.date ? (
             <p className="text-gray-600 text-lg">
@@ -222,12 +255,12 @@ export default function HomePage() {
         <div className="mt-8">
           <button
             onClick={handleNatalChartClick}
-            className="w-full max-w-sm bg-gradient-to-r from-purple-400 to-pink-300 text-white py-4 rounded-3xl font-semibold text-lg shadow-lg hover:shadow-xl transition-all duration-200"
+            className="btn-primary w-full max-w-sm py-4 text-lg"
           >
             {activeChart ? 'Моя натальная карта' : 'Создать натальную карту'}
           </button>
         </div>
       </div>
-    </div>
+    </main>
   );
 }
