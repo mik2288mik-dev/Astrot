@@ -1,5 +1,7 @@
 import { getOpenAI, getModel } from '@/lib/ai/openai';
 import { toMessage } from '@/lib/utils/errors';
+import { isAllowed } from '@/lib/chat/guard';
+import { systemPrompt } from '@/lib/chat/system';
 
 export const runtime = 'nodejs';
 export const dynamic = 'force-dynamic';
@@ -7,19 +9,30 @@ export const revalidate = 0;
 
 export async function POST(req: Request) {
   try {
-    const openai = getOpenAI();
     const { messages, natal } = await req.json(); // messages: [{role,content}...]
+    
+    // Берем последнее сообщение пользователя для проверки
+    const lastUserMessage = messages?.findLast?.((m: any) => m.role === 'user')?.content || '';
+    
+    // Проверяем через гвард - разрешена ли тема
+    const g = isAllowed(lastUserMessage);
+    if (!g.allowed) {
+      return Response.json({
+        type: 'guard',
+        reply: 'Я отвечаю только на астрологию, нумерологию и таро. Выберите тему:',
+        suggestions: [
+          { label: 'Натальная карта', value: 'Натальная карта: ...' },
+          { label: 'Совместимость', value: 'Синастрия: ...' },
+          { label: 'Нумерология', value: 'Число судьбы: ...' },
+          { label: 'Таро', value: 'Расклад для ...' }
+        ]
+      }, { status: 200 });
+    }
 
-    const system =
-      [
-        'Ты — дружелюбный, смешной и честный AI-астролог.',
-        'Говори тёпло, коротко и по делу, с лёгким юмором, без пафоса.',
-        'Можно использовать эмодзи умеренно. Будь поддерживающим и прямым.',
-        'Объясняй простыми словами — без домов/аспектов/жаргона.',
-        'Знаешь основы нумерологии, сонника, таро и альтернативных практик — отвечай осторожно и бережно, без категоричных обещаний.',
-        'Если нужен дисклеймер — добавь одну тихую фразу о том, что это не медицина/финансовая консультация.',
-        'Всегда структурируй ответ: 1) Короткий вывод. 2) 2–3 пункта «Что сделать». 3) Нежная поддержка в конце.'
-      ].join(' ');
+    const openai = getOpenAI();
+    
+    // Получаем системный промпт для конкретного домена
+    const system = systemPrompt(g.domain!);
 
     const resp = await openai.chat.completions.create({
       model: getModel(),           // <-- gpt-4o-mini

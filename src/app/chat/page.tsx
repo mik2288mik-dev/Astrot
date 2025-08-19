@@ -77,16 +77,36 @@ export default function ChatPage() {
         body: JSON.stringify(payload) 
       });
       
-      const { reply, error } = await res.json();
+      const response = await res.json();
       
-      const aiMessage: Message = {
-        id: (Date.now() + 1).toString(),
-        text: error || reply || 'Произошла ошибка при получении ответа',
-        sender: 'ai',
-        timestamp: new Date()
-      };
-      
-      setMessages(prev => [...prev, aiMessage]);
+      // Если гвард заблокировал - показываем отказ с кнопками
+      if (response.type === 'guard') {
+        const aiMessage: Message = {
+          id: (Date.now() + 1).toString(),
+          text: response.reply,
+          sender: 'ai',
+          timestamp: new Date()
+        };
+        setMessages(prev => [...prev, aiMessage]);
+        
+        // Добавляем кнопки-предложения после сообщения отказа
+        setTimeout(() => {
+          setMessages(prev => [...prev, {
+            id: (Date.now() + 2).toString(),
+            text: 'suggestions',
+            sender: 'ai',
+            timestamp: new Date()
+          }]);
+        }, 500);
+      } else {
+        const aiMessage: Message = {
+          id: (Date.now() + 1).toString(),
+          text: response.error || response.reply || 'Произошла ошибка при получении ответа',
+          sender: 'ai',
+          timestamp: new Date()
+        };
+        setMessages(prev => [...prev, aiMessage]);
+      }
       setIsTyping(false);
       hapticFeedback('notification', 'success');
     } catch (error) {
