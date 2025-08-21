@@ -1,51 +1,53 @@
-// Design tokens for Astrot navigation
+// Design tokens for Astrot navigation - Premium Minimalist Style
 export const navTokens = {
   colors: {
-    // Пастельные градиенты для фона
+    // Градиенты для иконок
     gradient: {
-      primary: 'linear-gradient(135deg, #F3E8FF 0%, #FFE5EC 50%, #E3F2FF 100%)',
-      secondary: 'linear-gradient(135deg, #E8E3FF 0%, #FFE5EC 100%)',
-      glow: 'linear-gradient(135deg, #D8B4FE 0%, #F9A8D4 50%, #93C5FD 100%)',
+      home: 'linear-gradient(135deg, #A07CFF 0%, #FFD6EC 100%)',
+      center: 'linear-gradient(135deg, #FFB3FF 0%, #A07CFF 100%)',
+      more: 'linear-gradient(135deg, #A0E3FF 0%, #A07CFF 100%)',
+      active: 'linear-gradient(135deg, #A07CFF 0%, #FFD6EC 100%)',
     },
-    // Цвета для элементов
-    icon: {
-      default: '#9CA3AF', // neutral-400
-      active: '#8B5CF6', // violet-500
-      hover: '#7C3AED', // violet-600
-    },
+    // Цвета текста
     text: {
-      default: '#6B7280', // gray-500
-      active: '#7C3AED', // violet-600
+      default: '#444444',
+      inactive: 'rgba(68, 68, 68, 0.7)',
     },
     // Центральная кнопка
     centerButton: {
-      bg: 'linear-gradient(135deg, #C084FC 0%, #F472B6 50%, #60A5FA 100%)',
-      shadow: 'rgba(196, 132, 252, 0.4)',
-      glow: 'rgba(196, 132, 252, 0.6)',
+      glow: 'rgba(160, 124, 255, 0.3)',
+      shadow: 'rgba(160, 124, 255, 0.2)',
+      innerShadow: 'inset 0 2px 4px rgba(255, 255, 255, 0.3)',
     },
     // Фон навигации
-    navBg: 'rgba(255, 255, 255, 0.95)',
-    navBorder: 'rgba(229, 231, 235, 0.3)',
+    navBg: 'rgba(255, 255, 255, 0.98)',
+    navBorder: 'rgba(160, 124, 255, 0.08)',
   },
   spacing: {
-    navHeight: '68px',
+    navHeight: '72px',
     iconSize: '24px',
-    centerButtonSize: '56px',
+    centerButtonSize: '56px', // 1.3x от обычной кнопки
     safeAreaBottom: 'env(safe-area-inset-bottom, 0px)',
+  },
+  typography: {
+    fontSize: '13px',
+    fontWeight: '600', // semi-bold
+    fontFamily: 'Inter, SF Pro Display, system-ui, -apple-system, sans-serif',
   },
   animation: {
     transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
-    glow: 'glow 2s ease-in-out infinite',
-    tap: 'scale 0.15s ease-out',
+    glow: 'glow 3s ease-in-out infinite',
   },
   shadows: {
-    nav: '0 -4px 20px rgba(0, 0, 0, 0.03)',
-    centerButton: '0 4px 20px rgba(196, 132, 252, 0.3)',
-    centerButtonHover: '0 6px 30px rgba(196, 132, 252, 0.4)',
+    nav: '0 -2px 20px rgba(160, 124, 255, 0.05)',
+    centerButton: '0 4px 24px rgba(160, 124, 255, 0.25)',
+    centerButtonHover: '0 6px 32px rgba(160, 124, 255, 0.35)',
+    soft: '0 2px 8px rgba(0, 0, 0, 0.04)',
   },
   borderRadius: {
-    nav: '20px 20px 0 0',
-    centerButton: '18px',
+    nav: '24px 24px 0 0',
+    centerButton: '20px',
+    button: '12px',
   },
 } as const;
 

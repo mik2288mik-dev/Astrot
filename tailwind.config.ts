@@ -87,8 +87,9 @@ const config: Config = {
         'fade-in': 'fadeIn 0.3s ease-out',
         'slide-up': 'slideUp 0.3s ease-out',
         'scale-in': 'scaleIn 0.2s ease-out',
-        'glow': 'glow 2s ease-in-out infinite',
+        'glow': 'glow 3s ease-in-out infinite',
         'tap': 'tap 0.15s ease-out',
+        'pulse-soft': 'pulseSoft 2s ease-in-out infinite',
       },
       keyframes: {
         fadeIn: {
@@ -105,16 +106,20 @@ const config: Config = {
         },
         glow: {
           '0%, 100%': { 
-            boxShadow: '0 0 20px rgba(196, 132, 252, 0.4), 0 0 40px rgba(196, 132, 252, 0.2)' 
+            boxShadow: '0 0 20px rgba(160, 124, 255, 0.3), 0 0 40px rgba(160, 124, 255, 0.15)' 
           },
           '50%': { 
-            boxShadow: '0 0 30px rgba(196, 132, 252, 0.6), 0 0 60px rgba(196, 132, 252, 0.3)' 
+            boxShadow: '0 0 30px rgba(160, 124, 255, 0.5), 0 0 60px rgba(160, 124, 255, 0.25)' 
           },
         },
         tap: {
           '0%': { transform: 'scale(1)' },
           '50%': { transform: 'scale(0.95)' },
           '100%': { transform: 'scale(1)' },
+        },
+        pulseSoft: {
+          '0%, 100%': { opacity: '0.7' },
+          '50%': { opacity: '1' },
         },
       },
     }
