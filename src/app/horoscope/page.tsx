@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useEffect, useState } from 'react';
+import { useSearchParams } from 'next/navigation';
 import { useTelegramUser } from '@/hooks/useTelegram';
 import { getActiveChart } from '../../../lib/birth/storage';
 import type { SavedChart } from '../../../lib/birth/storage';
@@ -18,10 +19,15 @@ import {
 
 export default function HoroscopePage() {
   const { userId } = useTelegramUser();
+  const searchParams = useSearchParams();
+  const tgIdFromUrl = searchParams.get('tgId');
   const [activeChart, setActiveChart] = useState<SavedChart | null>(null);
   const [horoscope, setHoroscope] = useState<FullHoroscope | null>(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+
+  // Используем tgId из URL или из Telegram
+  const effectiveTgId = tgIdFromUrl || userId?.toString();
 
   useEffect(() => {
     const chart = getActiveChart();
@@ -29,13 +35,13 @@ export default function HoroscopePage() {
   }, []);
 
   useEffect(() => {
-    if (activeChart && userId) {
+    if (effectiveTgId) {
       loadHoroscope();
     }
-  }, [activeChart, userId]);
+  }, [effectiveTgId]);
 
   const loadHoroscope = async () => {
-    if (!activeChart || !userId) return;
+    if (!effectiveTgId) return;
     
     setLoading(true);
     setError(null);
@@ -45,8 +51,9 @@ export default function HoroscopePage() {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          birth: activeChart.input,
-          userId: userId.toString()
+          birth: activeChart?.input,
+          tgId: effectiveTgId,
+          userId: effectiveTgId
         })
       });
       
@@ -94,16 +101,21 @@ export default function HoroscopePage() {
     return 'text-red-500';
   };
 
-  if (!activeChart) {
+  // Показываем состояние загрузки или ошибки только если нет tgId
+  if (!effectiveTgId) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-purple-50 to-blue-50 p-4 flex items-center justify-center">
-        <div className="text-center">
-          <div className="text-gray-500 mb-4">
-            Для просмотра гороскопа необходимо создать натальную карту
+      <div className="safe-page">
+        <div className="page-content animate-fade-in text-center">
+          <div className="mb-6">
+            <div className="text-6xl mb-4">🔮</div>
+            <h1 className="heading-1 mb-4">Гороскоп</h1>
+            <p className="body-text mb-6">
+              Для просмотра персонального гороскопа необходимо создать профиль
+            </p>
+            <a href="/profile" className="btn-primary">
+              Создать профиль
+            </a>
           </div>
-          <a href="/" className="text-blue-600 hover:text-blue-800">
-            Перейти на главную
-          </a>
         </div>
       </div>
     );

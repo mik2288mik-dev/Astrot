@@ -5,10 +5,12 @@ import '@/styles/tokens.css';
 import '@/styles/nebula.css';
 import '@/styles/ui-kit.css';
 import '@/styles/safe.css';
+import '@/styles/theme-animations.css';
 import { TelegramProvider } from '@/providers/telegram-provider';
 import { TelegramViewportProvider } from '@/providers/telegram-viewport';
+import { ThemeProvider } from '@/providers/ThemeProvider';
 import SafeArea from '@/components/layout/SafeArea';
-import NavBar from '@/components/NavBar';
+import BottomBar from '@/components/nav/BottomBar';
 import { GeistSans } from 'geist/font/sans';
 
 export const runtime = 'nodejs';
@@ -43,14 +45,16 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <div className="astrot-bg astrot-stars" />
         <TelegramProvider>
           <TelegramViewportProvider>
-            <SafeArea>
-              <div className="app-container">
-                <main className="main-content">
-                  {children}
-                </main>
-                <NavBar />
-              </div>
-            </SafeArea>
+            <ThemeProvider>
+              <SafeArea>
+                <div className="app-container">
+                  <main className="main-content">
+                    {children}
+                  </main>
+                  <BottomBar />
+                </div>
+              </SafeArea>
+            </ThemeProvider>
           </TelegramViewportProvider>
         </TelegramProvider>
       </body>

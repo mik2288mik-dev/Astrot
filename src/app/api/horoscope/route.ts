@@ -12,15 +12,32 @@ export async function POST(req: Request) {
   }
 
   try {
-    const { birth } = await req.json();
+    const { birth, tgId } = await req.json();
     
-    if (!birth?.date) {
+    let birthData = birth;
+    
+    // Если передан tgId, пытаемся загрузить профиль
+    if (tgId && !birth) {
+      try {
+        const profileResponse = await fetch(`${process.env.NEXTAUTH_URL || 'http://localhost:3000'}/api/profile?tgId=${tgId}`);
+        if (profileResponse.ok) {
+          const profileData = await profileResponse.json();
+          if (profileData.profile?.birthDate) {
+            birthData = { date: profileData.profile.birthDate };
+          }
+        }
+      } catch (error) {
+        console.error('Error loading profile for horoscope:', error);
+      }
+    }
+    
+    if (!birthData?.date) {
       return NextResponse.json({ 
         text: 'Прекрасный день для новых начинаний! Доверьтесь своей интуиции.' 
       });
     }
 
-    const zodiacSign = getZodiacSign(birth.date);
+    const zodiacSign = getZodiacSign(birthData.date);
     const openai = new OpenAI({ apiKey: key });
     
     const today = new Date();
@@ -77,4 +94,15 @@ function getZodiacSign(birthDate: string): string {
   if (monthDay >= 1222 || monthDay <= 119) return 'Козерог';
   if (monthDay >= 120 && monthDay <= 218) return 'Водолей';
   return 'Рыбы';
+}
+
+export async function GET(req: Request) {
+  const url = new URL(req.url);
+  const tgId = url.searchParams.get('tgId');
+  
+  return POST(new Request(req.url, {
+    method: 'POST',
+    body: JSON.stringify({ tgId }),
+    headers: { 'Content-Type': 'application/json' },
+  }));
 }
