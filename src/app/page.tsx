@@ -1,25 +1,31 @@
 'use client';
 
 import React, { useEffect, useState } from 'react';
-import Image from 'next/image';
 import { useTelegramUser, useTelegram } from '@/hooks/useTelegram';
 import { getActiveChart } from '../../lib/birth/storage';
 import type { SavedChart } from '../../lib/birth/storage';
 import NatalWheel, { type ChartData } from '@/components/natal/NatalWheel';
-import FriendlyCard from '@/components/friendly/FriendlyCard';
+import { 
+  ChartBarIcon, 
+  SparklesIcon,
+  UserCircleIcon,
+  ArrowRightIcon
+} from '@heroicons/react/24/outline';
 
 export default function HomePage() {
-  const { firstName, photoUrl, userId } = useTelegramUser();
+  const { firstName, userId } = useTelegramUser();
   const { hapticFeedback } = useTelegram();
   const [activeChart, setActiveChart] = useState<SavedChart | null>(null);
   const [chart, setChart] = useState<ChartData | 'loading' | 'error' | null>(null);
   const [profile, setProfile] = useState<any>(null);
+  const [dailyTip, setDailyTip] = useState<string>('');
 
   // Загружаем профиль для получения предпочитаемого имени
   useEffect(() => {
     if (userId) {
       loadProfile();
     }
+    loadDailyTip();
   }, [userId]);
 
   const loadProfile = async () => {
@@ -34,6 +40,27 @@ export default function HomePage() {
     }
   };
 
+  const loadDailyTip = async () => {
+    try {
+      const res = await fetch('/api/horoscope', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ tgId: userId?.toString() })
+      });
+      if (res.ok) {
+        const data = await res.json();
+        // Берём первый элемент из tldr или используем дефолт
+        if (data.tldr && Array.isArray(data.tldr)) {
+          setDailyTip(data.tldr[0] || 'Сегодня отличный день для новых начинаний!');
+        } else {
+          setDailyTip('Доверьтесь своей интуиции сегодня');
+        }
+      }
+    } catch (error) {
+      setDailyTip('Звёзды благоволят вам сегодня');
+    }
+  };
+
   const birth = activeChart?.input;
   
   // Определяем имя для отображения
@@ -41,7 +68,7 @@ export default function HomePage() {
   const displayName = profile?.preferredName || 
     [tg?.first_name, tg?.last_name].filter(Boolean).join(' ') || 
     firstName || 
-    'Друг';
+    'друг';
 
   useEffect(() => {
     // Загружаем активную карту
@@ -50,206 +77,151 @@ export default function HomePage() {
   }, []);
 
   useEffect(() => {
-    if (!birth) { 
-      setChart(null); 
-      return; 
+    if (birth) {
+      setChart('loading');
+      loadChart();
     }
-    
-    let stop = false;
-    
-    (async () => {
-      try {
-        setChart('loading');
-        
-        // Преобразуем данные рождения в формат API
-        const date = new Date(birth.date);
-        const [hours, minutes] = birth.time.split(':').map(Number);
-        
-        const birthData = {
-          year: date.getFullYear(),
-          month: date.getMonth() + 1,
-          day: date.getDate(),
-          hour: hours || 12,
-          minute: minutes || 0,
-          lat: birth.place?.lat || 0,
-          lon: birth.place?.lon || 0,
-          tz: birth.place?.tz || 'UTC',
-          place: birth.place?.displayName
-        };
-
-        const r = await fetch('/api/natal/compute', {
-          method: 'POST',
-          headers: { 'content-type': 'application/json' },
-          body: JSON.stringify({ birth: birthData })
-        });
-
-        if (!r.ok) throw 0;
-        
-        const response = await r.json();
-        
-        if (!stop && response.success && response.data) {
-          // Преобразуем данные из API в формат компонента NatalWheel
-          const apiData = response.data;
-          
-          const planets = apiData.planets.map((planet: { name: string; lon: number; speed?: number }) => ({
-            id: planet.name,
-            lon: planet.lon,
-            speed: planet.speed
-          }));
-
-          const houses = apiData.houses.cusps.map((cusp: { degree: number }, index: number) => ({
-            index: index + 1,
-            lon: cusp.degree
-          }));
-
-          // Преобразуем аспекты
-          const aspects = apiData.aspects.map((aspect: { planet1: string; planet2: string; type: string; orb: number }) => ({
-            a: aspect.planet1,
-            b: aspect.planet2,
-            type: aspect.type,
-            orb: aspect.orb
-          }));
-
-          const d = {
-            planets,
-            houses,
-            aspects
-          };
-          
-          if (!stop) setChart(d);
-        }
-      } catch { 
-        if (!stop) setChart('error'); 
-      }
-    })();
-    
-    return () => { stop = true; };
   }, [birth]);
 
-  const handleNatalChartClick = () => {
-    hapticFeedback('impact', 'medium');
-    window.location.href = '/natal';
+  const loadChart = async () => {
+    if (!birth) {
+      setChart(null);
+      return;
+    }
+
+    try {
+      const response = await fetch('/api/chart/calc', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ birth })
+      });
+
+      if (!response.ok) {
+        throw new Error('Failed to calculate chart');
+      }
+
+      const data = await response.json();
+      setChart(data);
+    } catch (error) {
+      console.error('Error loading chart:', error);
+      setChart('error');
+    }
   };
 
-  const handleHoroscopeClick = () => {
-    hapticFeedback('impact', 'light');
-    // Передаем tgId в URL для автоподстановки профиля
-    const url = userId ? `/horoscope?tgId=${userId}` : '/horoscope';
-    window.location.href = url;
-  };
-
-  const openInsight = (e: any) => {
-    console.log('select', e);
-    hapticFeedback('impact', 'light');
+  const handleNavigate = (path: string) => {
+    if (hapticFeedback) {
+      hapticFeedback.impactOccurred('light');
+    }
+    window.location.href = path;
   };
 
   return (
-    <main className="safe-page">
-      <div className="page-content animate-fade-in">
-        {/* Приветственный блок */}
+    <div className="min-h-screen bg-gradient-to-br from-indigo-50 via-purple-50 to-pink-50">
+      <div className="container py-8 pb-24">
+        {/* Приветствие */}
         <div className="text-center mb-8">
-          {/* Аватар пользователя */}
-          <div className="mb-6 animate-bounce-in">
-            {photoUrl ? (
-              <Image
-                src={photoUrl}
-                alt={firstName || 'User'}
-                width={100}
-                height={100}
-                unoptimized
-                className="w-[100px] h-[100px] rounded-full border-4 border-white shadow-lg mx-auto"
-              />
-            ) : (
-              <div className="w-[100px] h-[100px] bg-gradient-to-br from-purple-100 to-pink-100 rounded-full flex items-center justify-center border-4 border-white shadow-lg mx-auto">
-                <div className="text-3xl">✨</div>
-              </div>
-            )}
-          </div>
-
-          {/* Приветствие */}
-          <div className="mb-2">
-            <h1 className="heading-1 mb-2">
-              Привет, {displayName}!
-            </h1>
-            <p className="body-text-large text-center">
-              Ваш помощник на каждый день
-            </p>
-          </div>
+          <h1 className="text-3xl font-bold text-gray-900 mb-2">
+            Привет, {displayName}! 👋
+          </h1>
+          <p className="text-gray-600">
+            Добро пожаловать в мир астрологии
+          </p>
         </div>
 
-        {/* Блок натальной карты */}
-        <div className="card mb-6 text-center animate-slide-up">
-          <div className="mb-4">
-            <h2 className="card-title">Натальная карта</h2>
-            {activeChart?.input?.date ? (
-              <p className="card-caption">
-                {new Date(activeChart.input.date).toLocaleDateString('ru-RU', {
-                  year: 'numeric',
-                  month: 'long', 
-                  day: 'numeric'
-                })}
-              </p>
+        {/* Натальная карта */}
+        <div className="card mb-6">
+          <div className="flex items-center justify-between mb-4">
+            <h2 className="text-lg font-semibold">Натальная карта</h2>
+            {birth && (
+              <span className="text-sm text-gray-500">
+                {new Date(birth.date).toLocaleDateString('ru-RU')}
+              </span>
+            )}
+          </div>
+          
+          <div className="relative h-64 flex items-center justify-center bg-gradient-to-br from-purple-100 to-blue-100 rounded-lg mb-4">
+            {chart === 'loading' ? (
+              <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-purple-600" />
+            ) : chart === 'error' ? (
+              <div className="text-center">
+                <p className="text-gray-500 mb-2">Ошибка загрузки карты</p>
+                <button onClick={loadChart} className="text-blue-600 hover:underline">
+                  Попробовать снова
+                </button>
+              </div>
+            ) : chart ? (
+              <div className="w-full h-full p-4">
+                <NatalWheel 
+                  chartData={chart} 
+                  width={240} 
+                  height={240}
+                  showAspects={false}
+                  showHouses={false}
+                />
+              </div>
             ) : (
-              <p className="card-caption">
-                Создайте свою персональную карту
-              </p>
+              <div className="text-center">
+                <ChartBarIcon className="w-16 h-16 text-gray-400 mx-auto mb-2" />
+                <p className="text-gray-500">Карта не построена</p>
+              </div>
             )}
           </div>
 
-          {/* Колесо натальной карты */}
-          <div className="flex justify-center mb-6">
-            {chart && chart !== 'error' && chart !== 'loading' && typeof chart === 'object' ? (
-              <div className="animate-fade-in">
-                <NatalWheel data={chart} size={280} onSelect={(e) => openInsight(e)} />
-              </div>
-            ) : chart === 'loading' ? (
-              <div className="w-[280px] h-[280px] rounded-full bg-gradient-to-br from-purple-50 to-pink-50 flex items-center justify-center animate-pulse">
-                <div className="text-2xl">⏳</div>
-              </div>
-            ) : (
-                          <Image
-              src="/art/astrot-natal-wheel.svg" 
-              alt="Astrot wheel"
-              width={280} 
-              height={280}
-              className="rounded-full select-none animate-fade-in" 
-              draggable={false}
-              priority
-            />
-            )}
-          </div>
-
-          {/* Кнопки действий */}
           <div className="flex gap-3">
             <button
-              onClick={handleNatalChartClick}
-              className="btn-secondary flex-1"
-              aria-label={activeChart ? 'Открыть натальную карту' : 'Создать натальную карту'}
+              onClick={() => handleNavigate(birth ? '/chart' : '/natal')}
+              className="btn btn-primary flex-1"
             >
-              {activeChart ? 'Открыть карту' : 'Построить карту'}
+              {birth ? 'Открыть карту' : 'Построить карту'}
+              <ArrowRightIcon className="w-4 h-4 ml-2" />
             </button>
             <button
-              onClick={handleHoroscopeClick}
-              className="btn-primary flex-1"
-              aria-label="Перейти к гороскопу дня"
+              onClick={() => handleNavigate('/horoscope')}
+              className="btn btn-secondary flex-1"
             >
+              <SparklesIcon className="w-4 h-4 mr-2" />
               Гороскоп
             </button>
           </div>
         </div>
 
-        {/* Блок советов дня */}
-        <FriendlyCard tgId={userId?.toString()} className="mb-6" />
-
-        {/* Дополнительная информация */}
-        {userId && (
-          <div className="text-center">
-            <p className="caption">
-              ID: {userId}
-            </p>
+        {/* Совет дня */}
+        {dailyTip && (
+          <div className="card bg-gradient-to-r from-yellow-50 to-orange-50 border-l-4 border-yellow-400">
+            <div className="flex items-start">
+              <span className="text-2xl mr-3">💫</span>
+              <div>
+                <h3 className="font-semibold mb-1">Совет дня</h3>
+                <p className="text-gray-700">{dailyTip}</p>
+              </div>
+            </div>
           </div>
         )}
+
+        {/* Быстрые действия */}
+        <div className="mt-8">
+          <h2 className="text-lg font-semibold mb-4">Быстрые действия</h2>
+          <div className="grid grid-cols-2 gap-3">
+            <button
+              onClick={() => handleNavigate('/profile')}
+              className="p-4 bg-white rounded-lg shadow-sm hover:shadow-md transition-shadow text-left"
+            >
+              <UserCircleIcon className="w-6 h-6 text-purple-600 mb-2" />
+              <div className="font-medium">Профиль</div>
+              <div className="text-xs text-gray-500">Ваши данные</div>
+            </button>
+            
+            <button
+              onClick={() => handleNavigate('/functions')}
+              className="p-4 bg-white rounded-lg shadow-sm hover:shadow-md transition-shadow text-left"
+            >
+              <SparklesIcon className="w-6 h-6 text-blue-600 mb-2" />
+              <div className="font-medium">Функции</div>
+              <div className="text-xs text-gray-500">Все возможности</div>
+            </button>
+          </div>
+        </div>
       </div>
-    </main>
+    </div>
   );
 }

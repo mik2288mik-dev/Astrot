@@ -5,7 +5,6 @@ import { useSearchParams } from 'next/navigation';
 import { useTelegramUser } from '@/hooks/useTelegram';
 import { getActiveChart } from '../../../lib/birth/storage';
 import type { SavedChart } from '../../../lib/birth/storage';
-import type { FullHoroscope } from '@/lib/horoscope/types';
 import { 
   CalendarIcon, 
   SparklesIcon, 
@@ -14,19 +13,45 @@ import {
   AcademicCapIcon,
   MoonIcon,
   ClockIcon,
-  ShareIcon
+  ShareIcon,
+  ArrowPathIcon
 } from '@heroicons/react/24/outline';
+
+interface FriendlyHoroscope {
+  dateISO: string;
+  greeting: string;
+  tldr: string[];
+  keyTransits: Array<{
+    title: string;
+    description: string;
+    advice: string;
+  }>;
+  sections: {
+    love: string[];
+    work: string[];
+    health: string[];
+    growth: string[];
+  };
+  moon: {
+    tip: string;
+  };
+  timeline: Array<{
+    part: 'morning' | 'day' | 'evening';
+    icon: string;
+    tips: string[];
+  }>;
+}
 
 export default function HoroscopePage() {
   const { userId } = useTelegramUser();
   const searchParams = useSearchParams();
   const tgIdFromUrl = searchParams.get('tgId');
   const [activeChart, setActiveChart] = useState<SavedChart | null>(null);
-  const [horoscope, setHoroscope] = useState<FullHoroscope | null>(null);
+  const [horoscope, setHoroscope] = useState<FriendlyHoroscope | null>(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [debugId, setDebugId] = useState<string | null>(null);
 
-  // Используем tgId из URL или из Telegram
   const effectiveTgId = tgIdFromUrl || userId?.toString();
 
   useEffect(() => {
@@ -35,14 +60,12 @@ export default function HoroscopePage() {
   }, []);
 
   useEffect(() => {
-    if (effectiveTgId) {
+    if (effectiveTgId || activeChart) {
       loadHoroscope();
     }
-  }, [effectiveTgId]);
+  }, [effectiveTgId, activeChart]);
 
   const loadHoroscope = async () => {
-    if (!effectiveTgId) return;
-    
     setLoading(true);
     setError(null);
     
@@ -57,8 +80,15 @@ export default function HoroscopePage() {
         })
       });
       
+      // Сохраняем debug-id для отображения при ошибке
+      const debugIdHeader = response.headers.get('x-debug-id');
+      if (debugIdHeader) {
+        setDebugId(debugIdHeader);
+      }
+      
       if (!response.ok) {
-        throw new Error('Ошибка загрузки гороскопа');
+        const errorData = await response.json();
+        throw new Error(errorData.error || 'Ошибка загрузки гороскопа');
       }
       
       const data = await response.json();
@@ -73,16 +103,15 @@ export default function HoroscopePage() {
   const shareHoroscope = () => {
     if (!horoscope) return;
     
-    const text = `Мой гороскоп на ${horoscope.dateISO}:\n\n` +
-      `🌟 Настроение: ${horoscope.tldr.mood}\n` +
-      `⚡ Энергия: ${horoscope.tldr.energy}\n` +
-      `🎯 Фокус: ${horoscope.tldr.focus}\n` +
-      `🍀 Счастливое число: ${horoscope.tldr.lucky.number}`;
+    const text = `Мой гороскоп на ${formatDate(horoscope.dateISO)}:\n\n` +
+      horoscope.tldr.join('\n') + '\n\n' +
+      `💫 ${horoscope.moon.tip}`;
     
     if (navigator.share) {
       navigator.share({ text });
     } else {
       navigator.clipboard.writeText(text);
+      alert('Скопировано в буфер обмена!');
     }
   };
 
@@ -95,27 +124,64 @@ export default function HoroscopePage() {
     });
   };
 
-  const getScoreColor = (score: number) => {
-    if (score >= 80) return 'text-green-500';
-    if (score >= 60) return 'text-yellow-500';
-    return 'text-red-500';
+  const getSectionIcon = (section: string) => {
+    switch (section) {
+      case 'love': return <HeartIcon className="w-5 h-5" />;
+      case 'work': return <BriefcaseIcon className="w-5 h-5" />;
+      case 'health': return <SparklesIcon className="w-5 h-5" />;
+      case 'growth': return <AcademicCapIcon className="w-5 h-5" />;
+      default: return null;
+    }
   };
 
-  // Показываем состояние загрузки или ошибки только если нет tgId
-  if (!effectiveTgId) {
+  const getSectionTitle = (section: string) => {
+    switch (section) {
+      case 'love': return 'Любовь и отношения';
+      case 'work': return 'Работа и карьера';
+      case 'health': return 'Здоровье и энергия';
+      case 'growth': return 'Личностный рост';
+      default: return '';
+    }
+  };
+
+  // Skeleton компонент
+  const Skeleton = ({ className }: { className?: string }) => (
+    <div className={`animate-pulse bg-gray-200 rounded ${className || ''}`} />
+  );
+
+  // Показываем пустое состояние
+  if (!effectiveTgId && !activeChart) {
     return (
-      <div className="safe-page">
-        <div className="page-content animate-fade-in text-center">
-          <div className="mb-6">
-            <div className="text-6xl mb-4">🔮</div>
-            <h1 className="heading-1 mb-4">Гороскоп</h1>
-            <p className="body-text mb-6">
-              Для просмотра персонального гороскопа необходимо создать профиль
-            </p>
-            <a href="/profile" className="btn-primary">
-              Создать профиль
-            </a>
-          </div>
+      <div className="container min-h-screen flex items-center justify-center">
+        <div className="text-center max-w-md">
+          <div className="text-6xl mb-4">🔮</div>
+          <h1 className="text-2xl font-bold mb-4">Создайте профиль</h1>
+          <p className="text-gray-600 mb-6">
+            Чтобы получить персональный гороскоп, создайте профиль с датой рождения
+          </p>
+          <a href="/profile/form" className="btn btn-primary">
+            Создать профиль
+          </a>
+        </div>
+      </div>
+    );
+  }
+
+  // Показываем ошибку
+  if (error) {
+    return (
+      <div className="container min-h-screen flex items-center justify-center">
+        <div className="card max-w-md w-full text-center">
+          <div className="text-5xl mb-4">😔</div>
+          <h2 className="text-xl font-bold mb-2">Не удалось загрузить</h2>
+          <p className="text-gray-600 mb-4">{error}</p>
+          {debugId && (
+            <p className="text-xs text-gray-400 mb-4">ID: {debugId}</p>
+          )}
+          <button onClick={loadHoroscope} className="btn btn-primary">
+            <ArrowPathIcon className="w-4 h-4 mr-2" />
+            Попробовать снова
+          </button>
         </div>
       </div>
     );
@@ -123,235 +189,169 @@ export default function HoroscopePage() {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-purple-50 via-blue-50 to-indigo-50">
-      <div className="max-w-4xl mx-auto p-4 pb-20">
+      <div className="container py-6 pb-24">
         {/* Header */}
         <div className="flex items-center justify-between mb-6">
           <div>
-            <h1 className="text-2xl font-bold text-gray-900 mb-1">
-              Гороскоп дня
-            </h1>
-            <div className="flex items-center text-gray-600">
-              <CalendarIcon className="w-4 h-4 mr-2" />
-              {horoscope ? formatDate(horoscope.dateISO) : 'Загрузка...'}
-            </div>
+            {loading ? (
+              <>
+                <Skeleton className="h-8 w-48 mb-2" />
+                <Skeleton className="h-4 w-32" />
+              </>
+            ) : (
+              <>
+                <h1 className="text-2xl font-bold text-gray-900 mb-1">
+                  {horoscope?.greeting || 'Ваш гороскоп'}
+                </h1>
+                <div className="flex items-center text-gray-600">
+                  <CalendarIcon className="w-4 h-4 mr-2" />
+                  {horoscope ? formatDate(horoscope.dateISO) : 'Сегодня'}
+                </div>
+              </>
+            )}
           </div>
           {horoscope && (
             <button
               onClick={shareHoroscope}
-              className="p-2 rounded-full bg-white shadow-md hover:shadow-lg transition-shadow"
+              className="p-3 rounded-full bg-white shadow-md hover:shadow-lg transition-all"
+              aria-label="Поделиться"
             >
               <ShareIcon className="w-5 h-5 text-gray-600" />
             </button>
           )}
         </div>
 
-        {loading && (
-          <div className="flex items-center justify-center py-12">
-            <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-purple-600"></div>
-            <span className="ml-3 text-gray-600">Составляем ваш гороскоп...</span>
-          </div>
-        )}
+        {/* TL;DR блок */}
+        <div className="mb-6">
+          {loading ? (
+            <div className="flex gap-3">
+              <Skeleton className="h-10 flex-1 rounded-full" />
+              <Skeleton className="h-10 flex-1 rounded-full" />
+              <Skeleton className="h-10 flex-1 rounded-full" />
+            </div>
+          ) : horoscope ? (
+            <div className="flex flex-wrap gap-2">
+              {horoscope.tldr.map((item, index) => (
+                <div key={index} className="chip">
+                  {item}
+                </div>
+              ))}
+            </div>
+          ) : null}
+        </div>
 
-        {error && (
-          <div className="bg-red-50 border border-red-200 rounded-lg p-4 mb-6">
-            <div className="text-red-800">{error}</div>
-            <button 
-              onClick={loadHoroscope}
-              className="mt-2 text-red-600 hover:text-red-800 font-medium"
-            >
-              Попробовать снова
-            </button>
+        {/* Главное сегодня */}
+        {loading ? (
+          <div className="mb-8">
+            <Skeleton className="h-6 w-40 mb-4" />
+            <div className="grid gap-4">
+              <Skeleton className="h-24 rounded-lg" />
+              <Skeleton className="h-24 rounded-lg" />
+              <Skeleton className="h-24 rounded-lg" />
+            </div>
           </div>
-        )}
+        ) : horoscope?.keyTransits && horoscope.keyTransits.length > 0 ? (
+          <div className="mb-8">
+            <h2 className="text-lg font-semibold mb-4">Главное сегодня</h2>
+            <div className="grid gap-4">
+              {horoscope.keyTransits.map((transit, index) => (
+                <div key={index} className="card">
+                  <h3 className="font-medium mb-2">{transit.title}</h3>
+                  <p className="text-sm text-gray-600 mb-2">{transit.description}</p>
+                  <p className="text-sm text-blue-600">💡 {transit.advice}</p>
+                </div>
+              ))}
+            </div>
+          </div>
+        ) : null}
 
-        {horoscope && (
-          <div className="space-y-6">
-            {/* TL;DR Card */}
-            <div className="bg-white rounded-2xl shadow-lg p-6">
-              <div className="flex items-center mb-4">
-                <SparklesIcon className="w-6 h-6 text-purple-600 mr-2" />
-                <h2 className="text-xl font-bold text-gray-900">Сводка дня</h2>
-                <div className={`ml-auto text-2xl font-bold ${getScoreColor(horoscope.score)}`}>
-                  {horoscope.score}/100
+        {/* Секции (2x2 сетка) */}
+        {loading ? (
+          <div className="grid grid-cols-2 gap-4 mb-8">
+            <Skeleton className="h-32 rounded-lg" />
+            <Skeleton className="h-32 rounded-lg" />
+            <Skeleton className="h-32 rounded-lg" />
+            <Skeleton className="h-32 rounded-lg" />
+          </div>
+        ) : horoscope ? (
+          <div className="grid grid-cols-2 gap-4 mb-8">
+            {Object.entries(horoscope.sections).map(([key, items]) => (
+              <div key={key} className="card">
+                <div className="flex items-center mb-3">
+                  {getSectionIcon(key)}
+                  <h3 className="ml-2 font-medium">{getSectionTitle(key)}</h3>
                 </div>
+                <ul className="space-y-2">
+                  {items.map((item, index) => (
+                    <li key={index} className="text-sm text-gray-700">
+                      {item}
+                    </li>
+                  ))}
+                </ul>
               </div>
-              
-              <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-4">
-                <div className="text-center">
-                  <div className="text-sm text-gray-500">Настроение</div>
-                  <div className="font-semibold text-gray-900">{horoscope.tldr.mood}</div>
-                </div>
-                <div className="text-center">
-                  <div className="text-sm text-gray-500">Энергия</div>
-                  <div className="font-semibold text-gray-900">{horoscope.tldr.energy}</div>
-                </div>
-                <div className="text-center">
-                  <div className="text-sm text-gray-500">Фокус</div>
-                  <div className="font-semibold text-gray-900">{horoscope.tldr.focus}</div>
-                </div>
-                <div className="text-center">
-                  <div className="text-sm text-gray-500">Счастливое число</div>
-                  <div className="font-semibold text-gray-900">{horoscope.tldr.lucky.number}</div>
-                </div>
-              </div>
-              
-              <div className="flex items-center justify-center">
-                <div 
-                  className="w-4 h-4 rounded-full mr-2"
-                  style={{ backgroundColor: horoscope.tldr.lucky.color }}
-                ></div>
-                <span className="text-sm text-gray-600">Ваш цвет дня</span>
+            ))}
+          </div>
+        ) : null}
+
+        {/* Совет по луне */}
+        {loading ? (
+          <div className="mb-8">
+            <Skeleton className="h-20 rounded-lg" />
+          </div>
+        ) : horoscope?.moon ? (
+          <div className="card mb-8 bg-gradient-to-r from-purple-50 to-blue-50">
+            <div className="flex items-start">
+              <MoonIcon className="w-6 h-6 text-purple-600 mr-3 flex-shrink-0 mt-1" />
+              <div>
+                <h3 className="font-medium mb-2">Лунный совет</h3>
+                <p className="text-gray-700">{horoscope.moon.tip}</p>
               </div>
             </div>
+          </div>
+        ) : null}
 
-            {/* Key Transits */}
-            <div className="bg-white rounded-2xl shadow-lg p-6">
-              <h2 className="text-xl font-bold text-gray-900 mb-4">
-                Ключевые влияния
-              </h2>
-              <div className="space-y-4">
-                {horoscope.keyTransits.map((transit, index) => (
-                  <div key={index} className="border-l-4 border-purple-300 pl-4">
-                    <h3 className="font-semibold text-gray-900 mb-1">
-                      {transit.title}
-                    </h3>
-                    <p className="text-gray-600 text-sm mb-2">{transit.why}</p>
-                    <p className="text-purple-700 text-sm font-medium">
-                      💡 {transit.advice}
+        {/* Timeline */}
+        {loading ? (
+          <div className="space-y-4">
+            <Skeleton className="h-16 rounded-lg" />
+            <Skeleton className="h-16 rounded-lg" />
+            <Skeleton className="h-16 rounded-lg" />
+          </div>
+        ) : horoscope?.timeline ? (
+          <div>
+            <h2 className="text-lg font-semibold mb-4 flex items-center">
+              <ClockIcon className="w-5 h-5 mr-2" />
+              Распорядок дня
+            </h2>
+            <div className="space-y-3">
+              {horoscope.timeline.map((period, index) => (
+                <div key={index} className="flex items-center p-4 bg-white rounded-lg shadow-sm">
+                  <span className="text-2xl mr-4">{period.icon}</span>
+                  <div className="flex-1">
+                    <h4 className="font-medium capitalize mb-1">
+                      {period.part === 'morning' ? 'Утро' : 
+                       period.part === 'day' ? 'День' : 'Вечер'}
+                    </h4>
+                    <p className="text-sm text-gray-600">
+                      {period.tips.join(' • ')}
                     </p>
                   </div>
-                ))}
-              </div>
+                </div>
+              ))}
             </div>
+          </div>
+        ) : null}
 
-            {/* Sections */}
-            <div className="grid md:grid-cols-2 gap-6">
-              {/* Love */}
-              <div className="bg-white rounded-2xl shadow-lg p-6">
-                <div className="flex items-center mb-4">
-                  <HeartIcon className="w-5 h-5 text-pink-500 mr-2" />
-                  <h3 className="text-lg font-bold text-gray-900">Любовь</h3>
-                </div>
-                <ul className="space-y-2">
-                  {horoscope.sections.love.map((tip, index) => (
-                    <li key={index} className="text-gray-700 text-sm flex items-start">
-                      <span className="text-pink-400 mr-2">•</span>
-                      {tip}
-                    </li>
-                  ))}
-                </ul>
-              </div>
-
-              {/* Work */}
-              <div className="bg-white rounded-2xl shadow-lg p-6">
-                <div className="flex items-center mb-4">
-                  <BriefcaseIcon className="w-5 h-5 text-blue-500 mr-2" />
-                  <h3 className="text-lg font-bold text-gray-900">Работа</h3>
-                </div>
-                <ul className="space-y-2">
-                  {horoscope.sections.work.map((tip, index) => (
-                    <li key={index} className="text-gray-700 text-sm flex items-start">
-                      <span className="text-blue-400 mr-2">•</span>
-                      {tip}
-                    </li>
-                  ))}
-                </ul>
-              </div>
-
-              {/* Health */}
-              <div className="bg-white rounded-2xl shadow-lg p-6">
-                <div className="flex items-center mb-4">
-                  <HeartIcon className="w-5 h-5 text-green-500 mr-2" />
-                  <h3 className="text-lg font-bold text-gray-900">Здоровье</h3>
-                </div>
-                <ul className="space-y-2">
-                  {horoscope.sections.health.map((tip, index) => (
-                    <li key={index} className="text-gray-700 text-sm flex items-start">
-                      <span className="text-green-400 mr-2">•</span>
-                      {tip}
-                    </li>
-                  ))}
-                </ul>
-              </div>
-
-              {/* Growth */}
-              <div className="bg-white rounded-2xl shadow-lg p-6">
-                <div className="flex items-center mb-4">
-                  <AcademicCapIcon className="w-5 h-5 text-purple-500 mr-2" />
-                  <h3 className="text-lg font-bold text-gray-900">Развитие</h3>
-                </div>
-                <ul className="space-y-2">
-                  {horoscope.sections.growth.map((tip, index) => (
-                    <li key={index} className="text-gray-700 text-sm flex items-start">
-                      <span className="text-purple-400 mr-2">•</span>
-                      {tip}
-                    </li>
-                  ))}
-                </ul>
-              </div>
-            </div>
-
-            {/* Moon Info */}
-            <div className="bg-gradient-to-r from-indigo-100 to-purple-100 rounded-2xl p-6">
-              <div className="flex items-center mb-4">
-                <MoonIcon className="w-6 h-6 text-indigo-600 mr-2" />
-                <h2 className="text-xl font-bold text-gray-900">Луна сегодня</h2>
-              </div>
-              <div className="grid md:grid-cols-3 gap-4">
-                <div>
-                  <div className="text-sm text-gray-600">Знак</div>
-                  <div className="font-semibold text-gray-900">{horoscope.moon.sign}</div>
-                </div>
-                <div>
-                  <div className="text-sm text-gray-600">Фаза</div>
-                  <div className="font-semibold text-gray-900">{horoscope.moon.phase}</div>
-                </div>
-                {horoscope.moon.house && (
-                  <div>
-                    <div className="text-sm text-gray-600">Дом</div>
-                    <div className="font-semibold text-gray-900">{horoscope.moon.house}</div>
-                  </div>
-                )}
-              </div>
-              <div className="mt-4 p-3 bg-white/50 rounded-lg">
-                <div className="text-sm text-indigo-700 font-medium">
-                  💫 {horoscope.moon.tip}
-                </div>
-              </div>
-            </div>
-
-            {/* Timeline */}
-            <div className="bg-white rounded-2xl shadow-lg p-6">
-              <div className="flex items-center mb-4">
-                <ClockIcon className="w-6 h-6 text-orange-500 mr-2" />
-                <h2 className="text-xl font-bold text-gray-900">Лента дня</h2>
-              </div>
-              <div className="space-y-4">
-                {horoscope.timeline.map((period, index) => (
-                  <div key={index} className="flex items-start">
-                    <div className="flex-shrink-0 w-16 text-center">
-                      <div className="text-sm font-semibold text-gray-900 capitalize">
-                        {period.part === 'morning' ? 'Утро' : 
-                         period.part === 'day' ? 'День' : 'Вечер'}
-                      </div>
-                      <div className={`text-xs font-bold ${getScoreColor(period.score)}`}>
-                        {period.score}/100
-                      </div>
-                    </div>
-                    <div className="ml-4 flex-1">
-                      <ul className="space-y-1">
-                        {period.tips.map((tip, tipIndex) => (
-                          <li key={tipIndex} className="text-gray-700 text-sm flex items-start">
-                            <span className="text-orange-400 mr-2">•</span>
-                            {tip}
-                          </li>
-                        ))}
-                      </ul>
-                    </div>
-                  </div>
-                ))}
-              </div>
-            </div>
+        {/* Кнопка поделиться внизу */}
+        {horoscope && (
+          <div className="mt-8 text-center">
+            <button
+              onClick={shareHoroscope}
+              className="btn btn-primary"
+            >
+              <ShareIcon className="w-4 h-4 mr-2" />
+              Поделиться гороскопом
+            </button>
           </div>
         )}
       </div>
