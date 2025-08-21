@@ -110,7 +110,7 @@ export default function HomePage() {
 
   const handleNavigate = (path: string) => {
     if (hapticFeedback) {
-      hapticFeedback.impactOccurred('light');
+      hapticFeedback('impact', 'light');
     }
     window.location.href = path;
   };
@@ -152,11 +152,9 @@ export default function HomePage() {
             ) : chart ? (
               <div className="w-full h-full p-4">
                 <NatalWheel 
-                  chartData={chart} 
-                  width={240} 
-                  height={240}
+                  data={chart} 
+                  size={240}
                   showAspects={false}
-                  showHouses={false}
                 />
               </div>
             ) : (
