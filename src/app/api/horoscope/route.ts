@@ -1,18 +1,53 @@
 import OpenAI from 'openai';
 import { NextResponse } from 'next/server';
+import { generateDebugId, logApiRequest, logApiSuccess, logApiError, withDebugHeaders } from '@/lib/api/logger';
+import { z } from 'zod';
+import { kv } from '@vercel/kv';
 
 export const dynamic = 'force-dynamic';
 
+// Схема валидации входных данных
+const RequestSchema = z.object({
+  tgId: z.string().optional(),
+  birth: z.object({
+    date: z.string()
+  }).optional(),
+  date: z.string().optional() // дата для гороскопа, по умолчанию - сегодня
+});
+
 export async function POST(req: Request) {
+  const debugId = generateDebugId();
+  const startTime = Date.now();
+  
+  logApiRequest('/api/horoscope', 'POST', debugId);
+  
   const key = process.env.OPENAI_API_KEY;
-  if (!key) {
-    return NextResponse.json({ 
+  const mockMode = process.env.MOCK_MODE === 'true';
+  
+  if (!key && !mockMode) {
+    const response = NextResponse.json({ 
       text: 'Сегодня спокойный день. Обратите внимание на дела, связанные с вашим Солнцем и Луной.' 
     });
+    logApiSuccess('/api/horoscope', debugId, Date.now() - startTime);
+    return withDebugHeaders(response, debugId);
   }
 
   try {
-    const { birth, tgId } = await req.json();
+    const body = await req.json();
+    
+    // Валидация входных данных
+    const validationResult = RequestSchema.safeParse(body);
+    if (!validationResult.success) {
+      const response = NextResponse.json({
+        error: 'Неверные входные данные',
+        details: validationResult.error.errors
+      }, { status: 400 });
+      logApiError('/api/horoscope', debugId, validationResult.error, Date.now() - startTime);
+      return withDebugHeaders(response, debugId);
+    }
+    
+    const { birth, tgId, date } = validationResult.data;
+    const targetDate = date || new Date().toISOString().split('T')[0];
     
     let birthData = birth;
     
@@ -32,27 +67,69 @@ export async function POST(req: Request) {
     }
     
     if (!birthData?.date) {
-      return NextResponse.json({ 
-        text: 'Прекрасный день для новых начинаний! Доверьтесь своей интуиции.' 
+      const response = NextResponse.json({
+        tldr: ['✨ День новых возможностей', '🌟 Доверьтесь интуиции', '💫 Время для начинаний'],
+        sections: {
+          love: ['Проявите внимание к близким', 'Откройтесь для новых знакомств'],
+          work: ['Завершите важные дела', 'Предложите свои идеи'],
+          health: ['Добавьте физической активности', 'Следите за режимом дня'],
+          growth: ['Попробуйте что-то новое', 'Запишите свои мысли']
+        },
+        moon: { tip: 'Сегодня благоприятный день для планирования' },
+        timeline: [
+          { part: 'morning', tips: ['Начните день спокойно'] },
+          { part: 'day', tips: ['Сосредоточьтесь на главном'] },
+          { part: 'evening', tips: ['Отдохните и расслабьтесь'] }
+        ],
+        date: targetDate
       });
+      logApiSuccess('/api/horoscope', debugId, Date.now() - startTime);
+      return withDebugHeaders(response, debugId);
     }
 
+    // Проверяем кэш
+    const cacheKey = `horoscope:day:${tgId || birthData.date}:${targetDate}`;
+    const cached = await kv.get(cacheKey).catch(() => null);
+    
+    if (cached) {
+      const response = NextResponse.json(cached);
+      logApiSuccess('/api/horoscope', debugId, Date.now() - startTime, true);
+      return withDebugHeaders(response, debugId, true);
+    }
+    
     const zodiacSign = getZodiacSign(birthData.date);
     const openai = new OpenAI({ apiKey: key });
     
-    const today = new Date();
+    const today = new Date(targetDate);
     const dayOfWeek = today.toLocaleDateString('ru-RU', { weekday: 'long' });
     
-    const prompt = `Создайте краткий позитивный гороскоп на ${dayOfWeek} для знака ${zodiacSign}.
-Ответ должен быть одним абзацем на русском языке, 2-3 предложения, дружелюбным тоном.
-Избегайте негативных предсказаний.`;
+    const prompt = `Создайте структурированный гороскоп на ${dayOfWeek} для знака ${zodiacSign}.
+    
+Ответьте в формате JSON:
+{
+  "tldr": ["краткий тезис 1", "краткий тезис 2", "краткий тезис 3"],
+  "sections": {
+    "love": ["совет 1", "совет 2"],
+    "work": ["совет 1", "совет 2"],
+    "health": ["совет 1", "совет 2"],
+    "growth": ["совет 1", "совет 2"]
+  },
+  "moon": { "tip": "краткий совет по луне" },
+  "timeline": [
+    { "part": "morning", "tips": ["совет на утро"] },
+    { "part": "day", "tips": ["совет на день"] },
+    { "part": "evening", "tips": ["совет на вечер"] }
+  ]
+}
+
+Все советы должны быть позитивными, конкретными и на русском языке.`;
 
     const completion = await openai.chat.completions.create({
       model: "gpt-4o-mini",
       messages: [
         {
           role: "system",
-          content: "Вы - профессиональный астролог, создающий позитивные гороскопы на русском языке."
+          content: "Вы - профессиональный астролог. Отвечайте только валидным JSON без дополнительного текста."
         },
         {
           role: "user",
@@ -60,19 +137,73 @@ export async function POST(req: Request) {
         }
       ],
       temperature: 0.8,
-      max_tokens: 200
+      max_tokens: 800
     });
     
-    const text = completion.choices[0]?.message?.content || 
-      `Сегодня для ${zodiacSign} благоприятный день! Звезды располагают к позитивным изменениям и новым возможностям.`;
+    let horoscopeData;
+    try {
+      const content = completion.choices[0]?.message?.content || '{}';
+      horoscopeData = JSON.parse(content);
+      horoscopeData.date = targetDate;
+      horoscopeData.zodiacSign = zodiacSign;
+    } catch (e) {
+      // Fallback структура
+      horoscopeData = {
+        tldr: [`Сегодня ${zodiacSign} ждёт удачный день`, 'Доверьтесь интуиции', 'Время для новых начинаний'],
+        sections: {
+          love: ['Проявите внимание к близким', 'Откройтесь для общения'],
+          work: ['Сосредоточьтесь на главном', 'Завершите важные дела'],
+          health: ['Добавьте активности', 'Следите за самочувствием'],
+          growth: ['Изучите что-то новое', 'Найдите время для себя']
+        },
+        moon: { tip: 'Луна благоприятствует новым начинаниям' },
+        timeline: [
+          { part: 'morning', tips: ['Начните день с позитива'] },
+          { part: 'day', tips: ['Будьте продуктивны'] },
+          { part: 'evening', tips: ['Отдохните и расслабьтесь'] }
+        ],
+        date: targetDate,
+        zodiacSign
+      };
+    }
     
-    return NextResponse.json({ text });
+    // Кэшируем на 24 часа
+    await kv.set(cacheKey, horoscopeData, { ex: 86400 }).catch(() => {});
+    
+    const response = NextResponse.json(horoscopeData);
+    logApiSuccess('/api/horoscope', debugId, Date.now() - startTime);
+    return withDebugHeaders(response, debugId);
     
   } catch (error) {
-    console.error('Error generating horoscope:', error);
-    return NextResponse.json({ 
-      text: 'Сегодня особенный день! Прислушайтесь к своему внутреннему голосу и действуйте с уверенностью.' 
-    });
+    logApiError('/api/horoscope', debugId, error, Date.now() - startTime);
+    
+    // В случае ошибки используем мок-данные если включен MOCK_MODE
+    if (process.env.MOCK_MODE === 'true') {
+      const mockData = {
+        tldr: ['✨ День полон возможностей', '🌟 Доверьтесь себе', '💫 Время действовать'],
+        sections: {
+          love: ['Будьте открыты для общения', 'Проявите заботу о близких'],
+          work: ['Сосредоточьтесь на приоритетах', 'Завершите начатое'],
+          health: ['Добавьте движения в день', 'Пейте больше воды'],
+          growth: ['Изучите что-то новое', 'Практикуйте благодарность']
+        },
+        moon: { tip: 'Луна поддерживает ваши начинания сегодня' },
+        timeline: [
+          { part: 'morning', tips: ['Начните с планирования дня'] },
+          { part: 'day', tips: ['Время для активных действий'] },
+          { part: 'evening', tips: ['Расслабьтесь и отдохните'] }
+        ],
+        date: new Date().toISOString().split('T')[0]
+      };
+      const response = NextResponse.json(mockData);
+      return withDebugHeaders(response, debugId);
+    }
+    
+    const response = NextResponse.json({ 
+      error: 'Не удалось загрузить гороскоп',
+      debugId
+    }, { status: 500 });
+    return withDebugHeaders(response, debugId);
   }
 }
 
