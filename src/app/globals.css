@@ -3,6 +3,7 @@
 @tailwind utilities;
 
 @import '../styles/tokens.css';
+@import url('https://fonts.googleapis.com/css2?family=Comic+Neue:wght@400;700&family=Baloo+2:wght@400;700&family=Fredoka:wght@400;600;700&display=swap');
 
 :root {
   /* Telegram viewport */
@@ -96,7 +97,7 @@ body {
 .main-content {
   flex: 1;
   padding-top: var(--safe-top); /* Опускаем контент ниже Telegram header */
-  padding-bottom: calc(var(--nav-height) + var(--safe-bottom));
+  padding-bottom: calc(88px + var(--safe-bottom)); /* Увеличенная высота для cartoon bar */
   overflow-y: auto;
   -webkit-overflow-scrolling: touch;
 }

@@ -82,6 +82,13 @@ const config: Config = {
           'Arial',
           'sans-serif'
         ],
+        cartoon: [
+          'Comic Neue',
+          'Baloo 2',
+          'Fredoka',
+          'Comic Sans MS',
+          'cursive'
+        ],
       },
       animation: {
         'fade-in': 'fadeIn 0.3s ease-out',
@@ -90,6 +97,11 @@ const config: Config = {
         'glow': 'glow 3s ease-in-out infinite',
         'tap': 'tap 0.15s ease-out',
         'pulse-soft': 'pulseSoft 2s ease-in-out infinite',
+        'cartoon-bounce': 'cartoonBounce 0.6s cubic-bezier(0.68, -0.55, 0.265, 1.55)',
+        'cartoon-wobble': 'cartoonWobble 0.8s ease-in-out infinite',
+        'cartoon-pulse': 'cartoonPulse 1.5s ease-in-out infinite',
+        'cartoon-tap': 'cartoonTap 0.2s ease-out',
+        'cartoon-float': 'cartoonFloat 3s ease-in-out infinite',
       },
       keyframes: {
         fadeIn: {
@@ -120,6 +132,36 @@ const config: Config = {
         pulseSoft: {
           '0%, 100%': { opacity: '0.7' },
           '50%': { opacity: '1' },
+        },
+        cartoonBounce: {
+          '0%': { transform: 'translateY(0) scale(1)' },
+          '30%': { transform: 'translateY(-8px) scale(1.05)' },
+          '50%': { transform: 'translateY(-12px) scale(1.08)' },
+          '100%': { transform: 'translateY(0) scale(1)' },
+        },
+        cartoonWobble: {
+          '0%, 100%': { transform: 'rotate(-3deg)' },
+          '50%': { transform: 'rotate(3deg)' },
+        },
+        cartoonPulse: {
+          '0%, 100%': { 
+            transform: 'scale(1)',
+            filter: 'brightness(1)',
+          },
+          '50%': { 
+            transform: 'scale(1.05)',
+            filter: 'brightness(1.1)',
+          },
+        },
+        cartoonTap: {
+          '0%': { transform: 'scale(1) rotate(0deg)' },
+          '50%': { transform: 'scale(0.9) rotate(-5deg)' },
+          '100%': { transform: 'scale(1) rotate(0deg)' },
+        },
+        cartoonFloat: {
+          '0%, 100%': { transform: 'translateY(0px) rotate(-2deg)' },
+          '33%': { transform: 'translateY(-3px) rotate(2deg)' },
+          '66%': { transform: 'translateY(3px) rotate(-1deg)' },
         },
       },
     }
