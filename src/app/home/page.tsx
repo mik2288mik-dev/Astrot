@@ -178,7 +178,7 @@ export default function HomePage() {
               <div className="text-3xl">✨</div>
               <div className="flex-1">
                 <p className="text-gray-700 italic font-medium mb-2">
-                  "Звёзды указывают путь, но идти по нему — твой выбор"
+                  &ldquo;Звёзды указывают путь, но идти по нему — твой выбор&rdquo;
                 </p>
                 <p className="text-xs text-gray-500">— Космическая мудрость</p>
               </div>
