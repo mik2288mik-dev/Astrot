@@ -196,6 +196,7 @@ export function useTelegram() {
     webApp,
     user,
     isReady,
+    initData: webApp?.initData || '',
     showMainButton,
     hideMainButton,
     showBackButton,

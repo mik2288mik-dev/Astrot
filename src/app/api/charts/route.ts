@@ -53,13 +53,20 @@ export async function POST(request: NextRequest) {
     }
     
     const data = await request.json();
-    const chartData = CreateChartSchema.parse(data);
+    const parsedData = CreateChartSchema.parse(data);
     
     // Получаем или создаем пользователя
     const user = await UserService.findOrCreate(telegramUser);
     
-    // Создаем карту
-    const chart = await ChartService.create(user.id, chartData);
+    // Создаем карту - explicitly ensure required fields are present
+    const chart = await ChartService.create(user.id, {
+      title: parsedData.title,
+      description: parsedData.description,
+      inputData: parsedData.inputData,
+      chartData: parsedData.chartData,
+      timeUnknown: parsedData.timeUnknown,
+      houseSystem: parsedData.houseSystem,
+    });
     
     return NextResponse.json({ success: true, chart }, { status: 201 });
   } catch (error) {
