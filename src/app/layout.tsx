@@ -10,7 +10,7 @@ import { TelegramProvider } from '@/providers/telegram-provider';
 import { TelegramViewportProvider } from '@/providers/telegram-viewport';
 import { ThemeProvider } from '@/providers/ThemeProvider';
 import SafeArea from '@/components/layout/SafeArea';
-import BottomBar from '@/components/nav/BottomBar';
+import BottomBar from '@/components/navigation/BottomBar';
 import { Inter, Manrope } from 'next/font/google';
 
 const inter = Inter({ 
@@ -59,8 +59,8 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           <TelegramViewportProvider>
             <ThemeProvider>
               <SafeArea>
-                <div className="app-container">
-                  <main className="main-content">
+                <div className="min-h-screen flex flex-col bg-gradient-to-br from-purple-50 via-pink-50 to-blue-50">
+                  <main className="flex-1 pb-24 overflow-y-auto">
                     {children}
                   </main>
                   <BottomBar />
