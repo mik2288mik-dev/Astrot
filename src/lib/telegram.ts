@@ -1,3 +1,5 @@
+import { useEffect, useState } from 'react';
+
 export type HapticImpactStyle = 'light' | 'medium' | 'heavy';
 export type HapticNotificationType = 'success' | 'warning' | 'error';
 
@@ -24,6 +26,16 @@ export type TelegramHapticFeedback = {
 
 export type TelegramThemeParams = Record<string, string>;
 
+// Типы TG-пользователя
+export type TgUser = {
+  id: number;
+  first_name?: string;
+  last_name?: string;
+  username?: string;
+  photo_url?: string;
+  language_code?: string;
+};
+
 export type TelegramWebApp = {
   ready: () => void;
   expand: () => void;
@@ -33,7 +45,10 @@ export type TelegramWebApp = {
   offEvent?: (event: 'themeChanged' | 'viewportChanged', handler: (payload?: unknown) => void) => void;
   themeParams?: TelegramThemeParams;
   colorScheme?: 'light' | 'dark';
-  initDataUnsafe?: unknown;
+  initDataUnsafe?: {
+    user?: TgUser;
+    [key: string]: unknown;
+  };
   MainButton?: TelegramMainButton;
   BackButton?: TelegramBackButton;
   HapticFeedback?: TelegramHapticFeedback;
@@ -48,6 +63,16 @@ export function getTelegramWebApp(): TelegramWebApp | null {
   if (typeof window === 'undefined') return null;
   const tg = (window as unknown as { Telegram?: { WebApp?: TelegramWebApp } })?.Telegram?.WebApp;
   return tg ?? null;
+}
+
+// Безопасное чтение пользователя
+export function getTelegramUser(): TgUser | null {
+  try {
+    const tg = getTelegramWebApp();
+    return tg?.initDataUnsafe?.user ?? null;
+  } catch {
+    return null;
+  }
 }
 
 export function initTelegram(options?: {
@@ -79,4 +104,29 @@ export function onTelegramEvent(event: 'themeChanged' | 'viewportChanged', handl
   if (!tg?.onEvent) return () => {};
   tg.onEvent?.(event, handler as any);
   return () => tg.offEvent?.(event, handler as any);
+}
+
+// Хук с мягким поллингом (SDK может прийти не мгновенно)
+export function useTelegramUser() {
+  const [user, setUser] = useState<TgUser | null>(null);
+  const [loaded, setLoaded] = useState(false);
+
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+    let tries = 0;
+    const tick = () => {
+      const u = getTelegramUser();
+      if (u) {
+        setUser(u);
+        setLoaded(true);
+      } else if (tries++ > 12) {
+        setLoaded(true); // через ~1.8s прекращаем ожидание
+      }
+    };
+    const id = setInterval(tick, 150);
+    tick();
+    return () => clearInterval(id);
+  }, []);
+
+  return { user, loaded };
 }
