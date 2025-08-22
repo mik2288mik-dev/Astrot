@@ -54,13 +54,12 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <Script src="https://telegram.org/js/telegram-web-app.js" strategy="beforeInteractive" />
       </head>
       <body className={`${inter.variable} ${manrope.variable} font-sans`}>
-        <div className="astrot-bg astrot-stars" />
         <TelegramProvider>
           <TelegramViewportProvider>
             <ThemeProvider>
               <SafeArea>
-                <div className="min-h-screen flex flex-col bg-gradient-to-br from-purple-50 via-pink-50 to-blue-50">
-                  <main className="flex-1 pb-24 overflow-y-auto">
+                <div className="min-h-screen flex flex-col">
+                  <main className="flex-1 overflow-y-auto">
                     {children}
                   </main>
                   <BottomBar />

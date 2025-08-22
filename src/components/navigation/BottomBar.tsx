@@ -1,113 +1,177 @@
 'use client'
 
 import React from 'react'
-import Link from 'next/link'
+import { useRouter, usePathname } from 'next/navigation'
 import Image from 'next/image'
-import { usePathname } from 'next/navigation'
-import { Home, Settings } from 'lucide-react'
 
-interface NavItem {
-  href: string
-  icon?: React.ReactNode
+interface NavButtonProps {
+  icon: React.ReactNode
   label: string
-  isCenter?: boolean
+  route: string
+  isActive: boolean
+  onClick: () => void
+  bgColor: string
+}
+
+function NavButton({ icon, label, route, isActive, onClick, bgColor }: NavButtonProps) {
+  return (
+    <button
+      onClick={onClick}
+      className={`
+        relative flex flex-col items-center justify-center
+        transition-all duration-300 ease-out
+        ${isActive ? 'scale-105' : 'scale-100'}
+        active:scale-95
+      `}
+    >
+      <div className={`
+        relative w-14 h-14 rounded-full
+        flex items-center justify-center
+        transition-all duration-300
+        ${bgColor}
+        ${isActive ? 'shadow-xl shadow-purple-400/50' : 'shadow-md'}
+      `}>
+        <div className={`
+          transition-colors duration-300
+          ${isActive ? 'text-white' : 'text-white/90'}
+        `}>
+          {icon}
+        </div>
+        {isActive && (
+          <div className="absolute inset-0 rounded-full bg-white/20 animate-pulse" />
+        )}
+      </div>
+      <span className={`
+        mt-1 text-xs font-bold transition-colors duration-300
+        ${isActive ? 'text-[#7B61FF]' : 'text-gray-600'}
+      `}>
+        {label}
+      </span>
+    </button>
+  )
+}
+
+interface MainButtonProps {
+  route: string
+  isActive: boolean
+  onClick: () => void
+}
+
+function MainButton({ route, isActive, onClick }: MainButtonProps) {
+  return (
+    <button
+      onClick={onClick}
+      className={`
+        relative -mt-3 transition-all duration-300 ease-out
+        ${isActive ? 'scale-110' : 'scale-100'}
+        active:scale-95
+      `}
+    >
+      <div className={`
+        relative w-16 h-16 rounded-full
+        bg-gradient-to-br from-[#FFD6F5] to-[#D6ECFF]
+        border-4 border-white
+        shadow-2xl
+        flex items-center justify-center
+        transition-all duration-300
+        ${isActive ? 'shadow-[0_0_30px_rgba(255,214,245,0.8)]' : ''}
+      `}>
+        <div className="relative w-10 h-10">
+          <Image
+            src="/logo.png"
+            alt="Натальная карта"
+            fill
+            className="object-contain"
+            priority
+          />
+        </div>
+        {isActive && (
+          <div className="absolute inset-0 rounded-full">
+            <div className="absolute inset-0 rounded-full bg-gradient-to-br from-[#FFD6F5]/30 to-[#D6ECFF]/30 animate-pulse" />
+            <div className="absolute inset-0 rounded-full bg-gradient-to-br from-[#FFD6F5]/20 to-[#D6ECFF]/20 animate-ping" />
+          </div>
+        )}
+      </div>
+      <span className={`
+        absolute -bottom-5 left-1/2 -translate-x-1/2
+        text-xs font-bold whitespace-nowrap transition-colors duration-300
+        ${isActive ? 'text-[#7B61FF]' : 'text-gray-600'}
+      `}>
+        Карта
+      </span>
+    </button>
+  )
 }
 
 export default function BottomBar() {
+  const router = useRouter()
   const pathname = usePathname()
 
-  const navItems: NavItem[] = [
-    {
-      href: '/',
-      icon: <Home className="w-6 h-6" strokeWidth={3} />,
-      label: 'Главная'
-    },
-    {
-      href: '/natal-chart',
-      label: 'Карта',
-      isCenter: true
-    },
-    {
-      href: '/profile',
-      icon: <Settings className="w-6 h-6" strokeWidth={3} />,
-      label: 'Профиль'
-    }
-  ]
+  const handleNavigation = (route: string) => {
+    router.push(route)
+  }
+
+  // Иконки в мультяшном стиле
+  const HomeIcon = () => (
+    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <path 
+        d="M3 12L5 10M5 10L12 3L19 10M5 10V20C5 20.5523 5.44772 21 6 21H9M19 10L21 12M19 10V20C19 20.5523 18.5523 21 18 21H15M9 21C9.55228 21 10 20.5523 10 20V16C10 15.4477 10.4477 15 11 15H13C13.5523 15 14 15.4477 14 16V20C14 20.5523 14.4477 21 15 21M9 21H15" 
+        stroke="currentColor" 
+        strokeWidth="2.5" 
+        strokeLinecap="round" 
+        strokeLinejoin="round"
+      />
+    </svg>
+  )
+
+  const SettingsIcon = () => (
+    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <rect x="3" y="3" width="7" height="7" rx="2" stroke="currentColor" strokeWidth="2.5"/>
+      <rect x="14" y="3" width="7" height="7" rx="2" stroke="currentColor" strokeWidth="2.5"/>
+      <rect x="3" y="14" width="7" height="7" rx="2" stroke="currentColor" strokeWidth="2.5"/>
+      <rect x="14" y="14" width="7" height="7" rx="2" stroke="currentColor" strokeWidth="2.5"/>
+    </svg>
+  )
 
   return (
     <div className="fixed bottom-0 left-0 right-0 z-50 pb-safe">
-      <div className="bg-white/95 backdrop-blur-lg border-t border-gray-200 shadow-2xl rounded-t-3xl">
-        <nav className="flex items-end justify-around px-4 pt-2 pb-4">
-          {navItems.map((item) => {
-            const isActive = pathname === item.href
-            
-            if (item.isCenter) {
-              return (
-                <Link
-                  key={item.href}
-                  href={item.href}
-                  className="relative -mt-8 group"
-                >
-                  <div className={`
-                    flex flex-col items-center justify-center
-                    w-20 h-20 rounded-full
-                    bg-gradient-to-br from-purple-500 to-pink-500
-                    shadow-xl transform transition-all duration-300
-                    ${isActive ? 'scale-110 shadow-2xl' : 'hover:scale-105'}
-                    group-active:scale-95
-                  `}>
-                    <div className="relative w-12 h-12">
-                      <Image
-                        src="/logo.png"
-                        alt="Натальная карта"
-                        fill
-                        className="object-contain"
-                        priority
-                      />
-                    </div>
-                  </div>
-                  <span className={`
-                    absolute -bottom-6 left-1/2 -translate-x-1/2
-                    text-xs font-bold whitespace-nowrap
-                    ${isActive ? 'text-purple-600' : 'text-gray-600'}
-                  `}>
-                    {item.label}
-                  </span>
-                </Link>
-              )
-            }
+      <div className="mx-auto max-w-screen-md">
+        <div className="relative mx-4 mb-4">
+          {/* Фоновый градиент бара */}
+          <div className="absolute inset-0 bg-gradient-to-r from-purple-100/50 via-pink-100/50 to-blue-100/50 rounded-full blur-xl" />
+          
+          {/* Основной бар */}
+          <div className="relative bg-white shadow-lg rounded-full px-4 py-2 border border-purple-100/50">
+            <nav className="flex items-end justify-around">
+              {/* Кнопка Главная */}
+              <NavButton
+                icon={<HomeIcon />}
+                label="Главная"
+                route="/home"
+                isActive={pathname === '/home' || pathname === '/'}
+                onClick={() => handleNavigation('/home')}
+                bgColor="bg-[#EBD8FF]"
+              />
 
-            return (
-              <Link
-                key={item.href}
-                href={item.href}
-                className={`
-                  flex flex-col items-center justify-center
-                  py-2 px-4 rounded-2xl
-                  transition-all duration-300
-                  ${isActive 
-                    ? 'text-purple-600 scale-105' 
-                    : 'text-gray-500 hover:text-purple-500'
-                  }
-                  active:scale-95
-                `}
-              >
-                <div className={`
-                  p-2 rounded-xl transition-colors duration-300
-                  ${isActive ? 'bg-purple-100' : 'hover:bg-purple-50'}
-                `}>
-                  {item.icon}
-                </div>
-                <span className={`
-                  text-xs font-bold mt-1
-                  ${isActive ? 'text-purple-600' : 'text-gray-600'}
-                `}>
-                  {item.label}
-                </span>
-              </Link>
-            )
-          })}
-        </nav>
+              {/* Центральная кнопка с логотипом */}
+              <MainButton
+                route="/natal"
+                isActive={pathname === '/natal' || pathname === '/natal-chart'}
+                onClick={() => handleNavigation('/natal')}
+              />
+
+              {/* Кнопка Профиль */}
+              <NavButton
+                icon={<SettingsIcon />}
+                label="Профиль"
+                route="/profile"
+                isActive={pathname === '/profile'}
+                onClick={() => handleNavigation('/profile')}
+                bgColor="bg-[#CCF1FF]"
+              />
+            </nav>
+          </div>
+        </div>
       </div>
     </div>
   )

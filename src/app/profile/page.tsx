@@ -1,245 +1,273 @@
-'use client';
+'use client'
 
-import React, { useState, useEffect } from 'react';
-import Image from 'next/image';
-import { useTelegramUser, useTelegram } from '@/hooks/useTelegram';
-import { useRouter } from 'next/navigation';
-import { BellIcon, ShieldCheckIcon, QuestionMarkCircleIcon, StarIcon, UserIcon, PencilIcon, Cog6ToothIcon } from '@heroicons/react/24/outline';
+import React, { useState, useEffect } from 'react'
+import { User, Bell, Moon, Globe, Shield, LogOut, ChevronRight, Star, Heart, Zap, Settings } from 'lucide-react'
 
-interface MenuItem {
-  icon: React.ComponentType<React.SVGProps<SVGSVGElement>>;
-  label: string;
-  value?: string;
-  action?: () => void;
-  color?: string;
+interface UserProfile {
+  name: string
+  email: string
+  birthDate: string
+  zodiacSign: string
+  notifications: boolean
+  darkMode: boolean
+  language: string
 }
 
 export default function ProfilePage() {
-  const router = useRouter();
-  const { fullName, username, photoUrl, userId } = useTelegramUser();
-  const { hapticFeedback } = useTelegram();
-  const [profile, setProfile] = useState<any>(null);
-  const [isEditingName, setIsEditingName] = useState(false);
-  const [preferredName, setPreferredName] = useState('');
+  const [profile, setProfile] = useState<UserProfile>({
+    name: '',
+    email: '',
+    birthDate: '',
+    zodiacSign: '',
+    notifications: true,
+    darkMode: false,
+    language: 'ru'
+  })
 
-  // Загружаем профиль пользователя
+  const [editMode, setEditMode] = useState(false)
+
+  // Загружаем данные профиля при монтировании
   useEffect(() => {
-    if (userId) {
-      loadProfile();
-    }
-  }, [userId]);
-
-  const loadProfile = async () => {
-    try {
-      const res = await fetch(`/api/profile?tgId=${userId}`);
-      if (res.ok) {
-        const data = await res.json();
-        setProfile(data.profile);
-        setPreferredName(data.profile?.preferredName || '');
-      }
-    } catch (error) {
-      console.error('Error loading profile:', error);
-    }
-  };
-
-  const savePreferredName = async () => {
-    if (!userId) return;
+    const savedProfile = localStorage.getItem('userProfile')
+    const natalData = localStorage.getItem('natalFormData')
     
-    try {
-      const method = profile ? 'PUT' : 'POST';
-      const res = await fetch('/api/profile', {
-        method,
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          ...profile,
-          tgId: userId,
-          name: fullName || 'Пользователь',
-          preferredName: preferredName.trim() || undefined,
-          // Если профиля нет, создаем минимальные данные
-          ...(!profile && {
-            birthDate: '2000-01-01',
-            location: {
-              name: 'Москва',
-              lat: 55.7558,
-              lon: 37.6176,
-              timezone: 'Europe/Moscow',
-              tzOffset: 3
-            }
-          })
-        })
-      });
-
-      if (res.ok) {
-        await loadProfile();
-        setIsEditingName(false);
-        hapticFeedback('notification', 'success');
-      }
-    } catch (error) {
-      console.error('Error saving preferred name:', error);
-      hapticFeedback('notification', 'error');
+    if (savedProfile) {
+      setProfile(JSON.parse(savedProfile))
+    } else if (natalData) {
+      const natal = JSON.parse(natalData)
+      setProfile(prev => ({
+        ...prev,
+        name: natal.name || '',
+        birthDate: natal.birthDate || ''
+      }))
     }
-  };
+  }, [])
 
-  const menuItems: MenuItem[] = [
-    {
-      icon: Cog6ToothIcon,
-      label: 'Данные для расчётов',
-      value: profile ? 'Заполнено' : 'Не заполнено',
-      action: () => router.push('/profile/form'),
-    },
-    {
-      icon: UserIcon,
-      label: 'Имя для обращений',
-      value: preferredName || 'Не указано',
-      action: () => setIsEditingName(true),
-    },
-    {
-      icon: BellIcon,
-      label: 'Уведомления',
-      action: () => router.push('/profile/notifications'),
-    },
-    {
-      icon: ShieldCheckIcon,
-      label: 'Конфиденциальность',
-      action: () => router.push('/profile/privacy'),
-    },
-    {
-      icon: QuestionMarkCircleIcon,
-      label: 'Помощь',
-      action: () => router.push('/profile/help'),
-    },
-  ];
+  const handleSaveProfile = () => {
+    localStorage.setItem('userProfile', JSON.stringify(profile))
+    setEditMode(false)
+  }
 
-  const handleMenuClick = (item: MenuItem) => {
-    hapticFeedback('impact', 'light');
-    if (item.action) {
-      item.action();
+  const handleToggle = (field: 'notifications' | 'darkMode') => {
+    const newProfile = { ...profile, [field]: !profile[field] }
+    setProfile(newProfile)
+    localStorage.setItem('userProfile', JSON.stringify(newProfile))
+  }
+
+  const handleLogout = () => {
+    if (confirm('Вы уверены, что хотите выйти?')) {
+      localStorage.clear()
+      window.location.href = '/home'
     }
-  };
+  }
 
-  const displayName = preferredName || fullName || 'Пользователь';
+  const stats = [
+    { icon: '🌟', label: 'Дней с нами', value: '42' },
+    { icon: '🔮', label: 'Карт построено', value: '7' },
+    { icon: '💫', label: 'Уровень', value: 'Звездочёт' }
+  ]
+
+  const menuItems = [
+    {
+      icon: <Bell className="w-5 h-5" />,
+      title: 'Уведомления',
+      description: 'Получать прогнозы',
+      toggle: true,
+      field: 'notifications' as const,
+      color: 'text-purple-500'
+    },
+    {
+      icon: <Moon className="w-5 h-5" />,
+      title: 'Тёмная тема',
+      description: 'Ночной режим',
+      toggle: true,
+      field: 'darkMode' as const,
+      color: 'text-blue-500'
+    },
+    {
+      icon: <Globe className="w-5 h-5" />,
+      title: 'Язык',
+      description: 'Русский',
+      arrow: true,
+      color: 'text-green-500'
+    },
+    {
+      icon: <Shield className="w-5 h-5" />,
+      title: 'Конфиденциальность',
+      description: 'Настройки приватности',
+      arrow: true,
+      color: 'text-pink-500'
+    }
+  ]
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-[#FFFBF7] via-[#FFE5ED] to-[#FFE0EC] pb-28">
-      <div className="max-w-md mx-auto px-4 pt-6">
+    <div className="min-h-screen bg-gradient-to-br from-purple-50 via-pink-50 to-blue-50 pb-32">
+      <div className="max-w-screen-md mx-auto px-4 pt-6">
+        
         {/* Заголовок */}
-        <div className="text-center mb-8">
-          <h1 className="font-semibold text-[32px] text-[#2C2C2C]">Профиль</h1>
+        <div className="text-center mb-6">
+          <h1 className="text-3xl font-black bg-gradient-to-r from-purple-600 via-pink-500 to-blue-600 bg-clip-text text-transparent mb-2">
+            Профиль
+          </h1>
+          <p className="text-gray-600 font-medium">
+            ⚙️ Твои настройки ⚙️
+          </p>
         </div>
 
         {/* Карточка профиля */}
-        <div className="rounded-[24px] bg-white shadow-md p-6 mb-6">
-          <div className="flex items-center gap-4">
-            {photoUrl ? (
-              <Image
-                src={photoUrl}
-                alt="Avatar"
-                width={64}
-                height={64}
-                className="rounded-full"
-              />
-            ) : (
-              <div className="w-16 h-16 rounded-full bg-gradient-to-br from-[#FDCBFF] to-[#B3CFFF] flex items-center justify-center">
-                <UserIcon className="w-8 h-8 text-white" />
+        <div className="bg-white/90 backdrop-blur-sm rounded-3xl p-6 shadow-xl border border-white/50 mb-6">
+          <div className="flex items-center justify-between mb-6">
+            <div className="flex items-center gap-4">
+              <div className="w-20 h-20 bg-gradient-to-br from-purple-400 to-pink-400 rounded-full flex items-center justify-center text-white text-3xl font-bold shadow-lg">
+                {profile.name ? profile.name[0].toUpperCase() : '👤'}
               </div>
-            )}
-            <div className="flex-1">
-              <h2 className="font-semibold text-[20px] text-[#2C2C2C]">{displayName}</h2>
-              {username && (
-                <p className="text-[14px] text-[#666666]">@{username}</p>
-              )}
+              <div>
+                <h2 className="text-xl font-bold text-gray-800">
+                  {profile.name || 'Космический путешественник'}
+                </h2>
+                <p className="text-sm text-gray-500">
+                  {profile.zodiacSign || 'Знак зодиака не указан'}
+                </p>
+              </div>
             </div>
-          </div>
-        </div>
-
-        {/* Меню настроек */}
-        <div className="space-y-3">
-          {menuItems.map((item, index) => (
             <button
-              key={index}
-              onClick={() => handleMenuClick(item)}
-              className="w-full rounded-[24px] bg-white shadow-md p-4 hover:shadow-lg transition-all duration-300"
+              onClick={() => setEditMode(!editMode)}
+              className="p-2 bg-purple-100 rounded-xl hover:bg-purple-200 transition-colors"
             >
-              <div className="flex items-center justify-between">
-                <div className="flex items-center gap-4">
-                  <div className="w-10 h-10 bg-gray-50 rounded-[12px] flex items-center justify-center">
-                    <item.icon className="w-5 h-5 text-[#666666]" />
-                  </div>
-                  <span className="font-medium text-[16px] text-[#2C2C2C]">{item.label}</span>
-                </div>
-                {item.value && (
-                  <span className="text-[14px] text-[#999999]">{item.value}</span>
-                )}
-              </div>
+              <Settings className="w-5 h-5 text-purple-600" />
             </button>
-          ))}
-        </div>
-
-        {/* Премиум блок */}
-        <div className="mt-8 rounded-[24px] bg-gradient-to-br from-purple-50 to-pink-50 shadow-md p-6">
-          <div className="flex items-center gap-4 mb-4">
-            <div className="w-12 h-12 bg-gradient-to-br from-[#FDCBFF] to-[#B3CFFF] rounded-[16px] flex items-center justify-center shadow-md">
-              <StarIcon className="w-6 h-6 text-white" />
-            </div>
-            <div>
-              <h3 className="font-semibold text-[18px] text-[#2C2C2C]">
-                Премиум подписка
-              </h3>
-              <p className="text-[14px] text-[#666666] leading-tight">
-                Расширенные возможности
-              </p>
-            </div>
           </div>
-          <button
-            onClick={() => {
-              hapticFeedback('impact', 'medium');
-              router.push('/premium');
-            }}
-            className="w-full bg-gradient-to-r from-[#FDCBFF] to-[#B3CFFF] text-white rounded-[16px] py-3 font-semibold text-[14px] shadow-md hover:shadow-lg transition-all duration-300"
-          >
-            Узнать больше
-          </button>
-        </div>
 
-        {/* Модальное окно редактирования имени */}
-        {isEditingName && (
-          <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 px-4">
-            <div className="bg-white rounded-[24px] p-6 w-full max-w-sm shadow-xl">
-              <h3 className="font-semibold text-[20px] text-[#2C2C2C] mb-4">
-                Имя для обращений
-              </h3>
-              <p className="text-[14px] text-[#666666] mb-4">
-                Как вы хотите, чтобы приложение к вам обращалось?
-              </p>
+          {/* Форма редактирования */}
+          {editMode && (
+            <div className="space-y-3 mb-4 p-4 bg-purple-50 rounded-2xl">
               <input
                 type="text"
-                value={preferredName}
-                onChange={(e) => setPreferredName(e.target.value)}
-                placeholder="Введите имя"
-                className="w-full px-4 py-3 border border-gray-200 rounded-[16px] text-[16px] text-[#2C2C2C] placeholder-gray-400 focus:outline-none focus:border-[#B3CFFF] mb-6"
-                autoFocus
+                placeholder="Имя"
+                value={profile.name}
+                onChange={(e) => setProfile({...profile, name: e.target.value})}
+                className="w-full px-4 py-2 bg-white border-2 border-purple-200 rounded-xl focus:outline-none focus:border-purple-400"
               />
-              <div className="flex gap-3">
+              <input
+                type="email"
+                placeholder="Email"
+                value={profile.email}
+                onChange={(e) => setProfile({...profile, email: e.target.value})}
+                className="w-full px-4 py-2 bg-white border-2 border-purple-200 rounded-xl focus:outline-none focus:border-purple-400"
+              />
+              <div className="flex gap-2">
                 <button
-                  onClick={() => {
-                    setIsEditingName(false);
-                    setPreferredName(profile?.preferredName || '');
-                  }}
-                  className="flex-1 bg-white border border-gray-200 text-[#2C2C2C] rounded-[16px] py-3 font-semibold text-[14px] shadow-sm hover:shadow-md transition-all duration-300"
-                >
-                  Отмена
-                </button>
-                <button
-                  onClick={savePreferredName}
-                  className="flex-1 bg-gradient-to-r from-[#FDCBFF] to-[#B3CFFF] text-white rounded-[16px] py-3 font-semibold text-[14px] shadow-md hover:shadow-lg transition-all duration-300"
+                  onClick={handleSaveProfile}
+                  className="flex-1 py-2 bg-gradient-to-r from-purple-500 to-pink-500 text-white rounded-xl font-bold hover:shadow-lg transition-shadow"
                 >
                   Сохранить
                 </button>
+                <button
+                  onClick={() => setEditMode(false)}
+                  className="flex-1 py-2 bg-gray-200 text-gray-700 rounded-xl font-bold hover:bg-gray-300 transition-colors"
+                >
+                  Отмена
+                </button>
               </div>
             </div>
+          )}
+
+          {/* Статистика */}
+          <div className="grid grid-cols-3 gap-3">
+            {stats.map((stat, index) => (
+              <div key={index} className="bg-gradient-to-br from-purple-50 to-pink-50 rounded-2xl p-3 text-center">
+                <div className="text-2xl mb-1">{stat.icon}</div>
+                <div className="text-xl font-bold text-gray-800">{stat.value}</div>
+                <div className="text-xs text-gray-500">{stat.label}</div>
+              </div>
+            ))}
           </div>
-        )}
+        </div>
+
+        {/* Настройки */}
+        <div className="bg-white/90 backdrop-blur-sm rounded-3xl p-6 shadow-xl border border-white/50 mb-6">
+          <h3 className="font-bold text-gray-800 mb-4 flex items-center gap-2">
+            <Zap className="w-5 h-5 text-yellow-500" />
+            Настройки
+          </h3>
+          
+          <div className="space-y-3">
+            {menuItems.map((item, index) => (
+              <div
+                key={index}
+                className="flex items-center justify-between p-4 bg-gray-50 rounded-2xl hover:bg-gray-100 transition-colors cursor-pointer"
+              >
+                <div className="flex items-center gap-3">
+                  <div className={`${item.color}`}>
+                    {item.icon}
+                  </div>
+                  <div>
+                    <p className="font-medium text-gray-800">{item.title}</p>
+                    <p className="text-xs text-gray-500">{item.description}</p>
+                  </div>
+                </div>
+                
+                {item.toggle && item.field && (
+                  <button
+                    onClick={() => handleToggle(item.field)}
+                    className={`
+                      relative w-12 h-6 rounded-full transition-colors
+                      ${profile[item.field] ? 'bg-purple-500' : 'bg-gray-300'}
+                    `}
+                  >
+                    <div className={`
+                      absolute top-1 w-4 h-4 bg-white rounded-full transition-transform
+                      ${profile[item.field] ? 'translate-x-6' : 'translate-x-1'}
+                    `} />
+                  </button>
+                )}
+                
+                {item.arrow && (
+                  <ChevronRight className="w-5 h-5 text-gray-400" />
+                )}
+              </div>
+            ))}
+          </div>
+        </div>
+
+        {/* Премиум блок */}
+        <div className="relative mb-6">
+          <div className="absolute inset-0 bg-gradient-to-r from-yellow-200 via-orange-200 to-pink-200 rounded-3xl blur-lg opacity-60" />
+          <div className="relative bg-gradient-to-r from-yellow-400 via-orange-400 to-pink-400 rounded-3xl p-6 shadow-xl">
+            <div className="flex items-center justify-between">
+              <div className="text-white">
+                <div className="flex items-center gap-2 mb-2">
+                  <Star className="w-6 h-6" />
+                  <h3 className="text-xl font-bold">Премиум</h3>
+                </div>
+                <p className="text-sm text-white/90">
+                  Разблокируй все функции и получи доступ к эксклюзивным прогнозам
+                </p>
+              </div>
+              <button className="px-4 py-2 bg-white text-orange-500 rounded-xl font-bold hover:shadow-lg transition-shadow">
+                Узнать
+              </button>
+            </div>
+          </div>
+        </div>
+
+        {/* Кнопка выхода */}
+        <button
+          onClick={handleLogout}
+          className="w-full p-4 bg-red-50 rounded-2xl flex items-center justify-center gap-2 text-red-600 font-medium hover:bg-red-100 transition-colors"
+        >
+          <LogOut className="w-5 h-5" />
+          Выйти из аккаунта
+        </button>
+
+        {/* Версия приложения */}
+        <div className="text-center mt-6">
+          <p className="text-xs text-gray-400">
+            Astrot v1.0.0 • Made with 💜
+          </p>
+        </div>
+
       </div>
     </div>
-  );
+  )
 }
