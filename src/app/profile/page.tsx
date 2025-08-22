@@ -105,7 +105,7 @@ export default function ProfilePage() {
     },
     {
       icon: QuestionMarkCircleIcon,
-      label: 'Помощь и поддержка',
+      label: 'Помощь',
       action: () => router.push('/profile/help'),
     },
   ];
@@ -117,135 +117,129 @@ export default function ProfilePage() {
     }
   };
 
+  const displayName = preferredName || fullName || 'Пользователь';
+
   return (
-    <div className="page animate-fadeIn min-h-[calc(100vh-140px)] flex flex-col" style={{ ['--page-top' as any]: 'calc(var(--safe-top) + 32px)' }}>
-      {/* Профиль пользователя */}
-      <section className="mb-6">
-        <div className="bg-gradient-to-br from-pastel-purple via-pastel-pink to-pastel-peach p-6 rounded-2xl shadow-card">
-          <div className="flex items-center gap-4 mb-4">
+    <div className="min-h-screen bg-gradient-to-b from-[#FFFBF7] via-[#FFE5ED] to-[#FFE0EC] pb-28">
+      <div className="max-w-md mx-auto px-4 pt-6">
+        {/* Заголовок */}
+        <div className="text-center mb-8">
+          <h1 className="font-semibold text-[32px] text-[#2C2C2C]">Профиль</h1>
+        </div>
+
+        {/* Карточка профиля */}
+        <div className="rounded-[24px] bg-white shadow-md p-6 mb-6">
+          <div className="flex items-center gap-4">
             {photoUrl ? (
               <Image
                 src={photoUrl}
-                alt={fullName}
-                width={80}
-                height={80}
-                unoptimized
-                className="w-20 h-20 rounded-full border-4 border-white shadow-lg"
+                alt="Avatar"
+                width={64}
+                height={64}
+                className="rounded-full"
               />
             ) : (
-              <div className="w-20 h-20 rounded-full bg-white/40 flex items-center justify-center border-4 border-white shadow-lg">
-                <UserIcon className="w-10 h-10 text-primary-600" />
+              <div className="w-16 h-16 rounded-full bg-gradient-to-br from-[#FDCBFF] to-[#B3CFFF] flex items-center justify-center">
+                <UserIcon className="w-8 h-8 text-white" />
               </div>
             )}
             <div className="flex-1">
-              <h1 className="text-xl font-bold text-neutral-900">{fullName}</h1>
+              <h2 className="font-semibold text-[20px] text-[#2C2C2C]">{displayName}</h2>
               {username && (
-                <p className="text-sm text-neutral-700">@{username}</p>
+                <p className="text-[14px] text-[#666666]">@{username}</p>
               )}
-              <p className="text-xs text-neutral-600 mt-1">ID: {userId || 'Гость'}</p>
-            </div>
-          </div>
-
-          {/* Премиум статус */}
-          <div className="bg-white/60 backdrop-blur p-3 rounded-xl">
-            <div className="flex items-center justify-between">
-              <div className="flex items-center gap-2">
-                <div className="w-8 h-8 bg-gradient-to-br from-amber-400 to-amber-600 rounded-lg flex items-center justify-center">
-                  <StarIcon className="w-5 h-5 text-white" />
-                </div>
-                <div>
-                  <p className="text-sm font-semibold text-neutral-800">Премиум</p>
-                  <p className="text-xs text-neutral-600">Активировать</p>
-                </div>
-              </div>
-              <button 
-                onClick={() => {
-                  hapticFeedback('impact', 'medium');
-                  router.push('/premium');
-                }}
-                className="text-primary-600 font-medium text-sm px-3 py-1.5 bg-white rounded-lg"
-              >
-                Подробнее
-              </button>
             </div>
           </div>
         </div>
-      </section>
 
-      {/* Меню */}
-      <section className="mb-20">
-        <div className="bg-white rounded-2xl border border-gray-200 overflow-hidden">
-          {menuItems.map((item, index) => {
-            const Icon = item.icon;
-            return (
-              <button
-                key={index}
-                onClick={() => handleMenuClick(item)}
-                className={`w-full flex items-center justify-between p-4 hover:bg-neutral-50 transition-colors ${
-                  index !== menuItems.length - 1 ? 'border-b border-gray-200' : ''
-                }`}
-              >
-                <div className="flex items-center gap-3">
-                  <div className={`w-10 h-10 rounded-xl ${
-                    item.color ? 'bg-red-50' : 'bg-neutral-50'
-                  } flex items-center justify-center`}>
-                    <Icon className={`w-5 h-5 ${item.color || 'text-neutral-600'}`} />
+        {/* Меню настроек */}
+        <div className="space-y-3">
+          {menuItems.map((item, index) => (
+            <button
+              key={index}
+              onClick={() => handleMenuClick(item)}
+              className="w-full rounded-[24px] bg-white shadow-md p-4 hover:shadow-lg transition-all duration-300"
+            >
+              <div className="flex items-center justify-between">
+                <div className="flex items-center gap-4">
+                  <div className="w-10 h-10 bg-gray-50 rounded-[12px] flex items-center justify-center">
+                    <item.icon className="w-5 h-5 text-[#666666]" />
                   </div>
-                  <span className={`text-sm font-medium ${
-                    item.color ? item.color : 'text-neutral-800'
-                  }`}>
-                    {item.label}
-                  </span>
+                  <span className="font-medium text-[16px] text-[#2C2C2C]">{item.label}</span>
                 </div>
                 {item.value && (
-                  <span className="text-sm text-neutral-500">{item.value}</span>
+                  <span className="text-[14px] text-[#999999]">{item.value}</span>
                 )}
-              </button>
-            );
-          })}
+              </div>
+            </button>
+          ))}
         </div>
-      </section>
 
-      {/* Модальное окно редактирования имени */}
-      {isEditingName && (
-        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
-          <div className="bg-white rounded-2xl p-6 w-full max-w-sm">
-            <h3 className="text-lg font-semibold mb-4">Имя для обращений</h3>
-            <input
-              type="text"
-              value={preferredName}
-              onChange={(e) => setPreferredName(e.target.value)}
-              placeholder="Как к вам обращаться?"
-              className="w-full border border-gray-200 rounded-xl px-4 py-3 mb-4 focus:outline-none focus:border-primary-400"
-              maxLength={100}
-            />
-            <div className="flex gap-3">
-              <button
-                onClick={() => setIsEditingName(false)}
-                className="flex-1 py-3 px-4 bg-gray-100 rounded-xl text-gray-700 font-medium"
-              >
-                Отмена
-              </button>
-              <button
-                onClick={savePreferredName}
-                className="flex-1 py-3 px-4 bg-primary-500 rounded-xl text-white font-medium"
-              >
-                Сохранить
-              </button>
+        {/* Премиум блок */}
+        <div className="mt-8 rounded-[24px] bg-gradient-to-br from-purple-50 to-pink-50 shadow-md p-6">
+          <div className="flex items-center gap-4 mb-4">
+            <div className="w-12 h-12 bg-gradient-to-br from-[#FDCBFF] to-[#B3CFFF] rounded-[16px] flex items-center justify-center shadow-md">
+              <StarIcon className="w-6 h-6 text-white" />
+            </div>
+            <div>
+              <h3 className="font-semibold text-[18px] text-[#2C2C2C]">
+                Премиум подписка
+              </h3>
+              <p className="text-[14px] text-[#666666] leading-tight">
+                Расширенные возможности
+              </p>
             </div>
           </div>
+          <button
+            onClick={() => {
+              hapticFeedback('impact', 'medium');
+              router.push('/premium');
+            }}
+            className="w-full bg-gradient-to-r from-[#FDCBFF] to-[#B3CFFF] text-white rounded-[16px] py-3 font-semibold text-[14px] shadow-md hover:shadow-lg transition-all duration-300"
+          >
+            Узнать больше
+          </button>
         </div>
-      )}
 
-      {/* Версия приложения */}
-      <section className="text-center pb-24">
-        <p className="text-xs text-neutral-400">
-          DeepSoul v1.0.0
-        </p>
-        <p className="text-xs text-neutral-400 mt-1">
-          Made with ❤️ for Telegram
-        </p>
-      </section>
+        {/* Модальное окно редактирования имени */}
+        {isEditingName && (
+          <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 px-4">
+            <div className="bg-white rounded-[24px] p-6 w-full max-w-sm shadow-xl">
+              <h3 className="font-semibold text-[20px] text-[#2C2C2C] mb-4">
+                Имя для обращений
+              </h3>
+              <p className="text-[14px] text-[#666666] mb-4">
+                Как вы хотите, чтобы приложение к вам обращалось?
+              </p>
+              <input
+                type="text"
+                value={preferredName}
+                onChange={(e) => setPreferredName(e.target.value)}
+                placeholder="Введите имя"
+                className="w-full px-4 py-3 border border-gray-200 rounded-[16px] text-[16px] text-[#2C2C2C] placeholder-gray-400 focus:outline-none focus:border-[#B3CFFF] mb-6"
+                autoFocus
+              />
+              <div className="flex gap-3">
+                <button
+                  onClick={() => {
+                    setIsEditingName(false);
+                    setPreferredName(profile?.preferredName || '');
+                  }}
+                  className="flex-1 bg-white border border-gray-200 text-[#2C2C2C] rounded-[16px] py-3 font-semibold text-[14px] shadow-sm hover:shadow-md transition-all duration-300"
+                >
+                  Отмена
+                </button>
+                <button
+                  onClick={savePreferredName}
+                  className="flex-1 bg-gradient-to-r from-[#FDCBFF] to-[#B3CFFF] text-white rounded-[16px] py-3 font-semibold text-[14px] shadow-md hover:shadow-lg transition-all duration-300"
+                >
+                  Сохранить
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
+      </div>
     </div>
   );
 }

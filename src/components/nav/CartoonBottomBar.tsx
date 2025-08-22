@@ -4,8 +4,6 @@ import React, { useState, useEffect } from 'react';
 import { usePathname } from 'next/navigation';
 import Link from 'next/link';
 import Image from 'next/image';
-import { DoodleHomeIcon, DoodleMoreIcon } from '@/components/icons/DoodleIcons';
-import { cartoonTokens } from '@/styles/cartoon-tokens';
 
 export default function CartoonBottomBar() {
   const pathname = usePathname();
@@ -25,202 +23,83 @@ export default function CartoonBottomBar() {
     <>
       {/* Мягкая тень под баром */}
       <div 
-        className="fixed bottom-0 left-0 right-0 z-30 pointer-events-none"
+        className="fixed bottom-0 left-0 right-0 z-30 pointer-events-none h-10"
         style={{
-          height: '40px',
-          background: 'linear-gradient(to top, rgba(160, 124, 255, 0.03) 0%, transparent 100%)',
-          paddingBottom: cartoonTokens.spacing.safeAreaBottom,
+          background: 'linear-gradient(to top, rgba(0, 0, 0, 0.02) 0%, transparent 100%)',
         }}
       />
       
-      {/* Основной бар - премиум мультяшный стиль */}
-      <nav 
-        className="fixed bottom-0 left-3 right-3 z-50 select-none"
-        style={{
-          paddingBottom: cartoonTokens.spacing.safeAreaBottom,
-          WebkitTapHighlightColor: 'transparent',
-          touchAction: 'manipulation',
-        }}
-      >
-        {/* Фоновый слой бара с мягким градиентом */}
-        <div
-          className="relative overflow-hidden"
-          style={{
-            background: cartoonTokens.colors.bg.bar,
-            borderRadius: cartoonTokens.borderRadius.bar,
-            border: `${cartoonTokens.colors.stroke.thickness} solid ${cartoonTokens.colors.stroke.white}`,
-            boxShadow: cartoonTokens.colors.shadows.bar,
-            height: cartoonTokens.spacing.navHeight,
-          }}
-        >
-          {/* Лёгкая текстура муар */}
-          <div 
-            className="absolute inset-0 opacity-30"
-            style={{
-              backgroundImage: cartoonTokens.colors.bg.muar,
-              backgroundSize: '100px 100px',
-            }}
-          />
-          
-          {/* Облачный эффект сверху */}
-          <div 
-            className="absolute inset-x-0 top-0 h-2/3"
-            style={{
-              background: cartoonTokens.colors.bg.clouds,
-            }}
-          />
-          
-          {/* Минималистичные декоративные элементы */}
-          <div 
-            className="absolute top-4 left-8"
-            style={{
-              width: '8px',
-              height: '8px',
-              borderRadius: '50%',
-              background: cartoonTokens.colors.primary.lavender,
-              opacity: 0.6,
-            }}
-          />
-          <div 
-            className="absolute top-6 right-10"
-            style={{
-              width: '6px',
-              height: '6px',
-              borderRadius: '50%',
-              background: cartoonTokens.colors.primary.peach,
-              opacity: 0.5,
-            }}
-          />
+      {/* Основной бар */}
+      <nav className="fixed bottom-0 left-3 right-3 z-50 pb-safe">
+        <div className="relative bg-white rounded-[24px] shadow-lg border border-gray-100 h-[72px] overflow-hidden">
+          {/* Градиентный фон */}
+          <div className="absolute inset-0 bg-gradient-to-b from-white to-gray-50 opacity-50" />
           
           {/* Контейнер для кнопок */}
           <div className="relative flex items-center justify-between h-full px-8">
             
-            {/* Левая кнопка - Главная (стикер-стиль) */}
+            {/* Левая кнопка - Главная */}
             <Link
               href="/"
-              className={`group relative flex flex-col items-center justify-center transition-all duration-200 ${
+              className={`group flex flex-col items-center justify-center transition-all duration-300 ${
                 isActive('/') ? 'scale-105' : ''
               } hover:scale-110 active:scale-95`}
-              style={{
-                width: cartoonTokens.spacing.sideButtonSize,
-                height: cartoonTokens.spacing.sideButtonSize,
-              }}
+              style={{ width: '56px', height: '56px' }}
             >
-              {/* Фон кнопки-стикера */}
               <div 
-                className="absolute inset-0"
-                style={{
-                  background: isActive('/') 
-                    ? cartoonTokens.colors.gradients.home 
-                    : cartoonTokens.colors.primary.pink,
-                  borderRadius: cartoonTokens.borderRadius.sticker,
-                  border: `${cartoonTokens.colors.stroke.thickness} solid ${cartoonTokens.colors.stroke.white}`,
-                  boxShadow: isActive('/') 
-                    ? cartoonTokens.colors.shadows.glow
-                    : cartoonTokens.colors.shadows.sticker,
-                }}
-              />
-              
-              {/* Блик */}
-              <div 
-                className="absolute inset-1 opacity-40"
-                style={{
-                  background: cartoonTokens.colors.gradients.shine,
-                  borderRadius: cartoonTokens.borderRadius.sticker,
-                }}
-              />
-              
-              {/* Иконка */}
-              <DoodleHomeIcon className="relative z-10 w-6 h-6 text-white mb-0.5" />
-              
-              {/* Подпись */}
-              <span 
-                className="relative z-10 font-cartoon"
-                style={{
-                  fontSize: cartoonTokens.typography.fontSize.label,
-                  fontWeight: cartoonTokens.typography.fontWeight,
-                  color: 'white',
-                  textShadow: '0 1px 2px rgba(0,0,0,0.1)',
-                }}
+                className={`relative w-12 h-12 rounded-[16px] flex items-center justify-center transition-all duration-300 ${
+                  isActive('/') 
+                    ? 'bg-gradient-to-r from-[#FDCBFF] to-[#B3CFFF] shadow-md' 
+                    : 'bg-gray-100'
+                }`}
               >
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" className={isActive('/') ? 'text-white' : 'text-[#666666]'}>
+                  <path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                  <path d="M9 22V12h6v10" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                </svg>
+              </div>
+              <span className={`mt-1 text-[12px] font-medium ${isActive('/') ? 'text-[#2C2C2C]' : 'text-[#666666]'}`}>
                 Главная
               </span>
-              
-              {/* Активный индикатор - точка */}
-              {isActive('/') && (
-                <div 
-                  className="absolute -top-1 -right-1"
-                  style={{
-                    width: '12px',
-                    height: '12px',
-                    borderRadius: '50%',
-                    background: cartoonTokens.colors.primary.purple,
-                    border: `2px solid white`,
-                    boxShadow: '0 2px 4px rgba(0,0,0,0.1)',
-                  }}
-                />
-              )}
             </Link>
 
-            {/* ЦЕНТРАЛЬНАЯ КНОПКА - Logo Astrot */}
+            {/* ЦЕНТРАЛЬНАЯ КНОПКА - Logo */}
             <Link
               href="/chart"
-              className="absolute left-1/2 -translate-x-1/2 group"
-              style={{
-                top: '-12px', // Немного выступает за пределы
-              }}
+              className="absolute left-1/2 -translate-x-1/2 -top-2 group"
             >
               <div 
-                className={`relative flex items-center justify-center transition-all duration-200 ${
+                className={`relative w-[64px] h-[64px] rounded-full flex items-center justify-center transition-all duration-300 ${
                   isActive('/chart') ? 'scale-105' : ''
                 } hover:scale-110 active:scale-95`}
                 style={{
-                  width: cartoonTokens.spacing.centerButtonSize,
-                  height: cartoonTokens.spacing.centerButtonSize,
+                  background: 'linear-gradient(135deg, #FDCBFF 0%, #B3CFFF 100%)',
+                  boxShadow: isActive('/chart')
+                    ? '0 8px 24px rgba(183, 148, 246, 0.4), 0 0 20px rgba(183, 148, 246, 0.3)'
+                    : '0 4px 16px rgba(183, 148, 246, 0.3)',
                 }}
               >
-                {/* Фон центральной кнопки с градиентом */}
-                <div 
-                  className="absolute inset-0"
-                  style={{
-                    background: cartoonTokens.colors.gradients.center,
-                    borderRadius: cartoonTokens.borderRadius.centerButton,
-                    border: `${cartoonTokens.colors.stroke.thicknessLarge} solid ${cartoonTokens.colors.stroke.white}`,
-                    boxShadow: isActive('/chart')
-                      ? cartoonTokens.colors.shadows.glow
-                      : cartoonTokens.colors.shadows.button,
-                  }}
-                />
+                {/* Внутренний блик */}
+                <div className="absolute inset-1 rounded-full bg-gradient-to-br from-white/40 to-transparent" />
                 
-                {/* Внутренний круг с бликом */}
-                <div 
-                  className="absolute inset-1"
-                  style={{
-                    background: 'radial-gradient(circle at 30% 30%, rgba(255,255,255,0.6) 0%, transparent 50%)',
-                    borderRadius: cartoonTokens.borderRadius.centerButton,
-                  }}
-                />
-                
-                {/* Мягкое свечение при активности */}
+                {/* Свечение при активности */}
                 {isActive('/chart') && (
                   <div 
-                    className="absolute -inset-2 animate-pulse"
+                    className="absolute -inset-2 rounded-full animate-pulse"
                     style={{
-                      background: cartoonTokens.colors.gradients.glow,
-                      filter: 'blur(12px)',
-                      borderRadius: cartoonTokens.borderRadius.centerButton,
-                      opacity: 0.5,
+                      background: 'radial-gradient(circle, rgba(183, 148, 246, 0.3) 0%, transparent 70%)',
+                      filter: 'blur(8px)',
                     }}
                   />
                 )}
                 
-                {/* Logo Astrot */}
-                <div className="relative z-10 w-12 h-12 flex items-center justify-center">
+                {/* Logo */}
+                <div className="relative z-10 w-10 h-10 flex items-center justify-center">
                   <Image
                     src="/logo.png"
                     alt="Astrot"
-                    width={40}
-                    height={40}
+                    width={36}
+                    height={36}
                     className="drop-shadow-sm"
                     priority
                   />
@@ -228,84 +107,36 @@ export default function CartoonBottomBar() {
               </div>
               
               {/* Подпись под кнопкой */}
-              <span 
-                className="mt-2 block text-center font-cartoon"
-                style={{
-                  fontSize: cartoonTokens.typography.fontSize.centerLabel,
-                  fontWeight: cartoonTokens.typography.fontWeight,
-                  color: cartoonTokens.colors.primary.purple,
-                  textShadow: '0 1px 2px rgba(255,255,255,0.8)',
-                }}
-              >
+              <span className="mt-2 block text-center text-[12px] font-semibold text-[#2C2C2C]">
                 Карта
               </span>
             </Link>
 
-            {/* Правая кнопка - Ещё (стикер-стиль) */}
+            {/* Правая кнопка - Функции */}
             <Link
               href="/functions"
-              className={`group relative flex flex-col items-center justify-center transition-all duration-200 ${
+              className={`group flex flex-col items-center justify-center transition-all duration-300 ${
                 isActive('/functions') ? 'scale-105' : ''
               } hover:scale-110 active:scale-95`}
-              style={{
-                width: cartoonTokens.spacing.sideButtonSize,
-                height: cartoonTokens.spacing.sideButtonSize,
-              }}
+              style={{ width: '56px', height: '56px' }}
             >
-              {/* Фон кнопки-стикера */}
               <div 
-                className="absolute inset-0"
-                style={{
-                  background: isActive('/functions') 
-                    ? cartoonTokens.colors.gradients.more
-                    : cartoonTokens.colors.primary.blue,
-                  borderRadius: cartoonTokens.borderRadius.sticker,
-                  border: `${cartoonTokens.colors.stroke.thickness} solid ${cartoonTokens.colors.stroke.white}`,
-                  boxShadow: isActive('/functions') 
-                    ? cartoonTokens.colors.shadows.glow
-                    : cartoonTokens.colors.shadows.sticker,
-                }}
-              />
-              
-              {/* Блик */}
-              <div 
-                className="absolute inset-1 opacity-40"
-                style={{
-                  background: cartoonTokens.colors.gradients.shine,
-                  borderRadius: cartoonTokens.borderRadius.sticker,
-                }}
-              />
-              
-              {/* Иконка */}
-              <DoodleMoreIcon className="relative z-10 w-6 h-6 text-white mb-0.5" />
-              
-              {/* Подпись */}
-              <span 
-                className="relative z-10 font-cartoon"
-                style={{
-                  fontSize: cartoonTokens.typography.fontSize.label,
-                  fontWeight: cartoonTokens.typography.fontWeight,
-                  color: 'white',
-                  textShadow: '0 1px 2px rgba(0,0,0,0.1)',
-                }}
+                className={`relative w-12 h-12 rounded-[16px] flex items-center justify-center transition-all duration-300 ${
+                  isActive('/functions') 
+                    ? 'bg-gradient-to-r from-[#FDCBFF] to-[#B3CFFF] shadow-md' 
+                    : 'bg-gray-100'
+                }`}
               >
-                Ещё
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" className={isActive('/functions') ? 'text-white' : 'text-[#666666]'}>
+                  <rect x="3" y="3" width="7" height="7" rx="1" stroke="currentColor" strokeWidth="2"/>
+                  <rect x="14" y="3" width="7" height="7" rx="1" stroke="currentColor" strokeWidth="2"/>
+                  <rect x="3" y="14" width="7" height="7" rx="1" stroke="currentColor" strokeWidth="2"/>
+                  <rect x="14" y="14" width="7" height="7" rx="1" stroke="currentColor" strokeWidth="2"/>
+                </svg>
+              </div>
+              <span className={`mt-1 text-[12px] font-medium ${isActive('/functions') ? 'text-[#2C2C2C]' : 'text-[#666666]'}`}>
+                Функции
               </span>
-              
-              {/* Активный индикатор - точка */}
-              {isActive('/functions') && (
-                <div 
-                  className="absolute -top-1 -right-1"
-                  style={{
-                    width: '12px',
-                    height: '12px',
-                    borderRadius: '50%',
-                    background: cartoonTokens.colors.primary.purple,
-                    border: `2px solid white`,
-                    boxShadow: '0 2px 4px rgba(0,0,0,0.1)',
-                  }}
-                />
-              )}
             </Link>
           </div>
         </div>

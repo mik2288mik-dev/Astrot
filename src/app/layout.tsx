@@ -11,7 +11,19 @@ import { TelegramViewportProvider } from '@/providers/telegram-viewport';
 import { ThemeProvider } from '@/providers/ThemeProvider';
 import SafeArea from '@/components/layout/SafeArea';
 import BottomBar from '@/components/nav/BottomBar';
-import { GeistSans } from 'geist/font/sans';
+import { Inter, Manrope } from 'next/font/google';
+
+const inter = Inter({ 
+  subsets: ['latin', 'cyrillic'],
+  variable: '--font-inter',
+  display: 'swap',
+});
+
+const manrope = Manrope({ 
+  subsets: ['latin', 'cyrillic'],
+  variable: '--font-manrope',
+  display: 'swap',
+});
 
 export const runtime = 'nodejs';
 export const dynamic = 'force-dynamic';
@@ -41,7 +53,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <meta name="apple-mobile-web-app-status-bar-style" content="default" />
         <Script src="https://telegram.org/js/telegram-web-app.js" strategy="beforeInteractive" />
       </head>
-      <body className={GeistSans.className}>
+      <body className={`${inter.variable} ${manrope.variable} font-sans`}>
         <div className="astrot-bg astrot-stars" />
         <TelegramProvider>
           <TelegramViewportProvider>
