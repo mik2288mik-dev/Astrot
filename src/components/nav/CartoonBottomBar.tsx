@@ -3,7 +3,8 @@
 import React, { useState, useEffect } from 'react';
 import { usePathname } from 'next/navigation';
 import Link from 'next/link';
-import { DoodleHomeIcon, DoodleMoreIcon, DoodleAstrotLogo } from '@/components/icons/DoodleIcons';
+import Image from 'next/image';
+import { DoodleHomeIcon, DoodleMoreIcon } from '@/components/icons/DoodleIcons';
 import { cartoonTokens } from '@/styles/cartoon-tokens';
 
 export default function CartoonBottomBar() {
@@ -22,294 +23,288 @@ export default function CartoonBottomBar() {
 
   return (
     <>
-      {/* Многослойный эффект тени и свечения */}
+      {/* Мягкая тень под баром */}
       <div 
         className="fixed bottom-0 left-0 right-0 z-30 pointer-events-none"
         style={{
-          height: '120px',
-          background: 'radial-gradient(ellipse at bottom, rgba(255, 0, 110, 0.2) 0%, transparent 70%)',
-          filter: 'blur(20px)',
-          paddingBottom: cartoonTokens.spacing.safeAreaBottom,
-        }}
-      />
-      <div 
-        className="fixed bottom-0 left-2 right-2 z-35 pointer-events-none"
-        style={{
-          height: cartoonTokens.spacing.navHeight,
-          background: 'linear-gradient(180deg, transparent 0%, rgba(139, 92, 246, 0.1) 100%)',
-          borderRadius: cartoonTokens.borderRadius.bar,
-          transform: 'translateY(8px) scaleX(1.02)',
-          filter: 'blur(12px)',
+          height: '40px',
+          background: 'linear-gradient(to top, rgba(160, 124, 255, 0.03) 0%, transparent 100%)',
           paddingBottom: cartoonTokens.spacing.safeAreaBottom,
         }}
       />
       
-      {/* Основной бар с СУПЕР стилем */}
+      {/* Основной бар - премиум мультяшный стиль */}
       <nav 
-        className="fixed bottom-0 left-2 right-2 z-50 select-none"
+        className="fixed bottom-0 left-3 right-3 z-50 select-none"
         style={{
           paddingBottom: cartoonTokens.spacing.safeAreaBottom,
           WebkitTapHighlightColor: 'transparent',
           touchAction: 'manipulation',
         }}
       >
-        {/* Фоновый слой бара с текстурой и градиентом */}
+        {/* Фоновый слой бара с мягким градиентом */}
         <div
           className="relative overflow-hidden"
           style={{
             background: cartoonTokens.colors.bg.bar,
             borderRadius: cartoonTokens.borderRadius.bar,
-            border: `${cartoonTokens.colors.stroke.thicknessLarge} solid ${cartoonTokens.colors.bg.barStroke}`,
+            border: `${cartoonTokens.colors.stroke.thickness} solid ${cartoonTokens.colors.stroke.white}`,
             boxShadow: cartoonTokens.colors.shadows.bar,
             height: cartoonTokens.spacing.navHeight,
           }}
         >
-          {/* Текстурный слой - точки */}
+          {/* Лёгкая текстура муар */}
           <div 
-            className="absolute inset-0 opacity-20"
+            className="absolute inset-0 opacity-30"
             style={{
-              backgroundImage: cartoonTokens.colors.bg.dots,
-              backgroundSize: '20px 20px',
-            }}
-          />
-          
-          {/* Текстурный слой - диагональные полосы */}
-          <div 
-            className="absolute inset-0 opacity-10"
-            style={{
-              background: cartoonTokens.colors.bg.texture,
+              backgroundImage: cartoonTokens.colors.bg.muar,
+              backgroundSize: '100px 100px',
             }}
           />
           
           {/* Облачный эффект сверху */}
           <div 
-            className="absolute inset-x-0 top-0 h-1/2"
+            className="absolute inset-x-0 top-0 h-2/3"
             style={{
               background: cartoonTokens.colors.bg.clouds,
             }}
           />
           
-          {/* Анимированные декоративные элементы - больше эмодзи! */}
-          <div className="absolute top-1 left-4 text-3xl animate-bounce" style={{ animationDelay: '0.2s' }}>🌟</div>
-          <div className="absolute top-2 left-20 text-2xl animate-swing">💫</div>
-          <div className="absolute top-3 right-20 text-2xl animate-cartoon-float" style={{ animationDelay: '0.5s' }}>⭐</div>
-          <div className="absolute top-1 right-4 text-3xl animate-jiggle" style={{ animationDelay: '1s' }}>✨</div>
-          <div className="absolute bottom-2 left-1/2 text-xl animate-cartoon-pulse" style={{ animationDelay: '0.7s' }}>🌈</div>
+          {/* Минималистичные декоративные элементы */}
+          <div 
+            className="absolute top-4 left-8"
+            style={{
+              width: '8px',
+              height: '8px',
+              borderRadius: '50%',
+              background: cartoonTokens.colors.primary.lavender,
+              opacity: 0.6,
+            }}
+          />
+          <div 
+            className="absolute top-6 right-10"
+            style={{
+              width: '6px',
+              height: '6px',
+              borderRadius: '50%',
+              background: cartoonTokens.colors.primary.peach,
+              opacity: 0.5,
+            }}
+          />
           
           {/* Контейнер для кнопок */}
-          <div className="relative flex items-center justify-between h-full px-6">
+          <div className="relative flex items-center justify-between h-full px-8">
             
-            {/* Левая кнопка - Главная (как персонаж) */}
+            {/* Левая кнопка - Главная (стикер-стиль) */}
             <Link
               href="/"
-              className={`group relative flex flex-col items-center justify-center transition-all ${
-                isActive('/') ? 'animate-cartoon-wobble' : ''
-              } hover:scale-110 active:animate-cartoon-tap`}
+              className={`group relative flex flex-col items-center justify-center transition-all duration-200 ${
+                isActive('/') ? 'scale-105' : ''
+              } hover:scale-110 active:scale-95`}
               style={{
                 width: cartoonTokens.spacing.sideButtonSize,
                 height: cartoonTokens.spacing.sideButtonSize,
               }}
             >
-              {/* Многослойный фон кнопки */}
+              {/* Фон кнопки-стикера */}
               <div 
-                className="absolute inset-0 rounded-full"
+                className="absolute inset-0"
                 style={{
                   background: isActive('/') 
                     ? cartoonTokens.colors.gradients.home 
-                    : `linear-gradient(145deg, ${cartoonTokens.colors.primary.pink} 0%, ${cartoonTokens.colors.primary.coral} 100%)`,
-                  border: `${cartoonTokens.colors.stroke.thickness} solid ${cartoonTokens.colors.stroke.black}`,
+                    : cartoonTokens.colors.primary.pink,
+                  borderRadius: cartoonTokens.borderRadius.sticker,
+                  border: `${cartoonTokens.colors.stroke.thickness} solid ${cartoonTokens.colors.stroke.white}`,
                   boxShadow: isActive('/') 
                     ? cartoonTokens.colors.shadows.glow
-                    : cartoonTokens.colors.shadows.bubble,
-                  transform: 'rotate(-5deg)',
+                    : cartoonTokens.colors.shadows.sticker,
                 }}
               />
               
-              {/* Внутренний блик */}
+              {/* Блик */}
               <div 
-                className="absolute inset-2 rounded-full opacity-50"
+                className="absolute inset-1 opacity-40"
                 style={{
                   background: cartoonTokens.colors.gradients.shine,
+                  borderRadius: cartoonTokens.borderRadius.sticker,
                 }}
               />
               
-              {/* Иконка с тенью */}
-              <DoodleHomeIcon className="relative z-10 w-8 h-8 text-white mb-1 drop-shadow-lg" />
+              {/* Иконка */}
+              <DoodleHomeIcon className="relative z-10 w-6 h-6 text-white mb-0.5" />
               
-              {/* Подпись с обводкой */}
+              {/* Подпись */}
               <span 
                 className="relative z-10 font-cartoon"
                 style={{
                   fontSize: cartoonTokens.typography.fontSize.label,
                   fontWeight: cartoonTokens.typography.fontWeight,
                   color: 'white',
-                  textShadow: `2px 2px 0 ${cartoonTokens.colors.stroke.black}, -1px -1px 0 ${cartoonTokens.colors.stroke.black}`,
+                  textShadow: '0 1px 2px rgba(0,0,0,0.1)',
                 }}
               >
-                Home
+                Главная
               </span>
               
-              {/* Супер активный индикатор */}
+              {/* Активный индикатор - точка */}
               {isActive('/') && (
-                <>
-                  <div className="absolute -top-3 -right-3 text-3xl animate-bounce">
-                    🔥
-                  </div>
-                  <div className="absolute inset-0 rounded-full animate-glow-pulse pointer-events-none" />
-                </>
+                <div 
+                  className="absolute -top-1 -right-1"
+                  style={{
+                    width: '12px',
+                    height: '12px',
+                    borderRadius: '50%',
+                    background: cartoonTokens.colors.primary.purple,
+                    border: `2px solid white`,
+                    boxShadow: '0 2px 4px rgba(0,0,0,0.1)',
+                  }}
+                />
               )}
             </Link>
 
-            {/* ЦЕНТРАЛЬНАЯ СУПЕР-КНОПКА - Astrot Logo */}
+            {/* ЦЕНТРАЛЬНАЯ КНОПКА - Logo Astrot */}
             <Link
               href="/chart"
               className="absolute left-1/2 -translate-x-1/2 group"
               style={{
-                top: '-20px', // Еще больше выступает
+                top: '-12px', // Немного выступает за пределы
               }}
             >
               <div 
-                className={`relative flex items-center justify-center transition-all ${
-                  isActive('/chart') ? 'animate-cartoon-pulse' : 'animate-cartoon-float'
-                } hover:scale-115 active:animate-cartoon-tap`}
+                className={`relative flex items-center justify-center transition-all duration-200 ${
+                  isActive('/chart') ? 'scale-105' : ''
+                } hover:scale-110 active:scale-95`}
                 style={{
                   width: cartoonTokens.spacing.centerButtonSize,
                   height: cartoonTokens.spacing.centerButtonSize,
                 }}
               >
-                {/* Супер-фон с радужным градиентом */}
+                {/* Фон центральной кнопки с градиентом */}
                 <div 
                   className="absolute inset-0"
                   style={{
-                    background: cartoonTokens.colors.gradients.rainbow,
-                    borderRadius: cartoonTokens.borderRadius.centerButton,
-                    border: `${cartoonTokens.colors.stroke.thicknessLarge} solid ${cartoonTokens.colors.stroke.black}`,
-                    boxShadow: cartoonTokens.colors.shadows.glow,
-                    animation: 'rotate360 15s linear infinite',
-                  }}
-                />
-                
-                {/* Внутренний круг с градиентом */}
-                <div 
-                  className="absolute inset-2"
-                  style={{
                     background: cartoonTokens.colors.gradients.center,
                     borderRadius: cartoonTokens.borderRadius.centerButton,
-                    border: `${cartoonTokens.colors.stroke.thicknessSmall} solid white`,
+                    border: `${cartoonTokens.colors.stroke.thicknessLarge} solid ${cartoonTokens.colors.stroke.white}`,
+                    boxShadow: isActive('/chart')
+                      ? cartoonTokens.colors.shadows.glow
+                      : cartoonTokens.colors.shadows.button,
                   }}
                 />
                 
-                {/* Блик и сияние */}
+                {/* Внутренний круг с бликом */}
                 <div 
-                  className="absolute inset-3"
+                  className="absolute inset-1"
                   style={{
-                    background: 'radial-gradient(circle at 30% 30%, rgba(255,255,255,0.8) 0%, transparent 60%)',
+                    background: 'radial-gradient(circle at 30% 30%, rgba(255,255,255,0.6) 0%, transparent 50%)',
                     borderRadius: cartoonTokens.borderRadius.centerButton,
                   }}
                 />
                 
-                {/* Пульсирующее свечение */}
+                {/* Мягкое свечение при активности */}
                 {isActive('/chart') && (
                   <div 
-                    className="absolute -inset-4 animate-pulse"
+                    className="absolute -inset-2 animate-pulse"
                     style={{
                       background: cartoonTokens.colors.gradients.glow,
-                      filter: 'blur(20px)',
+                      filter: 'blur(12px)',
                       borderRadius: cartoonTokens.borderRadius.centerButton,
+                      opacity: 0.5,
                     }}
                   />
                 )}
                 
-                {/* Супер-лого с анимацией */}
-                <DoodleAstrotLogo className="relative z-10 w-full h-full p-1" />
-                
-                {/* Орбитальные элементы вокруг */}
-                {isActive('/chart') && (
-                  <>
-                    <div className="absolute -top-4 -left-4 text-2xl animate-bounce">🚀</div>
-                    <div className="absolute -top-3 -right-4 text-2xl animate-swing" style={{ animationDelay: '0.3s' }}>🌟</div>
-                    <div className="absolute -bottom-3 -left-3 text-xl animate-cartoon-float" style={{ animationDelay: '0.6s' }}>💫</div>
-                    <div className="absolute -bottom-4 -right-3 text-xl animate-jiggle" style={{ animationDelay: '0.9s' }}>⚡</div>
-                  </>
-                )}
+                {/* Logo Astrot */}
+                <div className="relative z-10 w-12 h-12 flex items-center justify-center">
+                  <Image
+                    src="/logo.png"
+                    alt="Astrot"
+                    width={40}
+                    height={40}
+                    className="drop-shadow-sm"
+                    priority
+                  />
+                </div>
               </div>
               
-              {/* Подпись под кнопкой с супер-стилем */}
+              {/* Подпись под кнопкой */}
               <span 
-                className="mt-3 block text-center font-cartoon animate-cartoon-pulse"
+                className="mt-2 block text-center font-cartoon"
                 style={{
                   fontSize: cartoonTokens.typography.fontSize.centerLabel,
                   fontWeight: cartoonTokens.typography.fontWeight,
-                  background: cartoonTokens.colors.gradients.center,
-                  WebkitBackgroundClip: 'text',
-                  WebkitTextFillColor: 'transparent',
-                  backgroundClip: 'text',
-                  textShadow: 'none',
-                  filter: 'drop-shadow(2px 2px 4px rgba(0,0,0,0.3))',
+                  color: cartoonTokens.colors.primary.purple,
+                  textShadow: '0 1px 2px rgba(255,255,255,0.8)',
                 }}
               >
-                ASTROT
+                Карта
               </span>
             </Link>
 
-            {/* Правая кнопка - Ещё (как персонаж) */}
+            {/* Правая кнопка - Ещё (стикер-стиль) */}
             <Link
               href="/functions"
-              className={`group relative flex flex-col items-center justify-center transition-all ${
-                isActive('/functions') ? 'animate-cartoon-wobble' : ''
-              } hover:scale-110 active:animate-cartoon-tap`}
+              className={`group relative flex flex-col items-center justify-center transition-all duration-200 ${
+                isActive('/functions') ? 'scale-105' : ''
+              } hover:scale-110 active:scale-95`}
               style={{
                 width: cartoonTokens.spacing.sideButtonSize,
                 height: cartoonTokens.spacing.sideButtonSize,
               }}
             >
-              {/* Многослойный фон кнопки */}
+              {/* Фон кнопки-стикера */}
               <div 
-                className="absolute inset-0 rounded-full"
+                className="absolute inset-0"
                 style={{
                   background: isActive('/functions') 
                     ? cartoonTokens.colors.gradients.more
-                    : `linear-gradient(145deg, ${cartoonTokens.colors.primary.cyan} 0%, ${cartoonTokens.colors.primary.blue} 100%)`,
-                  border: `${cartoonTokens.colors.stroke.thickness} solid ${cartoonTokens.colors.stroke.black}`,
+                    : cartoonTokens.colors.primary.blue,
+                  borderRadius: cartoonTokens.borderRadius.sticker,
+                  border: `${cartoonTokens.colors.stroke.thickness} solid ${cartoonTokens.colors.stroke.white}`,
                   boxShadow: isActive('/functions') 
                     ? cartoonTokens.colors.shadows.glow
-                    : cartoonTokens.colors.shadows.bubble,
-                  transform: 'rotate(5deg)',
+                    : cartoonTokens.colors.shadows.sticker,
                 }}
               />
               
-              {/* Внутренний блик */}
+              {/* Блик */}
               <div 
-                className="absolute inset-2 rounded-full opacity-50"
+                className="absolute inset-1 opacity-40"
                 style={{
                   background: cartoonTokens.colors.gradients.shine,
+                  borderRadius: cartoonTokens.borderRadius.sticker,
                 }}
               />
               
-              {/* Иконка с тенью */}
-              <DoodleMoreIcon className="relative z-10 w-8 h-8 text-white mb-1 drop-shadow-lg" />
+              {/* Иконка */}
+              <DoodleMoreIcon className="relative z-10 w-6 h-6 text-white mb-0.5" />
               
-              {/* Подпись с обводкой */}
+              {/* Подпись */}
               <span 
                 className="relative z-10 font-cartoon"
                 style={{
                   fontSize: cartoonTokens.typography.fontSize.label,
                   fontWeight: cartoonTokens.typography.fontWeight,
                   color: 'white',
-                  textShadow: `2px 2px 0 ${cartoonTokens.colors.stroke.black}, -1px -1px 0 ${cartoonTokens.colors.stroke.black}`,
+                  textShadow: '0 1px 2px rgba(0,0,0,0.1)',
                 }}
               >
-                More
+                Ещё
               </span>
               
-              {/* Супер активный индикатор */}
+              {/* Активный индикатор - точка */}
               {isActive('/functions') && (
-                <>
-                  <div className="absolute -top-3 -left-3 text-3xl animate-bounce">
-                    ⚡
-                  </div>
-                  <div className="absolute inset-0 rounded-full animate-glow-pulse pointer-events-none" />
-                </>
+                <div 
+                  className="absolute -top-1 -right-1"
+                  style={{
+                    width: '12px',
+                    height: '12px',
+                    borderRadius: '50%',
+                    background: cartoonTokens.colors.primary.purple,
+                    border: `2px solid white`,
+                    boxShadow: '0 2px 4px rgba(0,0,0,0.1)',
+                  }}
+                />
               )}
             </Link>
           </div>
