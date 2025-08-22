@@ -10,7 +10,7 @@ import { TelegramProvider } from '@/providers/telegram-provider';
 import { TelegramViewportProvider } from '@/providers/telegram-viewport';
 import { ThemeProvider } from '@/providers/ThemeProvider';
 import SafeArea from '@/components/layout/SafeArea';
-import BottomBar from '@/components/nav/BottomBar';
+import BottomBar from '@/components/navigation/BottomBar';
 import { Inter, Manrope } from 'next/font/google';
 
 const inter = Inter({ 
@@ -54,13 +54,12 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <Script src="https://telegram.org/js/telegram-web-app.js" strategy="beforeInteractive" />
       </head>
       <body className={`${inter.variable} ${manrope.variable} font-sans`}>
-        <div className="astrot-bg astrot-stars" />
         <TelegramProvider>
           <TelegramViewportProvider>
             <ThemeProvider>
               <SafeArea>
-                <div className="app-container">
-                  <main className="main-content">
+                <div className="min-h-screen flex flex-col">
+                  <main className="flex-1 overflow-y-auto">
                     {children}
                   </main>
                   <BottomBar />
