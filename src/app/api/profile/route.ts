@@ -1,152 +1,134 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { kv } from '@vercel/kv';
-import { z } from 'zod';
 import { extractTelegramUser, extractTelegramUserFromBody } from '@/lib/auth/telegram';
-import { ProfileApiSchema, Profile } from '@/types/profile';
+import { UserService } from '@/lib/services/user.service';
+import { z } from 'zod';
 
 export const runtime = 'nodejs';
 export const dynamic = 'force-dynamic';
 
-// GET - получить профиль по tgId
+// Схема валидации профиля
+const ProfileSchema = z.object({
+  birthDate: z.string(),
+  birthTime: z.string().optional(),
+  timeUnknown: z.boolean().optional(),
+  birthPlace: z.string(),
+  latitude: z.number(),
+  longitude: z.number(),
+  timezone: z.string(),
+  tzOffset: z.number(),
+  name: z.string().optional(),
+  gender: z.string().optional(),
+  email: z.string().email().optional(),
+  phone: z.string().optional(),
+  houseSystem: z.string().optional().default('P'),
+});
+
+// GET - получить профиль текущего пользователя
 export async function GET(request: NextRequest) {
   try {
-    // Try to authenticate via Telegram
+    // Аутентификация через Telegram
     const telegramUser = extractTelegramUser(request);
-    let tgId: string;
     
-    if (telegramUser) {
-      tgId = telegramUser.id.toString();
-    } else {
-      // Fallback to query parameter for backward compatibility
-      const { searchParams } = new URL(request.url);
-      const tgIdParam = searchParams.get('tgId');
-      
-      if (!tgIdParam) {
-        return NextResponse.json({ error: 'Authentication required' }, { status: 401 });
-      }
-      tgId = tgIdParam;
+    if (!telegramUser) {
+      return NextResponse.json({ error: 'Authentication required' }, { status: 401 });
     }
     
-    const profile = await kv.get(`profile:${tgId}`);
+    // Находим или создаем пользователя
+    const user = await UserService.findOrCreate(telegramUser);
     
-    if (!profile) {
-      return NextResponse.json({ error: 'Profile not found' }, { status: 404 });
-    }
-    
-    return NextResponse.json({ success: true, profile });
+    return NextResponse.json({ 
+      success: true, 
+      user: {
+        id: user.id,
+        tgId: user.tgId,
+        username: user.username,
+        firstName: user.firstName,
+        lastName: user.lastName,
+        isPremium: user.isPremium,
+        photoUrl: user.photoUrl,
+      },
+      profile: user.profile 
+    });
   } catch (error) {
     console.error('Error fetching profile:', error);
     return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
   }
 }
 
-// POST - создать новый профиль
+// POST/PUT - создать или обновить профиль
 export async function POST(request: NextRequest) {
   try {
     const data = await request.json();
     
-    // Extract Telegram user for authentication
+    // Аутентификация через Telegram
     const telegramUser = extractTelegramUser(request) || extractTelegramUserFromBody(data);
     
     if (!telegramUser) {
       return NextResponse.json({ error: 'Telegram authentication required' }, { status: 401 });
     }
     
-    const profile = ProfileApiSchema.parse({
-      ...data,
-      tgId: telegramUser.id, // Use authenticated user ID
-      createdAt: new Date().toISOString(),
-      updatedAt: new Date().toISOString()
-    });
+    // Валидация данных
+    const profileData = ProfileSchema.parse(data);
     
-    // Проверяем, не существует ли уже профиль
-    const existingProfile = await kv.get(`profile:${profile.tgId}`);
-    if (existingProfile) {
-      return NextResponse.json({ error: 'Profile already exists' }, { status: 409 });
+    // Находим или создаем пользователя
+    const user = await UserService.findOrCreate(telegramUser);
+    
+    // Преобразуем дату в DateTime
+    const birthDateTime = new Date(profileData.birthDate);
+    if (profileData.birthTime && !profileData.timeUnknown) {
+      const [hours, minutes] = profileData.birthTime.split(':').map(Number);
+      birthDateTime.setHours(hours, minutes, 0, 0);
     }
     
-    await kv.set(`profile:${profile.tgId}`, profile);
+    // Создаем или обновляем профиль
+    const profile = await UserService.upsertProfile(user.id, {
+      birthDate: birthDateTime,
+      birthTime: profileData.birthTime,
+      timeUnknown: profileData.timeUnknown || false,
+      birthPlace: profileData.birthPlace,
+      latitude: profileData.latitude,
+      longitude: profileData.longitude,
+      timezone: profileData.timezone,
+      tzOffset: profileData.tzOffset,
+      name: profileData.name,
+      gender: profileData.gender,
+      email: profileData.email,
+      phone: profileData.phone,
+      houseSystem: profileData.houseSystem || 'P',
+    });
     
-    return NextResponse.json({ success: true, profile }, { status: 201 });
+    return NextResponse.json({ success: true, profile });
   } catch (error) {
     if (error instanceof z.ZodError) {
       return NextResponse.json({ error: 'Validation error', details: error.errors }, { status: 400 });
     }
-    console.error('Error creating profile:', error);
+    console.error('Error creating/updating profile:', error);
     return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
   }
 }
 
-// PUT - обновить профиль
-export async function PUT(request: NextRequest) {
-  try {
-    const data = await request.json();
-    
-    // Extract Telegram user for authentication
-    const telegramUser = extractTelegramUser(request) || extractTelegramUserFromBody(data);
-    
-    if (!telegramUser) {
-      return NextResponse.json({ error: 'Telegram authentication required' }, { status: 401 });
-    }
-    
-    const updatedData = {
-      ...data,
-      tgId: telegramUser.id, // Use authenticated user ID
-      updatedAt: new Date().toISOString()
-    };
-    
-    const profile = ProfileApiSchema.parse(updatedData);
-    
-    // Проверяем, существует ли профиль
-    const existingProfile = await kv.get(`profile:${profile.tgId}`);
-    if (!existingProfile) {
-      return NextResponse.json({ error: 'Profile not found' }, { status: 404 });
-    }
-    
-    // Сохраняем дату создания из существующего профиля
-    const finalProfile = {
-      ...profile,
-      createdAt: (existingProfile as Profile).createdAt || new Date().toISOString()
-    };
-    
-    await kv.set(`profile:${profile.tgId}`, finalProfile);
-    
-    return NextResponse.json({ success: true, profile: finalProfile });
-  } catch (error) {
-    if (error instanceof z.ZodError) {
-      return NextResponse.json({ error: 'Validation error', details: error.errors }, { status: 400 });
-    }
-    console.error('Error updating profile:', error);
-    return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
-  }
-}
+// Алиас для POST
+export const PUT = POST;
 
 // DELETE - удалить профиль
 export async function DELETE(request: NextRequest) {
   try {
-    // Try to authenticate via Telegram
+    // Аутентификация через Telegram
     const telegramUser = extractTelegramUser(request);
-    let tgId: string;
     
-    if (telegramUser) {
-      tgId = telegramUser.id.toString();
-    } else {
-      // Fallback to query parameter for backward compatibility
-      const { searchParams } = new URL(request.url);
-      const tgIdParam = searchParams.get('tgId');
-      
-      if (!tgIdParam) {
-        return NextResponse.json({ error: 'Authentication required' }, { status: 401 });
-      }
-      tgId = tgIdParam;
+    if (!telegramUser) {
+      return NextResponse.json({ error: 'Authentication required' }, { status: 401 });
     }
     
-    const profile = await kv.get(`profile:${tgId}`);
-    if (!profile) {
+    // Получаем пользователя
+    const user = await UserService.getByTgId(telegramUser.id.toString());
+    
+    if (!user || !user.profile) {
       return NextResponse.json({ error: 'Profile not found' }, { status: 404 });
     }
     
-    await kv.del(`profile:${tgId}`);
+    // Удаляем профиль
+    await UserService.deleteProfile(user.id);
     
     return NextResponse.json({ success: true, message: 'Profile deleted' });
   } catch (error) {
