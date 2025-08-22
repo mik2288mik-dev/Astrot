@@ -4,13 +4,8 @@ import React, { useEffect, useState } from 'react';
 import { useTelegramUser, useTelegram } from '@/hooks/useTelegram';
 import { getActiveChart } from '../../lib/birth/storage';
 import type { SavedChart } from '../../lib/birth/storage';
-import NatalWheel, { type ChartData } from '@/components/natal/NatalWheel';
-import { 
-  ChartBarIcon, 
-  SparklesIcon,
-  UserCircleIcon,
-  ArrowRightIcon
-} from '@heroicons/react/24/outline';
+import CartoonNatalWheel from '@/components/natal/CartoonNatalWheel';
+import type { ChartData } from '@/components/natal/NatalWheel';
 
 export default function HomePage() {
   const { firstName, userId } = useTelegramUser();
@@ -116,110 +111,528 @@ export default function HomePage() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-indigo-50 via-purple-50 to-pink-50">
-      <div className="container py-8 pb-24">
+    <div className="cartoon-page">
+      <div className="cartoon-container">
         {/* Приветствие */}
-        <div className="text-center mb-8">
-          <h1 className="text-3xl font-bold text-gray-900 mb-2">
-            Привет, {displayName}! 👋
+        <div className="welcome-section">
+          <h1 className="welcome-title">
+            <span className="wave-emoji">👋</span>
+            Привет, {displayName}!
           </h1>
-          <p className="text-gray-600">
-            Добро пожаловать в мир астрологии
+          <p className="welcome-subtitle">
+            Добро пожаловать в мир магии звёзд ✨
           </p>
         </div>
 
         {/* Натальная карта */}
-        <div className="card mb-6">
-          <div className="flex items-center justify-between mb-4">
-            <h2 className="text-lg font-semibold">Натальная карта</h2>
+        <div className="cartoon-card main-card">
+          <div className="card-header">
+            <h2 className="card-title">
+              <span className="star-icon">⭐</span>
+              Натальная карта
+            </h2>
             {birth && (
-              <span className="text-sm text-gray-500">
+              <span className="card-date">
                 {new Date(birth.date).toLocaleDateString('ru-RU')}
               </span>
             )}
           </div>
           
-          <div className="relative h-64 flex items-center justify-center bg-gradient-to-br from-purple-100 to-blue-100 rounded-lg mb-4">
+          <div className="chart-container">
             {chart === 'loading' ? (
-              <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-purple-600" />
+              <div className="loading-spinner">
+                <div className="spinner"></div>
+                <p>Загружаем магию...</p>
+              </div>
             ) : chart === 'error' ? (
-              <div className="text-center">
-                <p className="text-gray-500 mb-2">Ошибка загрузки карты</p>
-                <button onClick={loadChart} className="text-blue-600 hover:underline">
+              <div className="error-state">
+                <span className="error-icon">😔</span>
+                <p>Упс! Что-то пошло не так</p>
+                <button onClick={loadChart} className="retry-button">
                   Попробовать снова
                 </button>
               </div>
             ) : chart ? (
-              <div className="w-full h-full p-4">
-                <NatalWheel 
+              <div className="chart-wrapper">
+                <CartoonNatalWheel 
                   data={chart} 
                   size={240}
-                  showAspects={false}
+                  onPlanetClick={(planet) => {
+                    console.log('Выбрана планета:', planet);
+                  }}
                 />
+                <div className="chart-glow"></div>
               </div>
             ) : (
-              <div className="text-center">
-                <ChartBarIcon className="w-16 h-16 text-gray-400 mx-auto mb-2" />
-                <p className="text-gray-500">Карта не построена</p>
+              <div className="empty-state">
+                <span className="empty-icon">🌙</span>
+                <p>Карта ещё не построена</p>
+                <p className="empty-hint">Давайте откроем тайны звёзд!</p>
               </div>
             )}
           </div>
 
-          <div className="flex gap-3">
+          <div className="card-actions">
             <button
               onClick={() => handleNavigate(birth ? '/chart' : '/natal')}
-              className="btn btn-primary flex-1"
+              className="cartoon-btn btn-primary"
             >
-              {birth ? 'Открыть карту' : 'Построить карту'}
-              <ArrowRightIcon className="w-4 h-4 ml-2" />
+              <span>{birth ? 'Открыть карту' : 'Построить карту'}</span>
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+                <path d="M12 4l-1.41 1.41L16.17 11H4v2h12.17l-5.58 5.59L12 20l8-8z"/>
+              </svg>
             </button>
             <button
               onClick={() => handleNavigate('/horoscope')}
-              className="btn btn-secondary flex-1"
+              className="cartoon-btn btn-secondary"
             >
-              <SparklesIcon className="w-4 h-4 mr-2" />
-              Гороскоп
+              <span className="sparkle-icon">✨</span>
+              <span>Гороскоп</span>
             </button>
           </div>
         </div>
 
         {/* Совет дня */}
         {dailyTip && (
-          <div className="card bg-gradient-to-r from-yellow-50 to-orange-50 border-l-4 border-yellow-400">
-            <div className="flex items-start">
-              <span className="text-2xl mr-3">💫</span>
-              <div>
-                <h3 className="font-semibold mb-1">Совет дня</h3>
-                <p className="text-gray-700">{dailyTip}</p>
-              </div>
+          <div className="tip-card">
+            <div className="tip-icon">💫</div>
+            <div className="tip-content">
+              <h3>Совет дня</h3>
+              <p>{dailyTip}</p>
             </div>
+            <div className="tip-decoration"></div>
           </div>
         )}
 
         {/* Быстрые действия */}
-        <div className="mt-8">
-          <h2 className="text-lg font-semibold mb-4">Быстрые действия</h2>
-          <div className="grid grid-cols-2 gap-3">
+        <div className="quick-actions">
+          <h2 className="section-title">Быстрые действия</h2>
+          <div className="action-grid">
             <button
               onClick={() => handleNavigate('/profile')}
-              className="p-4 bg-white rounded-lg shadow-sm hover:shadow-md transition-shadow text-left"
+              className="action-card"
             >
-              <UserCircleIcon className="w-6 h-6 text-purple-600 mb-2" />
-              <div className="font-medium">Профиль</div>
-              <div className="text-xs text-gray-500">Ваши данные</div>
+              <div className="action-icon profile-icon">👤</div>
+              <div className="action-title">Профиль</div>
+              <div className="action-subtitle">Ваши данные</div>
             </button>
             
             <button
               onClick={() => handleNavigate('/functions')}
-              className="p-4 bg-white rounded-lg shadow-sm hover:shadow-md transition-shadow text-left"
+              className="action-card"
             >
-              <SparklesIcon className="w-6 h-6 text-blue-600 mb-2" />
-              <div className="font-medium">Функции</div>
-              <div className="text-xs text-gray-500">Все возможности</div>
+              <div className="action-icon functions-icon">🎯</div>
+              <div className="action-title">Функции</div>
+              <div className="action-subtitle">Все возможности</div>
             </button>
           </div>
         </div>
       </div>
+
+      <style jsx>{`
+        .cartoon-page {
+          min-height: 100vh;
+          background: linear-gradient(180deg, #FFFBF7 0%, #FFE5ED 50%, #FFE0EC 100%);
+          padding-bottom: 110px;
+        }
+
+        .cartoon-container {
+          max-width: 428px;
+          margin: 0 auto;
+          padding: 20px 16px;
+        }
+
+        .welcome-section {
+          text-align: center;
+          margin-bottom: 32px;
+          animation: slideDown 0.6s ease-out;
+        }
+
+        .welcome-title {
+          font-size: 32px;
+          font-weight: 800;
+          color: #4A3D5C;
+          font-family: 'Fredoka', 'Baloo 2', sans-serif;
+          margin-bottom: 8px;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          gap: 12px;
+        }
+
+        .wave-emoji {
+          animation: wave 2s ease-in-out infinite;
+          display: inline-block;
+        }
+
+        .welcome-subtitle {
+          font-size: 18px;
+          color: #9B8FAB;
+          font-family: 'Comic Neue', sans-serif;
+        }
+
+        .cartoon-card {
+          background: linear-gradient(135deg, rgba(255, 255, 255, 0.98) 0%, rgba(255, 245, 237, 0.98) 100%);
+          border-radius: 32px;
+          padding: 28px;
+          box-shadow: 0 8px 32px rgba(183, 148, 246, 0.15);
+          border: 2px solid rgba(183, 148, 246, 0.1);
+          margin-bottom: 24px;
+          position: relative;
+          overflow: hidden;
+          animation: fadeInScale 0.5s ease-out;
+        }
+
+        .cartoon-card::before {
+          content: '';
+          position: absolute;
+          top: -50%;
+          right: -50%;
+          width: 200%;
+          height: 200%;
+          background: radial-gradient(circle, rgba(183, 148, 246, 0.05) 0%, transparent 70%);
+          pointer-events: none;
+        }
+
+        .card-header {
+          display: flex;
+          justify-content: space-between;
+          align-items: center;
+          margin-bottom: 24px;
+        }
+
+        .card-title {
+          font-size: 22px;
+          font-weight: 700;
+          color: #4A3D5C;
+          font-family: 'Fredoka', sans-serif;
+          display: flex;
+          align-items: center;
+          gap: 8px;
+        }
+
+        .star-icon {
+          font-size: 24px;
+          animation: twinkle 3s ease-in-out infinite;
+        }
+
+        .card-date {
+          font-size: 14px;
+          color: #9B8FAB;
+          font-family: 'Comic Neue', sans-serif;
+          background: linear-gradient(135deg, #FFE0EC 0%, #E8D5FF 100%);
+          padding: 6px 12px;
+          border-radius: 20px;
+        }
+
+        .chart-container {
+          height: 280px;
+          background: linear-gradient(135deg, #E8D5FF 0%, #D6ECFF 100%);
+          border-radius: 24px;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          margin-bottom: 24px;
+          position: relative;
+          overflow: hidden;
+        }
+
+        .chart-wrapper {
+          position: relative;
+          padding: 20px;
+        }
+
+        .chart-glow {
+          position: absolute;
+          inset: -20px;
+          background: radial-gradient(circle, rgba(183, 148, 246, 0.2) 0%, transparent 70%);
+          animation: glowPulse 3s ease-in-out infinite;
+          pointer-events: none;
+        }
+
+        .loading-spinner {
+          text-align: center;
+        }
+
+        .spinner {
+          width: 48px;
+          height: 48px;
+          border: 4px solid rgba(183, 148, 246, 0.2);
+          border-top-color: #B794F6;
+          border-radius: 50%;
+          animation: spin 1s linear infinite;
+          margin: 0 auto 16px;
+        }
+
+        .empty-state,
+        .error-state {
+          text-align: center;
+        }
+
+        .empty-icon,
+        .error-icon {
+          font-size: 64px;
+          display: block;
+          margin-bottom: 16px;
+          animation: float 3s ease-in-out infinite;
+        }
+
+        .empty-hint {
+          font-size: 14px;
+          color: #B794F6;
+          margin-top: 8px;
+        }
+
+        .retry-button {
+          margin-top: 16px;
+          padding: 10px 20px;
+          background: linear-gradient(135deg, #B794F6 0%, #9F7AEA 100%);
+          color: white;
+          border: none;
+          border-radius: 20px;
+          font-family: 'Comic Neue', sans-serif;
+          font-weight: 600;
+          cursor: pointer;
+          transition: transform 0.3s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+        }
+
+        .retry-button:hover {
+          transform: scale(1.05);
+        }
+
+        .card-actions {
+          display: flex;
+          gap: 12px;
+        }
+
+        .cartoon-btn {
+          flex: 1;
+          padding: 16px 24px;
+          border-radius: 24px;
+          font-size: 16px;
+          font-weight: 700;
+          font-family: 'Comic Neue', 'Baloo 2', sans-serif;
+          border: none;
+          cursor: pointer;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          gap: 8px;
+          transition: all 0.3s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+          position: relative;
+          overflow: hidden;
+        }
+
+        .btn-primary {
+          background: linear-gradient(135deg, #B794F6 0%, #9F7AEA 100%);
+          color: white;
+          box-shadow: 0 8px 24px rgba(183, 148, 246, 0.35);
+        }
+
+        .btn-primary:hover {
+          transform: translateY(-3px) scale(1.02);
+          box-shadow: 0 12px 32px rgba(183, 148, 246, 0.45);
+        }
+
+        .btn-secondary {
+          background: linear-gradient(135deg, #FFE0EC 0%, #E8D5FF 100%);
+          color: #6B5D7A;
+          box-shadow: 0 4px 16px rgba(183, 148, 246, 0.15);
+        }
+
+        .btn-secondary:hover {
+          transform: translateY(-2px) scale(1.02);
+          box-shadow: 0 6px 20px rgba(183, 148, 246, 0.25);
+        }
+
+        .sparkle-icon {
+          font-size: 18px;
+        }
+
+        .tip-card {
+          background: linear-gradient(135deg, #FFF9D6 0%, #FFE5D6 100%);
+          border-radius: 28px;
+          padding: 20px;
+          display: flex;
+          align-items: center;
+          gap: 16px;
+          margin-bottom: 32px;
+          border: 2px solid rgba(255, 200, 100, 0.2);
+          box-shadow: 0 4px 20px rgba(255, 200, 100, 0.15);
+          position: relative;
+          overflow: hidden;
+          animation: slideUp 0.6s ease-out 0.2s both;
+        }
+
+        .tip-icon {
+          font-size: 32px;
+          animation: bounce 2s ease-in-out infinite;
+        }
+
+        .tip-content h3 {
+          font-size: 16px;
+          font-weight: 700;
+          color: #6B5D7A;
+          margin-bottom: 4px;
+          font-family: 'Fredoka', sans-serif;
+        }
+
+        .tip-content p {
+          font-size: 15px;
+          color: #9B8FAB;
+          margin: 0;
+          font-family: 'Comic Neue', sans-serif;
+        }
+
+        .tip-decoration {
+          position: absolute;
+          top: -20px;
+          right: -20px;
+          width: 80px;
+          height: 80px;
+          background: radial-gradient(circle, rgba(255, 200, 100, 0.2) 0%, transparent 70%);
+          border-radius: 50%;
+        }
+
+        .quick-actions {
+          margin-top: 32px;
+        }
+
+        .section-title {
+          font-size: 20px;
+          font-weight: 700;
+          color: #4A3D5C;
+          margin-bottom: 16px;
+          font-family: 'Fredoka', sans-serif;
+        }
+
+        .action-grid {
+          display: grid;
+          grid-template-columns: repeat(2, 1fr);
+          gap: 16px;
+        }
+
+        .action-card {
+          background: linear-gradient(135deg, rgba(255, 255, 255, 0.95) 0%, rgba(255, 245, 237, 0.95) 100%);
+          border-radius: 24px;
+          padding: 20px;
+          border: 2px solid rgba(183, 148, 246, 0.1);
+          box-shadow: 0 4px 16px rgba(183, 148, 246, 0.1);
+          cursor: pointer;
+          transition: all 0.3s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+          text-align: center;
+          animation: fadeInScale 0.5s ease-out 0.3s both;
+        }
+
+        .action-card:hover {
+          transform: translateY(-4px) scale(1.05);
+          box-shadow: 0 8px 24px rgba(183, 148, 246, 0.2);
+          border-color: rgba(183, 148, 246, 0.2);
+        }
+
+        .action-icon {
+          font-size: 36px;
+          margin-bottom: 12px;
+          display: block;
+        }
+
+        .profile-icon {
+          animation: wobble 3s ease-in-out infinite;
+        }
+
+        .functions-icon {
+          animation: rotate 4s linear infinite;
+        }
+
+        .action-title {
+          font-size: 16px;
+          font-weight: 700;
+          color: #4A3D5C;
+          margin-bottom: 4px;
+          font-family: 'Fredoka', sans-serif;
+        }
+
+        .action-subtitle {
+          font-size: 13px;
+          color: #9B8FAB;
+          font-family: 'Comic Neue', sans-serif;
+        }
+
+        @keyframes wave {
+          0%, 100% { transform: rotate(0deg); }
+          25% { transform: rotate(-20deg); }
+          75% { transform: rotate(20deg); }
+        }
+
+        @keyframes twinkle {
+          0%, 100% { opacity: 1; transform: scale(1); }
+          50% { opacity: 0.7; transform: scale(0.9); }
+        }
+
+        @keyframes float {
+          0%, 100% { transform: translateY(0); }
+          50% { transform: translateY(-10px); }
+        }
+
+        @keyframes bounce {
+          0%, 100% { transform: translateY(0); }
+          50% { transform: translateY(-8px); }
+        }
+
+        @keyframes wobble {
+          0%, 100% { transform: rotate(0deg); }
+          25% { transform: rotate(-5deg); }
+          75% { transform: rotate(5deg); }
+        }
+
+        @keyframes rotate {
+          from { transform: rotate(0deg); }
+          to { transform: rotate(360deg); }
+        }
+
+        @keyframes spin {
+          from { transform: rotate(0deg); }
+          to { transform: rotate(360deg); }
+        }
+
+        @keyframes glowPulse {
+          0%, 100% { opacity: 0.5; }
+          50% { opacity: 1; }
+        }
+
+        @keyframes slideDown {
+          from { 
+            opacity: 0;
+            transform: translateY(-20px);
+          }
+          to {
+            opacity: 1;
+            transform: translateY(0);
+          }
+        }
+
+        @keyframes slideUp {
+          from {
+            opacity: 0;
+            transform: translateY(20px);
+          }
+          to {
+            opacity: 1;
+            transform: translateY(0);
+          }
+        }
+
+        @keyframes fadeInScale {
+          from {
+            opacity: 0;
+            transform: scale(0.95);
+          }
+          to {
+            opacity: 1;
+            transform: scale(1);
+          }
+        }
+      `}</style>
     </div>
   );
 }
