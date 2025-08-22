@@ -71,8 +71,9 @@ const config: Config = {
       },
       fontFamily: {
         sans: [
-          'SF Pro Display',
           'Inter',
+          'Manrope',
+          'SF Pro Display',
           'system-ui',
           '-apple-system',
           'BlinkMacSystemFont',
@@ -82,6 +83,8 @@ const config: Config = {
           'Arial',
           'sans-serif'
         ],
+        inter: ['Inter', 'sans-serif'],
+        manrope: ['Manrope', 'sans-serif'],
         cartoon: [
           'Comic Neue',
           'Baloo 2',
