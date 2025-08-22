@@ -1,0 +1,397 @@
+/* 🎨 Boinkers Design System - Мультяшный стиль для астро-приложения */
+
+:root {
+  /* 🌈 Яркие мультяшные цвета */
+  --boinkers-purple: #8B5CF6;
+  --boinkers-pink: #EC4899;
+  --boinkers-blue: #3B82F6;
+  --boinkers-cyan: #06B6D4;
+  --boinkers-green: #10B981;
+  --boinkers-yellow: #F59E0B;
+  --boinkers-orange: #F97316;
+  --boinkers-red: #EF4444;
+  
+  /* 🎭 Градиенты */
+  --gradient-cosmic: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  --gradient-sunset: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+  --gradient-ocean: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+  --gradient-candy: linear-gradient(135deg, #ff9a9e 0%, #fecfef 100%);
+  --gradient-aurora: linear-gradient(135deg, #f77062 0%, #fe5196 100%);
+  
+  /* 🎪 Тени для объема */
+  --shadow-bubble: 0 10px 40px rgba(139, 92, 246, 0.3);
+  --shadow-pop: 0 20px 60px rgba(236, 72, 153, 0.4);
+  --shadow-float: 0 15px 35px rgba(59, 130, 246, 0.3);
+  --shadow-glow: 0 0 30px rgba(139, 92, 246, 0.5);
+  
+  /* 🎯 Закругления */
+  --radius-bubble: 24px;
+  --radius-blob: 40% 60% 60% 40% / 60% 30% 70% 40%;
+  --radius-squircle: 20px;
+}
+
+/* 🎈 Анимированные пузыри фона */
+.boinkers-bg {
+  position: relative;
+  overflow: hidden;
+  background: linear-gradient(135deg, #667eea15 0%, #764ba215 100%);
+}
+
+.boinkers-bg::before,
+.boinkers-bg::after {
+  content: '';
+  position: absolute;
+  border-radius: 50%;
+  animation: float 20s infinite ease-in-out;
+}
+
+.boinkers-bg::before {
+  width: 300px;
+  height: 300px;
+  background: radial-gradient(circle, rgba(139, 92, 246, 0.1) 0%, transparent 70%);
+  top: -150px;
+  left: -150px;
+}
+
+.boinkers-bg::after {
+  width: 400px;
+  height: 400px;
+  background: radial-gradient(circle, rgba(236, 72, 153, 0.1) 0%, transparent 70%);
+  bottom: -200px;
+  right: -200px;
+  animation-delay: 10s;
+}
+
+/* 🎪 Карточки в стиле Boinkers */
+.boinkers-card {
+  background: rgba(255, 255, 255, 0.95);
+  border-radius: var(--radius-bubble);
+  padding: 24px;
+  box-shadow: var(--shadow-bubble);
+  border: 3px solid transparent;
+  background-clip: padding-box;
+  position: relative;
+  transition: all 0.3s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+}
+
+.boinkers-card::before {
+  content: '';
+  position: absolute;
+  inset: -3px;
+  border-radius: var(--radius-bubble);
+  padding: 3px;
+  background: var(--gradient-cosmic);
+  -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+  -webkit-mask-composite: xor;
+  mask-composite: exclude;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+.boinkers-card:hover {
+  transform: translateY(-5px) scale(1.02);
+  box-shadow: var(--shadow-pop);
+}
+
+.boinkers-card:hover::before {
+  opacity: 1;
+}
+
+/* 🎯 Кнопки в стиле Boinkers */
+.boinkers-btn {
+  padding: 12px 28px;
+  border-radius: 100px;
+  font-weight: 700;
+  font-size: 16px;
+  border: none;
+  cursor: pointer;
+  position: relative;
+  overflow: hidden;
+  transition: all 0.3s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.boinkers-btn-primary {
+  background: var(--gradient-cosmic);
+  color: white;
+  box-shadow: 0 4px 15px rgba(139, 92, 246, 0.4);
+}
+
+.boinkers-btn-primary:hover {
+  transform: translateY(-2px) scale(1.05);
+  box-shadow: 0 6px 20px rgba(139, 92, 246, 0.6);
+}
+
+.boinkers-btn-secondary {
+  background: var(--gradient-candy);
+  color: white;
+  box-shadow: 0 4px 15px rgba(255, 154, 158, 0.4);
+}
+
+.boinkers-btn-magic {
+  background: var(--gradient-aurora);
+  color: white;
+  box-shadow: 0 4px 15px rgba(247, 112, 98, 0.4);
+  position: relative;
+  overflow: hidden;
+}
+
+.boinkers-btn-magic::before {
+  content: '✨';
+  position: absolute;
+  font-size: 20px;
+  animation: sparkle 2s infinite;
+}
+
+/* 🌟 Эмодзи-иконки для домов */
+.house-emoji {
+  font-size: 32px;
+  display: inline-block;
+  animation: bounce 2s infinite;
+  animation-delay: calc(var(--house-number) * 0.1s);
+}
+
+/* 🎭 Анимации */
+@keyframes float {
+  0%, 100% {
+    transform: translate(0, 0) rotate(0deg);
+  }
+  33% {
+    transform: translate(30px, -30px) rotate(120deg);
+  }
+  66% {
+    transform: translate(-20px, 20px) rotate(240deg);
+  }
+}
+
+@keyframes bounce {
+  0%, 100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-10px);
+  }
+}
+
+@keyframes sparkle {
+  0% {
+    left: -20px;
+    top: 0;
+    opacity: 0;
+  }
+  20% {
+    opacity: 1;
+  }
+  80% {
+    opacity: 1;
+  }
+  100% {
+    left: calc(100% + 20px);
+    top: 100%;
+    opacity: 0;
+  }
+}
+
+@keyframes wiggle {
+  0%, 100% {
+    transform: rotate(-3deg);
+  }
+  50% {
+    transform: rotate(3deg);
+  }
+}
+
+@keyframes pulse-glow {
+  0%, 100% {
+    box-shadow: 0 0 20px rgba(139, 92, 246, 0.5);
+  }
+  50% {
+    box-shadow: 0 0 40px rgba(139, 92, 246, 0.8);
+  }
+}
+
+/* 🎪 Текстовые стили */
+.boinkers-title {
+  font-size: 32px;
+  font-weight: 900;
+  background: var(--gradient-cosmic);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  animation: wiggle 2s ease-in-out infinite;
+}
+
+.boinkers-subtitle {
+  font-size: 20px;
+  font-weight: 700;
+  color: var(--boinkers-purple);
+  margin-bottom: 8px;
+}
+
+.boinkers-text {
+  font-size: 16px;
+  line-height: 1.6;
+  color: #4B5563;
+}
+
+/* 🎨 Знаки зодиака в мультяшном стиле */
+.zodiac-badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 80px;
+  height: 80px;
+  border-radius: 50%;
+  background: var(--gradient-cosmic);
+  color: white;
+  font-size: 40px;
+  box-shadow: var(--shadow-bubble);
+  animation: pulse-glow 2s infinite;
+}
+
+/* 🌈 Планеты в веселом стиле */
+.planet-bubble {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 16px;
+  border-radius: 100px;
+  background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+  color: white;
+  font-weight: 700;
+  box-shadow: 0 4px 15px rgba(245, 87, 108, 0.3);
+  transition: all 0.3s ease;
+}
+
+.planet-bubble:hover {
+  transform: scale(1.1) rotate(5deg);
+}
+
+/* 🎯 Таро карты */
+.tarot-card {
+  width: 150px;
+  height: 250px;
+  border-radius: 16px;
+  background: var(--gradient-aurora);
+  box-shadow: var(--shadow-pop);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 60px;
+  cursor: pointer;
+  transition: all 0.6s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+  transform-style: preserve-3d;
+}
+
+.tarot-card:hover {
+  transform: rotateY(180deg);
+}
+
+.tarot-card-back {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  backface-visibility: hidden;
+  transform: rotateY(180deg);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+  text-align: center;
+  background: white;
+  border-radius: 16px;
+}
+
+/* 🎪 Уведомления */
+.boinkers-notification {
+  padding: 16px 24px;
+  border-radius: 100px;
+  background: var(--gradient-candy);
+  color: white;
+  font-weight: 700;
+  box-shadow: var(--shadow-bubble);
+  display: inline-flex;
+  align-items: center;
+  gap: 12px;
+  animation: slideInBounce 0.5s ease;
+}
+
+@keyframes slideInBounce {
+  0% {
+    transform: translateX(100%) scale(0.5);
+    opacity: 0;
+  }
+  60% {
+    transform: translateX(-10%) scale(1.1);
+    opacity: 1;
+  }
+  100% {
+    transform: translateX(0) scale(1);
+    opacity: 1;
+  }
+}
+
+/* 🌟 Советы дня */
+.daily-tip {
+  padding: 20px;
+  border-radius: var(--radius-bubble);
+  background: linear-gradient(135deg, #ffecd2 0%, #fcb69f 100%);
+  position: relative;
+  overflow: hidden;
+}
+
+.daily-tip::before {
+  content: '💫';
+  position: absolute;
+  font-size: 100px;
+  opacity: 0.1;
+  right: -20px;
+  top: -20px;
+  animation: float 10s infinite ease-in-out;
+}
+
+/* 🎯 Прогресс бары */
+.boinkers-progress {
+  height: 24px;
+  border-radius: 100px;
+  background: rgba(139, 92, 246, 0.1);
+  overflow: hidden;
+  position: relative;
+}
+
+.boinkers-progress-fill {
+  height: 100%;
+  border-radius: 100px;
+  background: var(--gradient-cosmic);
+  transition: width 1s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+  position: relative;
+  overflow: hidden;
+}
+
+.boinkers-progress-fill::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgba(255, 255, 255, 0.3),
+    transparent
+  );
+  animation: shimmer 2s infinite;
+}
+
+@keyframes shimmer {
+  0% {
+    transform: translateX(-100%);
+  }
+  100% {
+    transform: translateX(100%);
+  }
+}

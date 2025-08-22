@@ -17,3 +17,5 @@ pnpm-debug.log*
 !.env.example
 .next/cache
 ephe-full/
+
+/generated/prisma
