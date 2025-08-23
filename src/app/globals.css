@@ -5,6 +5,14 @@
 @import '../styles/tokens.css';
 @import url('https://fonts.googleapis.com/css2?family=Comic+Neue:wght@400;700&family=Baloo+2:wght@400;500;600;700;800&family=Fredoka:wght@400;500;600;700&family=Kalam:wght@400;700&family=Patrick+Hand:wght@400&display=swap');
 
+/* Отключение overscroll для Telegram Mini App */
+html, body {
+  overscroll-behavior: none;
+  overscroll-behavior-y: none;
+  -webkit-overflow-scrolling: touch;
+  touch-action: pan-x pan-y;
+}
+
 :root {
   /* Telegram viewport */
   --tg-viewport-height: 100dvh;

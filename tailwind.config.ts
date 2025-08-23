@@ -8,7 +8,52 @@ const config: Config = {
   ],
   theme: {
     extend: {
+      fontFamily: {
+        'rubik': ['var(--font-rubik)', 'system-ui', 'sans-serif'],
+        'manrope': ['var(--font-manrope)', 'system-ui', 'sans-serif'],
+        'sans': ['var(--font-rubik)', 'system-ui', 'sans-serif'],
+      },
       colors: {
+        // Премиальная мультяшная палитра
+        cartoon: {
+          // Основные тона
+          purple: {
+            light: '#E8D5FF',
+            DEFAULT: '#B794F6',
+            dark: '#805AD5',
+            glow: 'rgba(183, 148, 246, 0.3)',
+          },
+          pink: {
+            light: '#FFE0EC',
+            DEFAULT: '#FF9EC7',
+            dark: '#EC4899',
+            glow: 'rgba(255, 158, 199, 0.3)',
+          },
+          blue: {
+            light: '#D6ECFF',
+            DEFAULT: '#7DD3FC',
+            dark: '#0EA5E9',
+            glow: 'rgba(125, 211, 252, 0.3)',
+          },
+          mint: {
+            light: '#D6FFE8',
+            DEFAULT: '#6EE7B7',
+            dark: '#10B981',
+            glow: 'rgba(110, 231, 183, 0.3)',
+          },
+          peach: {
+            light: '#FFE5D6',
+            DEFAULT: '#FCA5A5',
+            dark: '#F87171',
+            glow: 'rgba(252, 165, 165, 0.3)',
+          },
+          yellow: {
+            light: '#FFF9D6',
+            DEFAULT: '#FDE047',
+            dark: '#FACC15',
+            glow: 'rgba(253, 224, 71, 0.3)',
+          },
+        },
         // Основные цвета
         primary: {
           50: '#fdf4ff',
@@ -48,103 +93,74 @@ const config: Config = {
           900: '#171717',
         },
         // Telegram цвета (для обратной совместимости)
-        bg: 'rgb(var(--tg-bg-color) / <alpha-value>)',
-        text: 'rgb(var(--tg-text-color) / <alpha-value>)',
-        hint: 'rgb(var(--tg-hint-color) / <alpha-value>)',
-        link: 'rgb(var(--tg-link-color) / <alpha-value>)',
-        button: 'rgb(var(--tg-button-color) / <alpha-value>)',
-        'button-text': 'rgb(var(--tg-button-text-color) / <alpha-value>)',
+        telegram: {
+          bg: '#ffffff',
+          bgSecondary: '#f4f4f5',
+          text: '#000000',
+          hint: '#999999',
+          link: '#3390ec',
+          button: '#3390ec',
+          buttonText: '#ffffff',
+        },
       },
-      borderRadius: {
-        sm: '8px',
-        md: '12px',
-        lg: '16px',
-        xl: '20px',
-        '2xl': '24px',
-        '3xl': '32px'
+      spacing: {
+        safe: 'env(safe-area-inset-bottom)',
+        'safe-top': 'env(safe-area-inset-top)',
+        'safe-bottom': 'env(safe-area-inset-bottom)',
+        'safe-left': 'env(safe-area-inset-left)',
+        'safe-right': 'env(safe-area-inset-right)',
+      },
+      height: {
+        'tg-viewport': 'var(--tg-viewport-height, 100vh)',
+        'available': 'calc(var(--tg-viewport-height, 100vh) - env(safe-area-inset-top) - env(safe-area-inset-bottom))',
+      },
+      padding: {
+        'safe-top': 'env(safe-area-inset-top)',
+        'safe-bottom': 'env(safe-area-inset-bottom)',
+        'safe-left': 'env(safe-area-inset-left)',
+        'safe-right': 'env(safe-area-inset-right)',
       },
       boxShadow: {
-        'soft': '0 2px 8px rgba(0,0,0,0.04)',
-        'card': '0 4px 12px rgba(0,0,0,0.06)',
-        'hover': '0 8px 24px rgba(0,0,0,0.08)',
-        'nav': '0 -2px 12px rgba(0,0,0,0.04)',
+        'cartoon-sm': '0 2px 8px rgba(183, 148, 246, 0.15)',
+        'cartoon-md': '0 4px 16px rgba(183, 148, 246, 0.2)',
+        'cartoon-lg': '0 8px 30px rgba(183, 148, 246, 0.25)',
+        'cartoon-xl': '0 12px 40px rgba(183, 148, 246, 0.3)',
+        'cartoon-glow': '0 0 30px rgba(183, 148, 246, 0.4)',
+        'cartoon-inner': 'inset 0 2px 8px rgba(255, 255, 255, 0.5)',
+        'button-3d': '0 4px 0 rgba(0, 0, 0, 0.1), 0 8px 24px rgba(0, 0, 0, 0.15)',
+        'button-pressed': '0 2px 0 rgba(0, 0, 0, 0.1), 0 4px 12px rgba(0, 0, 0, 0.1)',
+        'nav-soft': '0 -4px 20px rgba(0, 0, 0, 0.08)',
+        'premium': '0 8px 30px rgba(0, 0, 0, 0.12)',
+        'premium-lg': '0 12px 40px rgba(0, 0, 0, 0.18)',
       },
-      fontFamily: {
-        sans: [
-          'Inter',
-          'Manrope',
-          'SF Pro Display',
-          'system-ui',
-          '-apple-system',
-          'BlinkMacSystemFont',
-          'Segoe UI',
-          'Roboto',
-          'Helvetica',
-          'Arial',
-          'sans-serif'
-        ],
-        inter: ['Inter', 'sans-serif'],
-        manrope: ['Manrope', 'sans-serif'],
-        cartoon: [
-          'Comic Neue',
-          'Baloo 2',
-          'Fredoka',
-          'Comic Sans MS',
-          'cursive'
-        ],
+      backgroundImage: {
+        'gradient-cartoon': 'linear-gradient(135deg, #FFE0EC 0%, #E8D5FF 50%, #D6ECFF 100%)',
+        'gradient-premium': 'linear-gradient(135deg, #B794F6 0%, #FF9EC7 100%)',
+        'gradient-glass': 'linear-gradient(180deg, rgba(255, 255, 255, 0.8) 0%, rgba(255, 255, 255, 0.4) 100%)',
+        'gradient-button': 'linear-gradient(135deg, #B794F6 0%, #9F7AEA 100%)',
+        'gradient-center-button': 'linear-gradient(135deg, #B794F6 0%, #EC4899 50%, #7DD3FC 100%)',
       },
       animation: {
-        'fade-in': 'fadeIn 0.3s ease-out',
-        'slide-up': 'slideUp 0.3s ease-out',
-        'scale-in': 'scaleIn 0.2s ease-out',
-        'glow': 'glow 3s ease-in-out infinite',
-        'tap': 'tap 0.15s ease-out',
-        'pulse-soft': 'pulseSoft 2s ease-in-out infinite',
-        'cartoon-bounce': 'cartoonBounce 0.6s cubic-bezier(0.68, -0.55, 0.265, 1.55)',
-        'cartoon-wobble': 'cartoonWobble 0.8s ease-in-out infinite',
-        'cartoon-pulse': 'cartoonPulse 1.5s ease-in-out infinite',
-        'cartoon-tap': 'cartoonTap 0.2s ease-out',
+        'cartoon-bounce': 'cartoonBounce 0.6s ease-in-out',
+        'cartoon-pop': 'cartoonPop 0.3s cubic-bezier(0.68, -0.55, 0.265, 1.55)',
+        'cartoon-wobble': 'cartoonWobble 0.5s ease-in-out',
+        'cartoon-pulse': 'cartoonPulse 2s infinite',
+        'cartoon-tap': 'cartoonTap 0.3s ease-in-out',
         'cartoon-float': 'cartoonFloat 3s ease-in-out infinite',
       },
       keyframes: {
-        fadeIn: {
-          '0%': { opacity: '0' },
-          '100%': { opacity: '1' },
+        cartoonBounce: {
+          '0%, 100%': { transform: 'translateY(0)' },
+          '50%': { transform: 'translateY(-10px)' },
         },
-        slideUp: {
-          '0%': { transform: 'translateY(10px)', opacity: '0' },
-          '100%': { transform: 'translateY(0)', opacity: '1' },
-        },
-        scaleIn: {
-          '0%': { transform: 'scale(0.95)', opacity: '0' },
+        cartoonPop: {
+          '0%': { transform: 'scale(0.8)', opacity: '0' },
           '100%': { transform: 'scale(1)', opacity: '1' },
         },
-        glow: {
-          '0%, 100%': { 
-            boxShadow: '0 0 20px rgba(160, 124, 255, 0.3), 0 0 40px rgba(160, 124, 255, 0.15)' 
-          },
-          '50%': { 
-            boxShadow: '0 0 30px rgba(160, 124, 255, 0.5), 0 0 60px rgba(160, 124, 255, 0.25)' 
-          },
-        },
-        tap: {
-          '0%': { transform: 'scale(1)' },
-          '50%': { transform: 'scale(0.95)' },
-          '100%': { transform: 'scale(1)' },
-        },
-        pulseSoft: {
-          '0%, 100%': { opacity: '0.7' },
-          '50%': { opacity: '1' },
-        },
-        cartoonBounce: {
-          '0%': { transform: 'translateY(0) scale(1)' },
-          '30%': { transform: 'translateY(-8px) scale(1.05)' },
-          '50%': { transform: 'translateY(-12px) scale(1.08)' },
-          '100%': { transform: 'translateY(0) scale(1)' },
-        },
         cartoonWobble: {
-          '0%, 100%': { transform: 'rotate(-3deg)' },
-          '50%': { transform: 'rotate(3deg)' },
+          '0%, 100%': { transform: 'rotate(0deg)' },
+          '25%': { transform: 'rotate(-3deg)' },
+          '75%': { transform: 'rotate(3deg)' },
         },
         cartoonPulse: {
           '0%, 100%': { 

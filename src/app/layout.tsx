@@ -11,17 +11,19 @@ import { ThemeProvider } from '@/providers/ThemeProvider';
 import SafeArea from '@/components/layout/SafeArea';
 import TopBar from '@/components/top/TopBar';
 import BottomNav from '@/components/navigation/BottomNav';
-import { Inter, Manrope } from 'next/font/google';
+import { Rubik, Manrope } from 'next/font/google';
 
-const inter = Inter({ 
+const rubik = Rubik({ 
   subsets: ['latin', 'cyrillic'],
-  variable: '--font-inter',
+  variable: '--font-rubik',
+  weight: ['300', '400', '500', '600', '700'],
   display: 'swap',
 });
 
 const manrope = Manrope({ 
   subsets: ['latin', 'cyrillic'],
   variable: '--font-manrope',
+  weight: ['400', '500', '600', '700', '800'],
   display: 'swap',
 });
 
@@ -53,7 +55,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <meta name="apple-mobile-web-app-status-bar-style" content="default" />
         <Script src="https://telegram.org/js/telegram-web-app.js" strategy="beforeInteractive" />
       </head>
-      <body className={`${inter.variable} ${manrope.variable} font-sans min-h-screen bg-gradient-to-b from-[#FFF6FB] to-[#FBEFFF]`}>
+      <body className={`${rubik.variable} ${manrope.variable} font-rubik min-h-screen bg-gradient-to-b from-[#FFF6FB] to-[#FBEFFF]`}>
         <TelegramProvider>
           <TelegramViewportProvider>
             <ThemeProvider>
