@@ -1,4 +1,4 @@
-import { getEphemerisAdapter, signFromLongitude, type ComputeInput } from '../../../lib/ephemeris/adapter';
+import { getEphemerisAdapter, signFromLongitude, type ComputeInput } from '@/lib/ephemeris/adapter';
 import type { TransitHit, AspectType } from './types';
 
 // Веса планет

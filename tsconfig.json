@@ -19,11 +19,11 @@
       "@/*": ["src/*"],
       "@/app/*": ["src/app/*"],
       "@/components/*": ["src/components/*"],
-      "@/lib/*": ["src/lib/*"],
+      "@/lib/*": ["lib/*", "src/lib/*"],
       "@/providers/*": ["src/providers/*"],
       "@/shared/*": ["src/shared/*"],
       "@/config/*": ["src/config/*"],
-      "@/types/*": ["src/types/*"],
+      "@/types/*": ["types/*", "src/types/*"],
       "@/styles/*": ["src/styles/*"],
       "@/services/*": ["src/services/*"],
       "@/hooks/*": ["src/hooks/*"]
@@ -35,7 +35,10 @@
     "next-env.d.ts",
     "src/**/*.ts",
     "src/**/*.tsx",
-    ".next/types/**/*.ts"
+    ".next/types/**/*.ts",
+    "types/**/*.d.ts",
+    "types/**/*.ts",
+    "lib/**/*.ts"
   ],
   "exclude": ["node_modules"]
 }

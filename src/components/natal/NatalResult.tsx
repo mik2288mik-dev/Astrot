@@ -1,10 +1,10 @@
 'use client';
 import BirthHeader from '../birth/BirthHeader';
-import type { NatalResult } from '../../../lib/api/natal';
-import type { BirthData } from '../../../lib/birth/types';
+import type { NatalResult } from '@/lib/api/natal';
+import type { BirthData } from '@/lib/birth/types';
 import { IconHelpCircle } from '@tabler/icons-react';
 import { useState } from 'react';
-import { formatBirthLine } from '../../../lib/birth/format';
+import { formatBirthLine } from '@/lib/birth/format';
 
 interface NatalResultProps {
   result: NatalResult;

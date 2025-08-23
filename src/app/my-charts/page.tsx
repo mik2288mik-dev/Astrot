@@ -2,8 +2,8 @@
 
 import React, { useState, useEffect } from 'react';
 import BirthHeader from '@/components/birth/BirthHeader';
-import { getSavedCharts, setActiveChart, deleteChart } from '../../../lib/birth/storage';
-import type { SavedChart } from '../../../lib/birth/storage';
+import { getSavedCharts, setActiveChart, deleteChart } from '@/lib/birth/storage';
+import type { SavedChart } from '@/lib/birth/storage';
 import { TrashIcon, StarIcon } from '@heroicons/react/24/outline';
 import { StarIcon as StarIconSolid } from '@heroicons/react/24/solid';
 

@@ -1,5 +1,5 @@
-import { getEphemerisAdapter, signFromLongitude } from '../../../lib/ephemeris/adapter';
-import type { ComputeInput } from '../../../lib/ephemeris/adapter';
+import { getEphemerisAdapter, signFromLongitude } from '@/lib/ephemeris/adapter';
+import type { ComputeInput } from '@/lib/ephemeris/adapter';
 
 export type BirthInput = {
   date: string;      // 'YYYY-MM-DD'

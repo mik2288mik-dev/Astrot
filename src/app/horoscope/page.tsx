@@ -3,8 +3,8 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { useSearchParams } from 'next/navigation';
 import { useTelegramUser } from '@/hooks/useTelegram';
-import { getActiveChart } from '../../../lib/birth/storage';
-import type { SavedChart } from '../../../lib/birth/storage';
+import { getActiveChart } from '@/lib/birth/storage';
+import type { SavedChart } from '@/lib/birth/storage';
 import { formatAspectTitle } from '@/lib/astro/labels';
 import { pickBirthFromChart } from '@/lib/astro/pickBirth';
 import { 

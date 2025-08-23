@@ -4,8 +4,8 @@ import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { XMarkIcon, ArrowRightIcon, SparklesIcon } from '@heroicons/react/24/outline';
 import type { SelectEntity } from './NatalWheel';
-import type { ChartData, Interpretation } from '../../../lib/astro/types';
-import { getQuickInsight, interpretNatalChart } from '../../../lib/astro/interp';
+import type { ChartData, Interpretation } from '@/lib/astro/types';
+import { getQuickInsight, interpretNatalChart } from '@/lib/astro/interp';
 
 interface InsightSheetProps {
   isOpen: boolean;

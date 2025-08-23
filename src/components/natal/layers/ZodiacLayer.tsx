@@ -1,9 +1,9 @@
 'use client';
 
 import React from 'react';
-import type { ChartData } from '../../../../lib/astro/types';
+import type { ChartData } from '@/lib/astro/types';
 import type { SelectEntity } from '../NatalWheel';
-import { SIGN_SYMBOLS } from '../../../../lib/astro/types';
+import { SIGN_SYMBOLS } from '@/lib/astro/types';
 
 interface ZodiacLayerProps {
   center: number;

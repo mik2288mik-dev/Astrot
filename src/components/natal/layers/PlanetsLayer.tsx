@@ -1,9 +1,9 @@
 'use client';
 
 import React from 'react';
-import type { ChartData, PlanetPos } from '../../../../lib/astro/types';
+import type { ChartData, PlanetPos } from '@/lib/astro/types';
 import type { SelectEntity } from '../NatalWheel';
-import { PLANET_SYMBOLS } from '../../../../lib/astro/types';
+import { PLANET_SYMBOLS } from '@/lib/astro/types';
 
 interface PlanetsLayerProps {
   center: number;

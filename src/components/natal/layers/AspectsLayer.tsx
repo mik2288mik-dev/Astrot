@@ -1,7 +1,7 @@
 'use client';
 
 import React from 'react';
-import type { ChartData, Aspect } from '../../../../lib/astro/types';
+import type { ChartData, Aspect } from '@/lib/astro/types';
 import type { SelectEntity } from '../NatalWheel';
 
 interface AspectsLayerProps {

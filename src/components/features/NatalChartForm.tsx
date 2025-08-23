@@ -1,8 +1,8 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
-import { getLastSavedChart } from '../../lib/birth/storage';
-import type { BirthData } from '../../lib/birth/types';
+import { getLastSavedChart } from '@/lib/birth/storage';
+import type { BirthData } from '@/lib/birth/types';
 
 interface PlaceSuggestion {
   display_name: string;

@@ -1,6 +1,6 @@
 'use client';
-import { fmtBirth } from '../../../lib/birth/format';
-import type { BirthData } from '../../../lib/birth/types';
+import { fmtBirth } from '@/lib/birth/format';
+import type { BirthData } from '@/lib/birth/types';
 
 export default function BirthHeader({ 
   birth, 

@@ -1,8 +1,8 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { z } from 'zod';
-import { getEphemerisAdapter } from '../../../../../lib/ephemeris/adapter';
-import { safeTzLookup } from '../../../../../lib/geocode';
-import type { ComputeInput } from '../../../../../lib/ephemeris/adapter';
+import { getEphemerisAdapter } from '@/lib/ephemeris/adapter';
+import { safeTzLookup } from '@/lib/geocode';
+import type { ComputeInput } from '@/lib/ephemeris/adapter';
 
 export const runtime = 'nodejs';
 export const dynamic = 'force-dynamic';

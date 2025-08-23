@@ -1,9 +1,9 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { z } from 'zod';
-import { getEphemerisAdapter, signFromLongitude } from '../../../../lib/ephemeris/adapter';
-import { safeTzLookup } from '../../../../lib/geocode';
-import type { ComputeInput } from '../../../../lib/ephemeris/adapter';
-import type { NatalInput, NatalResult } from '../../../../lib/api/natal';
+import { getEphemerisAdapter, signFromLongitude } from '@/lib/ephemeris/adapter';
+import { safeTzLookup } from '@/lib/geocode';
+import type { ComputeInput } from '@/lib/ephemeris/adapter';
+import type { NatalInput, NatalResult } from '@/lib/api/natal';
 import { DateTime } from 'luxon';
 
 export const runtime = 'nodejs';

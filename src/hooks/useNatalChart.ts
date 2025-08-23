@@ -1,7 +1,7 @@
 // Хук для работы с натальной картой
 
 import { useState, useEffect, useCallback } from 'react';
-import type { BirthData, ChartData } from '../../lib/astro/types';
+import type { BirthData, ChartData } from '@/lib/astro/types';
 
 export function useNatalChart() {
   const [chartData, setChartData] = useState<ChartData | null>(null);
