@@ -1,7 +1,15 @@
 'use client';
 
 import { useState, useEffect, useCallback } from 'react';
-import { useTelegram } from '@/hooks/useTelegram';
+import { useTelegram } from './useTelegram';
+
+interface ChartInputData {
+  [key: string]: unknown;
+}
+
+interface ChartData {
+  [key: string]: unknown;
+}
 
 interface NatalChart {
   id: string;
@@ -9,8 +17,8 @@ interface NatalChart {
   title?: string;
   description?: string;
   pinned: boolean;
-  inputData: any;
-  chartData: any;
+  inputData: ChartInputData;
+  chartData: ChartData;
   timeUnknown: boolean;
   houseSystem: string;
   createdAt: string;
@@ -67,8 +75,8 @@ export function useSupabaseCharts() {
   const createChart = async (chartData: {
     title?: string;
     description?: string;
-    inputData: any;
-    chartData: any;
+    inputData: ChartInputData;
+    chartData: ChartData;
     timeUnknown?: boolean;
     houseSystem?: string;
   }) => {

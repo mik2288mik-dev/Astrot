@@ -1,7 +1,7 @@
 'use client'
 
 import React, { useState, useEffect } from 'react'
-import { User, Bell, Moon, Globe, Shield, LogOut, ChevronRight, Star, Heart, Zap, Settings } from 'lucide-react'
+import { MapPin, Calendar, Clock, Settings, ChevronRight, Sparkles, Star } from 'lucide-react'
 
 interface UserProfile {
   name: string
@@ -69,7 +69,7 @@ export default function ProfilePage() {
 
   const menuItems = [
     {
-      icon: <Bell className="w-5 h-5" />,
+      icon: <Sparkles className="w-5 h-5" />,
       title: 'Уведомления',
       description: 'Получать прогнозы',
       toggle: true,
@@ -77,7 +77,7 @@ export default function ProfilePage() {
       color: 'text-purple-500'
     },
     {
-      icon: <Moon className="w-5 h-5" />,
+      icon: <Star className="w-5 h-5" />,
       title: 'Тёмная тема',
       description: 'Ночной режим',
       toggle: true,
@@ -85,14 +85,14 @@ export default function ProfilePage() {
       color: 'text-blue-500'
     },
     {
-      icon: <Globe className="w-5 h-5" />,
+      icon: <MapPin className="w-5 h-5" />,
       title: 'Язык',
       description: 'Русский',
       arrow: true,
       color: 'text-green-500'
     },
     {
-      icon: <Shield className="w-5 h-5" />,
+      icon: <Settings className="w-5 h-5" />,
       title: 'Конфиденциальность',
       description: 'Настройки приватности',
       arrow: true,
@@ -187,7 +187,7 @@ export default function ProfilePage() {
         {/* Настройки */}
         <div className="bg-white/90 backdrop-blur-sm rounded-3xl p-6 shadow-xl border border-white/50 mb-6">
           <h3 className="font-bold text-gray-800 mb-4 flex items-center gap-2">
-            <Zap className="w-5 h-5 text-yellow-500" />
+            <Sparkles className="w-5 h-5 text-yellow-500" />
             Настройки
           </h3>
           
@@ -256,7 +256,7 @@ export default function ProfilePage() {
           onClick={handleLogout}
           className="w-full p-4 bg-red-50 rounded-2xl flex items-center justify-center gap-2 text-red-600 font-medium hover:bg-red-100 transition-colors"
         >
-          <LogOut className="w-5 h-5" />
+          <Settings className="w-5 h-5" />
           Выйти из аккаунта
         </button>
 

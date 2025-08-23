@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { ArrowPathIcon } from '@heroicons/react/24/outline';
 
 interface FriendlyTip {
@@ -21,14 +21,10 @@ export default function FriendlyCard({ tgId, className = '' }: FriendlyCardProps
   const [error, setError] = useState<string | null>(null);
   const [refreshing, setRefreshing] = useState(false);
 
-  const loadTips = async (showLoading = true) => {
-    if (showLoading) {
-      setLoading(true);
-    } else {
-      setRefreshing(true);
-    }
+  const loadTips = useCallback(async () => {
+    setLoading(true);
     setError(null);
-
+    
     try {
       const response = await fetch('/api/interpret/friendly', {
         method: 'POST',
@@ -75,11 +71,11 @@ export default function FriendlyCard({ tgId, className = '' }: FriendlyCardProps
       setLoading(false);
       setRefreshing(false);
     }
-  };
+  }, [tgId]);
 
   useEffect(() => {
     loadTips();
-  }, [tgId]);
+  }, [tgId, loadTips]);
 
   const handleRefresh = () => {
     if (refreshing) return;

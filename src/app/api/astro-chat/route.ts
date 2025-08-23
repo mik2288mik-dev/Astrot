@@ -12,7 +12,7 @@ export async function POST(req: Request) {
     const { messages, natal } = await req.json(); // messages: [{role,content}...]
     
     // Берем последнее сообщение пользователя для проверки
-    const lastUserMessage = messages?.findLast?.((m: any) => m.role === 'user')?.content || '';
+    const lastUserMessage = messages?.findLast?.((m: { role: string; content: string }) => m.role === 'user')?.content || '';
     
     // Проверяем через гвард - разрешена ли тема
     const g = isAllowed(lastUserMessage);

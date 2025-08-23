@@ -18,18 +18,6 @@ const RequestSchema = z.object({
   date: z.string().optional(), // формат YYYY-MM-DD, по умолчанию сегодня
 });
 
-const ResponseSchema = z.object({
-  success: z.boolean(),
-  tips: z.array(z.object({
-    id: z.string(),
-    text: z.string(),
-    emoji: z.string().optional(),
-    category: z.string().optional(),
-  })),
-  date: z.string(),
-  cached: z.boolean().optional(),
-});
-
 export async function POST(req: NextRequest) {
   try {
     const body = await req.json();
@@ -77,7 +65,19 @@ export async function POST(req: NextRequest) {
   }
 }
 
-async function generateFriendlyTips(birth?: any, date?: string): Promise<Array<{
+interface BirthData {
+  year?: number;
+  month?: number;
+  day?: number;
+  hour?: number;
+  minute?: number;
+  lat?: number;
+  lon?: number;
+  tz?: string;
+  place?: string;
+}
+
+async function generateFriendlyTips(birth?: BirthData, date?: string): Promise<Array<{
   id: string;
   text: string;
   emoji?: string;

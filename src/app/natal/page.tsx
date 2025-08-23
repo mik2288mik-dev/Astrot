@@ -1,6 +1,6 @@
 'use client'
 
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, useCallback } from 'react'
 import { Calendar, Clock, MapPin, User, Sparkles, Star, Moon, Sun, Heart } from 'lucide-react'
 
 interface FormData {
@@ -45,28 +45,7 @@ export default function NatalPage() {
   const [chartData, setChartData] = useState<ChartData | null>(null)
   const [isLoading, setIsLoading] = useState(false)
 
-  // Загружаем сохраненные данные при монтировании
-  useEffect(() => {
-    const savedData = localStorage.getItem('natalFormData')
-    if (savedData) {
-      const parsed = JSON.parse(savedData)
-      setFormData(parsed)
-      if (parsed.name && parsed.birthDate && parsed.birthPlace) {
-        handleGenerateChart(parsed)
-      }
-    }
-  }, [])
-
-  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const { name, value, type, checked } = e.target
-    const newData = {
-      ...formData,
-      [name]: type === 'checkbox' ? checked : value
-    }
-    setFormData(newData)
-  }
-
-  const handleGenerateChart = async (data?: FormData) => {
+  const handleGenerateChart = useCallback(async (data?: FormData) => {
     const dataToUse = data || formData
     
     // Сохраняем данные в localStorage
@@ -101,6 +80,27 @@ export default function NatalPage() {
       setShowChart(true)
       setIsLoading(false)
     }, 2000)
+  }, [formData])
+
+  // Загружаем сохраненные данные при монтировании
+  useEffect(() => {
+    const savedData = localStorage.getItem('natalFormData')
+    if (savedData) {
+      const parsed = JSON.parse(savedData)
+      setFormData(parsed)
+      if (parsed.name && parsed.birthDate && parsed.birthPlace) {
+        handleGenerateChart(parsed)
+      }
+    }
+  }, [handleGenerateChart])
+
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const { name, value, type, checked } = e.target
+    const newData = {
+      ...formData,
+      [name]: type === 'checkbox' ? checked : value
+    }
+    setFormData(newData)
   }
 
   const handleSubmit = (e: React.FormEvent) => {

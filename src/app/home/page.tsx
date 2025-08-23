@@ -2,14 +2,14 @@
 
 import React from 'react'
 import { useRouter } from 'next/navigation'
-import { Calendar, Moon, Star, Sparkles, Heart, Briefcase, Brain, TrendingUp, Zap, Sun } from 'lucide-react'
+import { Stars, Moon, Sun, Sparkles, ChevronRight } from 'lucide-react'
 
 export default function HomePage() {
   const router = useRouter()
 
   const quickActions = [
     {
-      icon: <Star className="w-6 h-6" />,
+      icon: <Stars className="w-6 h-6" />,
       title: 'Гороскоп дня',
       description: 'Узнай, что готовят звёзды',
       gradient: 'from-purple-400 to-pink-400',
@@ -23,14 +23,6 @@ export default function HomePage() {
       gradient: 'from-blue-400 to-cyan-400',
       shadow: 'shadow-blue-200',
       onClick: () => router.push('/calendar')
-    },
-    {
-      icon: <Heart className="w-6 h-6" />,
-      title: 'Совместимость',
-      description: 'Проверь вашу пару',
-      gradient: 'from-pink-400 to-red-400',
-      shadow: 'shadow-pink-200',
-      onClick: () => router.push('/compat')
     },
     {
       icon: <Sparkles className="w-6 h-6" />,
@@ -118,7 +110,7 @@ export default function HomePage() {
         {/* Быстрые инсайты */}
         <div className="mb-6">
           <h3 className="text-lg font-bold text-gray-800 mb-3 flex items-center gap-2">
-            <Zap className="w-5 h-5 text-yellow-500" />
+            <ChevronRight className="w-5 h-5 text-yellow-500" />
             Сферы жизни
           </h3>
           <div className="grid grid-cols-2 gap-3">
@@ -140,7 +132,7 @@ export default function HomePage() {
         {/* Быстрые действия */}
         <div className="mb-6">
           <h3 className="text-lg font-bold text-gray-800 mb-3 flex items-center gap-2">
-            <Star className="w-5 h-5 text-purple-500" />
+            <Stars className="w-5 h-5 text-purple-500" />
             Исследуй магию
           </h3>
           <div className="grid grid-cols-2 gap-4">

@@ -34,17 +34,25 @@ type PlanetData = {
   house?: number;
 };
 
-type Props = {
+interface AspectData {
+  p1: string;
+  p2: string;
+  type: string;
+  angle: number;
+  orb?: number;
+}
+
+type NatalWheelProps = {
   data: {
     planets: Array<{ id: string; lon: number; speed?: number }>;
     houses?: Array<{ index: number; lon: number }>;
-    aspects?: Array<any>;
+    aspects?: Array<AspectData>;
   };
   size?: number;
   onPlanetClick?: (planet: PlanetData) => void;
 };
 
-export default function CartoonNatalWheel({ data, size = 320, onPlanetClick }: Props) {
+export default function CartoonNatalWheel({ data, size = 320, onPlanetClick }: NatalWheelProps) {
   const [selectedPlanet, setSelectedPlanet] = useState<string | null>(null);
   const [rotation, setRotation] = useState(0);
   const [isDragging, setIsDragging] = useState(false);

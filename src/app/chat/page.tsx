@@ -139,7 +139,7 @@ export default function ChatPage() {
 
   return (
     <main className="safe-page px-4 pb-24">
-      <div className="page animate-fadeIn min-h-[calc(100vh-140px)] flex flex-col bg-gradient-to-b from-neutral-50 to-white" style={{ ['--page-top' as any]: 'calc(var(--safe-top) + 32px)' }}>
+      <div className="page animate-fadeIn min-h-[calc(100vh-140px)] flex flex-col bg-gradient-to-b from-neutral-50 to-white" style={{ '--page-top': 'calc(var(--safe-top) + 32px)' } as React.CSSProperties}>
       {/* Header */}
       <div className="bg-white border-b border-neutral-100 py-3 flex items-center gap-3">
         <div className="w-10 h-10 bg-gradient-to-br from-primary-400 to-primary-600 rounded-full flex items-center justify-center">
