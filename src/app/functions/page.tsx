@@ -1,7 +1,6 @@
 'use client';
 
 import React, { useState } from 'react';
-import FunctionCard, { FunctionGrid } from '@/components/FunctionCard';
 import { useTelegram } from '@/hooks/useTelegram';
 import {
   CalendarDaysIcon,

@@ -1,31 +1,25 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { useRouter } from 'next/navigation';
 import ProfileForm from '@/components/profile/ProfileForm';
 import { useTelegramUser, useTelegram } from '@/hooks/useTelegram';
 import { ProfileFormData, ProfileResponse } from '@/types/profile';
+import { useSearchParams } from 'next/navigation';
 
 export default function ProfileFormPage() {
   const router = useRouter();
-  const { userId, fullName } = useTelegramUser();
+  const searchParams = useSearchParams();
+  const { userId } = useTelegramUser();
   const { hapticFeedback } = useTelegram();
+  const tgId = searchParams.get('tgId') || userId;
   const [loading, setLoading] = useState(false);
-  const [initialData, setInitialData] = useState<Partial<ProfileFormData> | undefined>();
+  const [initialData, setInitialData] = useState<ProfileFormData | null>(null);
   const [loadingProfile, setLoadingProfile] = useState(true);
 
-  // Load existing profile on mount
-  useEffect(() => {
-    if (userId) {
-      loadExistingProfile();
-    } else {
-      setLoadingProfile(false);
-    }
-  }, [userId]);
-
-  const loadExistingProfile = async () => {
+  const loadExistingProfile = useCallback(async () => {
     try {
-      const res = await fetch(`/api/profile?tgId=${userId}`);
+      const res = await fetch(`/api/profile?tgId=${tgId}`);
       if (res.ok) {
         const data: ProfileResponse = await res.json();
         if (data.profile) {
@@ -44,10 +38,19 @@ export default function ProfileFormPage() {
     } finally {
       setLoadingProfile(false);
     }
-  };
+  }, [tgId]);
+
+  // Load existing profile on mount
+  useEffect(() => {
+    if (tgId) {
+      loadExistingProfile();
+    } else {
+      setLoadingProfile(false);
+    }
+  }, [tgId, loadExistingProfile]);
 
   const handleSubmit = async (formData: ProfileFormData) => {
-    if (!userId) {
+    if (!tgId) {
       hapticFeedback('notification', 'error');
       return;
     }
@@ -57,7 +60,7 @@ export default function ProfileFormPage() {
     try {
       // Prepare data for API
       const profileData = {
-        tgId: userId,
+        tgId: tgId,
         name: formData.name,
         birthDate: formData.birthDate,
         birthTime: formData.unknownTime ? undefined : formData.birthTime,
@@ -113,7 +116,7 @@ export default function ProfileFormPage() {
   }
 
   return (
-    <div className="page animate-fadeIn min-h-[calc(100vh-140px)]" style={{ ['--page-top' as any]: 'calc(var(--safe-top) + 32px)' }}>
+    <div className="page animate-fadeIn min-h-[calc(100vh-140px)]" style={{ '--page-top': 'calc(var(--safe-top) + 32px)' } as React.CSSProperties}>
       <div className="mb-6">
         <h1 className="text-2xl font-bold text-neutral-900 mb-2">
           {initialData ? 'Редактировать профиль' : 'Создать профиль'}

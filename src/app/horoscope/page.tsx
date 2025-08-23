@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useEffect, useState } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { useSearchParams } from 'next/navigation';
 import { useTelegramUser } from '@/hooks/useTelegram';
 import { getActiveChart } from '../../../lib/birth/storage';
@@ -59,46 +59,56 @@ export default function HoroscopePage() {
     setActiveChart(chart);
   }, []);
 
-  useEffect(() => {
-    if (effectiveTgId || activeChart) {
-      loadHoroscope();
-    }
-  }, [effectiveTgId, activeChart]);
-
-  const loadHoroscope = async () => {
+  const loadHoroscope = useCallback(async () => {
     setLoading(true);
     setError(null);
     
     try {
-      const response = await fetch('/api/horoscope/full', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          birth: activeChart?.input,
-          tgId: effectiveTgId,
-          userId: effectiveTgId
-        })
-      });
+      const requestData: any = {};
       
-      // Сохраняем debug-id для отображения при ошибке
-      const debugIdHeader = response.headers.get('x-debug-id');
-      if (debugIdHeader) {
-        setDebugId(debugIdHeader);
+      if (activeChart) {
+        // Используем данные из выбранной карты
+        const birthDate = new Date(activeChart.inputData.date);
+        requestData.birth = {
+          date: birthDate.toISOString().split('T')[0],
+          time: activeChart.inputData.time,
+          tzOffset: activeChart.inputData.tzOffset,
+          lat: activeChart.inputData.lat,
+          lon: activeChart.inputData.lon,
+          houseSystem: activeChart.houseSystem
+        };
+      } else if (effectiveTgId) {
+        // Используем tgId для получения данных профиля
+        requestData.tgId = effectiveTgId;
       }
       
+      const response = await fetch('/api/horoscope/full', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(requestData)
+      });
+      
       if (!response.ok) {
-        const errorData = await response.json();
-        throw new Error(errorData.error || 'Ошибка загрузки гороскопа');
+        throw new Error('Failed to load horoscope');
       }
       
       const data = await response.json();
       setHoroscope(data);
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Неизвестная ошибка');
+      console.error('Error loading horoscope:', err);
+      setError('Не удалось загрузить гороскоп. Попробуйте позже.');
     } finally {
       setLoading(false);
     }
-  };
+  }, [activeChart, effectiveTgId]);
+
+  useEffect(() => {
+    if (effectiveTgId || activeChart) {
+      loadHoroscope();
+    }
+  }, [effectiveTgId, activeChart, loadHoroscope]);
 
   const shareHoroscope = () => {
     if (!horoscope) return;

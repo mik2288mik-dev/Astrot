@@ -9,7 +9,11 @@ import { MOCK_HOROSCOPE } from '@/lib/api/mocks';
 import { composeFriendly } from '@/lib/text/composeFriendly';
 
 // Простой кеш в памяти для разработки
-const cache = new Map<string, { data: any; expires: number }>();
+interface CacheEntry {
+  data: unknown;
+  expires: number;
+}
+const cache = new Map<string, CacheEntry>();
 
 export const dynamic = 'force-dynamic';
 
@@ -38,7 +42,7 @@ function getCachedData(key: string) {
   return null;
 }
 
-function setCachedData(key: string, data: any, ttlHours = 6) {
+function setCachedData(key: string, data: unknown, ttlHours = 6) {
   const expires = Date.now() + (ttlHours * 60 * 60 * 1000);
   cache.set(key, { data, expires });
 }

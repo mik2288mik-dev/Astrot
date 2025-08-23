@@ -57,7 +57,7 @@ export function HousesLayer({
     };
   });
 
-  const handleHouseClick = (houseData: any, event: React.MouseEvent) => {
+  const handleHouseClick = (houseData: { houseNumber: number; lon?: number }, event: React.MouseEvent) => {
     event.stopPropagation();
     onSelect({
       kind: 'house',

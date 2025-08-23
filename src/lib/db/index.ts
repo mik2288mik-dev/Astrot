@@ -14,29 +14,72 @@ if (process.env.NODE_ENV !== 'production') {
   globalForPrisma.prisma = prisma
 }
 
-// Supabase Client
-// Allow using SUPABASE_URL as a fallback so production builds work even when
-// only server-side env vars are configured. Throw a clear error if neither is
-// provided.
-const supabaseUrl =
-  process.env.NEXT_PUBLIC_SUPABASE_URL || process.env.SUPABASE_URL
+// Supabase Client - Lazy initialization to handle build-time missing env vars
+let supabaseInstance: ReturnType<typeof createClient> | null = null
+let supabaseAdminInstance: ReturnType<typeof createClient> | null = null
 
-if (!supabaseUrl) {
-  throw new Error(
-    'Supabase URL is required. Set NEXT_PUBLIC_SUPABASE_URL or SUPABASE_URL.'
-  )
+function getSupabaseUrl(): string {
+  const url = process.env.NEXT_PUBLIC_SUPABASE_URL || process.env.SUPABASE_URL
+  if (!url) {
+    // During build time, we might not have env vars, return a dummy URL
+    if (process.env.NODE_ENV === 'production' && !process.env.VERCEL) {
+      throw new Error(
+        'Supabase URL is required. Set NEXT_PUBLIC_SUPABASE_URL or SUPABASE_URL.'
+      )
+    }
+    // Return a dummy URL for build time
+    return 'https://placeholder.supabase.co'
+  }
+  return url
 }
 
-const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
-const supabaseServiceKey = process.env.SUPABASE_SERVICE_ROLE_KEY!
+function getSupabaseAnonKey(): string {
+  const key = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
+  if (!key) {
+    // During build time, we might not have env vars, return a dummy key
+    if (process.env.NODE_ENV === 'production' && !process.env.VERCEL) {
+      throw new Error('Supabase Anon Key is required. Set NEXT_PUBLIC_SUPABASE_ANON_KEY.')
+    }
+    // Return a dummy key for build time
+    return 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.placeholder'
+  }
+  return key
+}
+
+function getSupabaseServiceKey(): string {
+  const key = process.env.SUPABASE_SERVICE_ROLE_KEY
+  if (!key) {
+    // During build time, we might not have env vars, return a dummy key
+    if (process.env.NODE_ENV === 'production' && !process.env.VERCEL) {
+      throw new Error('Supabase Service Role Key is required. Set SUPABASE_SERVICE_ROLE_KEY.')
+    }
+    // Return a dummy key for build time
+    return 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.placeholder'
+  }
+  return key
+}
 
 // Публичный клиент для клиентской части
-export const supabase = createClient(supabaseUrl, supabaseAnonKey)
+export const supabase = (() => {
+  if (!supabaseInstance) {
+    const url = getSupabaseUrl()
+    const key = getSupabaseAnonKey()
+    supabaseInstance = createClient(url, key)
+  }
+  return supabaseInstance
+})()
 
 // Сервисный клиент для серверной части (с полными правами)
-export const supabaseAdmin = createClient(supabaseUrl, supabaseServiceKey, {
-  auth: {
-    autoRefreshToken: false,
-    persistSession: false
+export const supabaseAdmin = (() => {
+  if (!supabaseAdminInstance) {
+    const url = getSupabaseUrl()
+    const key = getSupabaseServiceKey()
+    supabaseAdminInstance = createClient(url, key, {
+      auth: {
+        autoRefreshToken: false,
+        persistSession: false
+      }
+    })
   }
-})
+  return supabaseAdminInstance
+})()
