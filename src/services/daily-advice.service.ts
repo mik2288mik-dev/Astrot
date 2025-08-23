@@ -2,7 +2,8 @@ import { supabase, handleSupabaseError } from '@/lib/supabase'
 import type { 
   DailyAdvice, 
   DailyAdviceInsert,
-  AstroContext 
+  AstroContext,
+  Json
 } from '@/types/database'
 
 export class DailyAdviceService {
@@ -108,12 +109,12 @@ export class DailyAdviceService {
         profile_id: profileId,
         date: today,
         advice_text: adviceText,
-        astro_context: astroContext as any
+        astro_context: astroContext ? (astroContext as unknown as Json) : undefined
       }
 
       const { data: advice, error } = await supabase
         .from('daily_advice')
-        .upsert(insertData, {
+        .upsert([insertData], {
           onConflict: 'profile_id,date'
         })
         .select()
@@ -175,7 +176,7 @@ export class DailyAdviceService {
   static getParsedAstroContext(advice: DailyAdvice): AstroContext | null {
     try {
       if (!advice.astro_context) return null
-      return advice.astro_context as AstroContext
+      return advice.astro_context as unknown as AstroContext
     } catch (error) {
       console.error('Error parsing astro context:', error)
       return null
@@ -207,8 +208,8 @@ export class DailyAdviceService {
 
       return {
         totalAdvice: adviceList.length,
-        firstAdviceDate: adviceList[0].date,
-        lastAdviceDate: adviceList[adviceList.length - 1].date
+        firstAdviceDate: adviceList[0]?.date || null,
+        lastAdviceDate: adviceList[adviceList.length - 1]?.date || null
       }
     } catch (error) {
       console.error('Unexpected error in getAdviceStats:', error)

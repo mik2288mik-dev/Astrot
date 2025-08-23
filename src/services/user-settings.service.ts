@@ -48,7 +48,7 @@ export class UserSettingsService {
 
       const { data: settings, error } = await supabase
         .from('user_settings')
-        .insert(defaultSettings)
+        .insert([defaultSettings])
         .select()
         .single()
 

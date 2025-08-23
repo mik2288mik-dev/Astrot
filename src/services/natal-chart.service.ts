@@ -2,7 +2,6 @@ import { supabase, handleSupabaseError } from '@/lib/supabase'
 import type { 
   NatalChart, 
   NatalChartInsert, 
-  NatalChartUpdate,
   NatalChartData 
 } from '@/types/database'
 
@@ -41,7 +40,7 @@ export class NatalChartService {
     try {
       const { data: chart, error } = await supabase
         .from('natal_charts')
-        .upsert(data, {
+        .upsert([data], {
           onConflict: 'profile_id'
         })
         .select()
@@ -108,7 +107,7 @@ export class NatalChartService {
   static getParsedChartData(chart: NatalChart): NatalChartData | null {
     try {
       if (!chart.full_data) return null
-      return chart.full_data as NatalChartData
+      return chart.full_data as unknown as NatalChartData
     } catch (error) {
       console.error('Error parsing chart data:', error)
       return null
