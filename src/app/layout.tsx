@@ -9,8 +9,8 @@ import { TelegramProvider } from '@/providers/telegram-provider';
 import { TelegramViewportProvider } from '@/providers/telegram-viewport';
 import { ThemeProvider } from '@/providers/ThemeProvider';
 import SafeArea, { SafeAreaInit } from '@/components/layout/SafeArea';
-import TopBar from '@/components/top/TopBar';
-import BottomNav from '@/components/navigation/BottomNav';
+import TopBar from '@/components/layout/TopBar';
+import BottomNav from '@/components/layout/BottomNav';
 import { Rubik, Manrope } from 'next/font/google';
 
 const rubik = Rubik({ 

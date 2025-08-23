@@ -115,7 +115,6 @@ export function TelegramProvider({ children }: { children: React.ReactNode }) {
           }
         } else {
           // Fallback для разработки
-          console.log('Running outside Telegram WebApp');
           applyBrandTheme('dark', {});
         }
         

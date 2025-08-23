@@ -134,8 +134,7 @@ export async function migrateToSupabase(initData: string): Promise<MigrationResu
     
     result.success = result.errors.length === 0;
     
-    // Логируем результат
-    console.log('Migration completed:', result);
+    // Миграция завершена
     
   } catch (err) {
     console.error('Migration failed:', err);
@@ -182,7 +181,7 @@ export function useMigration(initData: string | undefined) {
         
         // Показываем уведомление пользователю
         if (result.success) {
-          console.log(`✅ Миграция завершена успешно! Перенесено ${result.migratedCharts} карт.`);
+          // Миграция завершена успешно
         } else {
           console.error('⚠️ Миграция завершена с ошибками:', result.errors);
         }

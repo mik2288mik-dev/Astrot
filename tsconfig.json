@@ -19,12 +19,14 @@
       "@/*": ["src/*"],
       "@/app/*": ["src/app/*"],
       "@/components/*": ["src/components/*"],
-      "@/lib/*": ["lib/*", "src/lib/*"],
+      "@/lib/*": ["src/lib/*"],
       "@/providers/*": ["src/providers/*"],
       "@/shared/*": ["src/shared/*"],
       "@/config/*": ["src/config/*"],
-      "@/types/*": ["types/*", "src/types/*"],
-      "@/styles/*": ["src/styles/*"]
+      "@/types/*": ["src/types/*"],
+      "@/styles/*": ["src/styles/*"],
+      "@/services/*": ["src/services/*"],
+      "@/hooks/*": ["src/hooks/*"]
     },
     "plugins": [{ "name": "next" }],
     "esModuleInterop": true
@@ -33,13 +35,7 @@
     "next-env.d.ts",
     "src/**/*.ts",
     "src/**/*.tsx",
-    "lib/**/*.ts",
-    ".next/types/**/*.ts",
-    "__tests__/**/*.ts",
-    "__tests__/**/*.tsx",
-    "types/**/*.d.ts",
-    "types/**/*.ts",
-    "styles/**/*.ts"
+    ".next/types/**/*.ts"
   ],
   "exclude": ["node_modules"]
 }

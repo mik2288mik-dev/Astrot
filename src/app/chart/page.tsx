@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState } from 'react';
-import NatalChartForm, { NatalFormData } from '@/components/NatalChartForm';
+import NatalChartForm, { NatalFormData } from '@/components/features/NatalChartForm';
 
 export default function ChartPage() {
   const [submitted, setSubmitted] = useState<NatalFormData | null>(null);
