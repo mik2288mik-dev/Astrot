@@ -14,7 +14,7 @@ export class ProfileService {
     try {
       const { data: profile, error } = await supabase
         .from('profiles')
-        .upsert(data, {
+        .upsert([data], {
           onConflict: 'telegram_id',
           ignoreDuplicates: false
         })
