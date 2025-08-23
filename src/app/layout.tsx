@@ -8,7 +8,7 @@ import '@/styles/safe.css';
 import { TelegramProvider } from '@/providers/telegram-provider';
 import { TelegramViewportProvider } from '@/providers/telegram-viewport';
 import { ThemeProvider } from '@/providers/ThemeProvider';
-import SafeArea from '@/components/layout/SafeArea';
+import SafeArea, { SafeAreaInit } from '@/components/layout/SafeArea';
 import TopBar from '@/components/top/TopBar';
 import BottomNav from '@/components/navigation/BottomNav';
 import { Rubik, Manrope } from 'next/font/google';
@@ -56,6 +56,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <Script src="https://telegram.org/js/telegram-web-app.js" strategy="beforeInteractive" />
       </head>
       <body className={`${rubik.variable} ${manrope.variable} font-rubik min-h-screen bg-gradient-to-b from-[#FFF6FB] to-[#FBEFFF]`}>
+        <SafeAreaInit />
         <TelegramProvider>
           <TelegramViewportProvider>
             <ThemeProvider>

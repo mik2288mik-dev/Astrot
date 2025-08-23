@@ -45,6 +45,7 @@
   },
   "devDependencies": {
     "@playwright/test": "^1.54.2",
+    "@twa-dev/types": "^8.0.2",
     "@types/jest": "^29.5.12",
     "@types/luxon": "^3.7.1",
     "@types/node": "20.14.10",

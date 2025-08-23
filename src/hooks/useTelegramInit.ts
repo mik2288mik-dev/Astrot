@@ -1,35 +1,10 @@
 'use client';
 
 import { useEffect } from 'react';
+import type { WebApp } from '@twa-dev/types';
 
-declare global {
-  interface Window {
-    Telegram?: {
-      WebApp: {
-        ready: () => void;
-        expand: () => void;
-        disableVerticalSwipes?: () => void;
-        enableVerticalSwipes?: () => void;
-        isVerticalSwipesEnabled?: boolean;
-        version: string;
-        platform: string;
-        isVersionAtLeast: (version: string) => boolean;
-        setHeaderColor: (color: string) => void;
-        setBackgroundColor: (color: string) => void;
-        initDataUnsafe?: {
-          user?: {
-            id: number;
-            first_name: string;
-            last_name?: string;
-            username?: string;
-            photo_url?: string;
-            language_code?: string;
-          };
-        };
-      };
-    };
-  }
-}
+// Типы уже определены в useTelegram.ts и SafeArea.tsx
+// Не нужно дублировать declare global здесь
 
 /**
  * Хук для инициализации Telegram Mini App с правильными настройками
@@ -40,7 +15,7 @@ export function useTelegramInit() {
     if (typeof window === 'undefined') return;
     
     const initTelegram = () => {
-      const tg = window.Telegram?.WebApp;
+      const tg = (window as any).Telegram?.WebApp as WebApp | undefined;
       if (!tg) {
         console.warn('Telegram WebApp не найден');
         return;
@@ -51,9 +26,9 @@ export function useTelegramInit() {
       tg.expand();
       
       // Отключаем вертикальные свайпы (Bot API 7.7+)
-      if (tg.disableVerticalSwipes) {
+      if ('disableVerticalSwipes' in tg && typeof (tg as any).disableVerticalSwipes === 'function') {
         try {
-          tg.disableVerticalSwipes();
+          (tg as any).disableVerticalSwipes();
           console.log('✅ Вертикальные свайпы отключены');
         } catch (error) {
           console.error('Ошибка при отключении свайпов:', error);
@@ -73,12 +48,12 @@ export function useTelegramInit() {
         version: tg.version,
         platform: tg.platform,
         user: tg.initDataUnsafe?.user,
-        verticalSwipesDisabled: !tg.isVerticalSwipesEnabled
+        verticalSwipesDisabled: 'isVerticalSwipesEnabled' in tg ? !(tg as any).isVerticalSwipesEnabled : undefined
       });
     };
 
     // Пробуем инициализировать сразу
-    if (window.Telegram?.WebApp) {
+    if ((window as any).Telegram?.WebApp) {
       initTelegram();
     } else {
       // Если Telegram еще не загружен, ждем немного

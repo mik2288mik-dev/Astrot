@@ -1,6 +1,7 @@
 'use client';
 
 import { useEffect, useState } from 'react';
+import type { WebApp } from '@twa-dev/types';
 
 interface TelegramUser {
   id: number;
@@ -13,87 +14,13 @@ interface TelegramUser {
   is_premium?: boolean;
 }
 
-interface WebApp {
-  ready: () => void;
-  expand: () => void;
-  close: () => void;
-  enableClosingConfirmation: () => void;
-  disableClosingConfirmation: () => void;
-  isExpanded: boolean;
-  viewportHeight: number;
-  viewportStableHeight: number;
-  headerColor: string;
-  backgroundColor: string;
-  isClosingConfirmationEnabled: boolean;
-  BackButton: {
-    show: () => void;
-    hide: () => void;
-    onClick: (callback: () => void) => void;
-    offClick: (callback: () => void) => void;
-    isVisible: boolean;
-  };
-  MainButton: {
-    text: string;
-    color: string;
-    textColor: string;
-    isVisible: boolean;
-    isActive: boolean;
-    isProgressVisible: boolean;
-    setText: (text: string) => void;
-    onClick: (callback: () => void) => void;
-    offClick: (callback: () => void) => void;
-    show: () => void;
-    hide: () => void;
-    enable: () => void;
-    disable: () => void;
-    showProgress: (leaveActive?: boolean) => void;
-    hideProgress: () => void;
-  };
-  HapticFeedback: {
-    impactOccurred: (style: 'light' | 'medium' | 'heavy' | 'rigid' | 'soft') => void;
-    notificationOccurred: (type: 'error' | 'success' | 'warning') => void;
-    selectionChanged: () => void;
-  };
-  initData: string;
-  initDataUnsafe: {
-    query_id?: string;
-    user?: TelegramUser;
-    receiver?: TelegramUser;
-    chat?: object;
-    start_param?: string;
-    can_send_after?: number;
-    auth_date: number;
-    hash: string;
-  };
-  version: string;
-  platform: string;
-  colorScheme: 'light' | 'dark';
-  themeParams: {
-    bg_color?: string;
-    text_color?: string;
-    hint_color?: string;
-    link_color?: string;
-    button_color?: string;
-    button_text_color?: string;
-    secondary_bg_color?: string;
-  };
-  isVersionAtLeast: (version: string) => boolean;
-  setHeaderColor: (color: 'bg_color' | 'secondary_bg_color' | string) => void;
-  setBackgroundColor: (color: 'bg_color' | 'secondary_bg_color' | string) => void;
-  openLink: (url: string, options?: { try_instant_view?: boolean }) => void;
-  showPopup: (params: {
-    title?: string;
-    message: string;
-    buttons?: Array<{ id?: string; type?: 'default' | 'ok' | 'close' | 'cancel' | 'destructive'; text?: string }>;
-  }, callback?: (buttonId: string) => void) => void;
-  showAlert: (message: string, callback?: () => void) => void;
-  showConfirm: (message: string, callback?: (confirmed: boolean) => void) => void;
-  showScanQrPopup: (params?: { text?: string }, callback?: (text: string) => void) => void;
-  closeScanQrPopup: () => void;
-  readTextFromClipboard: (callback?: (text: string) => void) => void;
-  requestWriteAccess: (callback?: (granted: boolean) => void) => void;
-  requestContact: (callback?: (shared: boolean) => void) => void;
-  invokeCustomMethod: (method: string, params?: object, callback?: (result: unknown) => void) => void;
+// Расширяем window для Telegram
+declare global {
+  interface Window {
+    Telegram?: {
+      WebApp: WebApp;
+    };
+  }
 }
 
 export function useTelegram() {
@@ -114,7 +41,7 @@ export function useTelegram() {
       tg.setBackgroundColor('#FAFAFA');
       
       setWebApp(tg);
-      setUser(tg.initDataUnsafe?.user || null);
+      setUser(tg.initDataUnsafe?.user as TelegramUser || null);
       setIsReady(true);
       
       // Логирование для отладки
@@ -128,7 +55,7 @@ export function useTelegram() {
   }, []);
 
   const showMainButton = (text: string, onClick: () => void) => {
-    if (webApp) {
+    if (webApp?.MainButton) {
       webApp.MainButton.setText(text);
       webApp.MainButton.onClick(onClick);
       webApp.MainButton.show();
@@ -136,20 +63,20 @@ export function useTelegram() {
   };
 
   const hideMainButton = () => {
-    if (webApp) {
+    if (webApp?.MainButton) {
       webApp.MainButton.hide();
     }
   };
 
   const showBackButton = (onClick: () => void) => {
-    if (webApp) {
+    if (webApp?.BackButton) {
       webApp.BackButton.onClick(onClick);
       webApp.BackButton.show();
     }
   };
 
   const hideBackButton = () => {
-    if (webApp) {
+    if (webApp?.BackButton) {
       webApp.BackButton.hide();
     }
   };
@@ -167,7 +94,7 @@ export function useTelegram() {
   };
 
   const showAlert = (message: string, callback?: () => void) => {
-    if (webApp) {
+    if (webApp?.showAlert) {
       webApp.showAlert(message, callback);
     } else {
       alert(message);
@@ -176,7 +103,7 @@ export function useTelegram() {
   };
 
   const showConfirm = (message: string, callback?: (confirmed: boolean) => void) => {
-    if (webApp) {
+    if (webApp?.showConfirm) {
       webApp.showConfirm(message, callback);
     } else {
       const confirmed = confirm(message);
