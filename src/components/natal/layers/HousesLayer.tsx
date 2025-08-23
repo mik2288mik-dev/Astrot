@@ -124,7 +124,7 @@ export function HousesLayer({
               fill={houseColor}
               stroke="transparent"
               className="cursor-pointer hover:fill-purple-50 transition-all duration-200"
-              onClick={(e) => handleHouseClick({ houseNumber, cusp, meaning }, e)}
+              onClick={(e) => handleHouseClick({ houseNumber, lon: cusp.degree }, e)}
             />
             
             {/* Линия куспида */}
@@ -136,7 +136,7 @@ export function HousesLayer({
               stroke={strokeColor}
               strokeWidth={houseNumber === 1 || houseNumber === 7 || houseNumber === 4 || houseNumber === 10 ? "2" : "1"}
               className="cursor-pointer"
-              onClick={(e) => handleHouseClick({ houseNumber, cusp, meaning }, e)}
+              onClick={(e) => handleHouseClick({ houseNumber, lon: cusp.degree }, e)}
             />
             
             {/* Номер дома */}
@@ -148,7 +148,7 @@ export function HousesLayer({
               stroke={strokeColor}
               strokeWidth="1"
               className="cursor-pointer hover:fill-purple-50 transition-colors"
-              onClick={(e) => handleHouseClick({ houseNumber, cusp, meaning }, e)}
+              onClick={(e) => handleHouseClick({ houseNumber, lon: cusp.degree }, e)}
             />
             
             <text
@@ -157,7 +157,7 @@ export function HousesLayer({
               textAnchor="middle"
               dominantBaseline="middle"
               className="fill-gray-700 text-sm font-semibold cursor-pointer"
-              onClick={(e) => handleHouseClick({ houseNumber, cusp, meaning }, e)}
+              onClick={(e) => handleHouseClick({ houseNumber, lon: cusp.degree }, e)}
             >
               {houseNumber}
             </text>
@@ -174,7 +174,7 @@ export function HousesLayer({
                 transform: `rotate(${midAngle > 90 && midAngle < 270 ? midAngle + 180 : midAngle}deg)`,
                 transformOrigin: `${meaningX}px ${meaningY}px`
               }}
-              onClick={(e) => handleHouseClick({ houseNumber, cusp, meaning }, e)}
+              onClick={(e) => handleHouseClick({ houseNumber, lon: cusp.degree }, e)}
             >
               {meaning.split(',')[0]}
             </text>

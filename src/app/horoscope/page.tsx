@@ -50,7 +50,6 @@ export default function HoroscopePage() {
   const [horoscope, setHoroscope] = useState<FriendlyHoroscope | null>(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const [debugId, setDebugId] = useState<string | null>(null);
 
   const effectiveTgId = tgIdFromUrl || userId?.toString();
 
@@ -67,16 +66,24 @@ export default function HoroscopePage() {
       const requestData: any = {};
       
       if (activeChart) {
-        // Используем данные из выбранной карты
-        const birthDate = new Date(activeChart.inputData.date);
-        requestData.birth = {
-          date: birthDate.toISOString().split('T')[0],
-          time: activeChart.inputData.time,
-          tzOffset: activeChart.inputData.tzOffset,
-          lat: activeChart.inputData.lat,
-          lon: activeChart.inputData.lon,
-          houseSystem: activeChart.houseSystem
-        };
+        // Helper: безопасно извлечь данные рождения из разных версий схемы
+        const birthData = activeChart.input;
+        
+        if (!birthData?.date) {
+          console.warn("No birth date in activeChart, fallback to profile data");
+        } else {
+          const birthDateISO = new Date(birthData.date).toISOString().split('T')[0];
+          
+          requestData.birth = {
+            date: birthDateISO,
+            time: birthData.time || '12:00',
+            lat: birthData.place?.lat,
+            lon: birthData.place?.lon,
+            city: birthData.place?.displayName,
+            // Используем дефолтную систему домов
+            houseSystem: 'placidus'
+          };
+        }
       } else if (effectiveTgId) {
         // Используем tgId для получения данных профиля
         requestData.tgId = effectiveTgId;
@@ -185,9 +192,7 @@ export default function HoroscopePage() {
           <div className="text-5xl mb-4">😔</div>
           <h2 className="text-xl font-bold mb-2">Не удалось загрузить</h2>
           <p className="text-gray-600 mb-4">{error}</p>
-          {debugId && (
-            <p className="text-xs text-gray-400 mb-4">ID: {debugId}</p>
-          )}
+
           <button onClick={loadHoroscope} className="btn btn-primary">
             <ArrowPathIcon className="w-4 h-4 mr-2" />
             Попробовать снова
