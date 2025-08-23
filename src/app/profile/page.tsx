@@ -1,7 +1,7 @@
 'use client'
 
 import React, { useState, useEffect } from 'react'
-import { MapPin, Calendar, Clock, Settings, ChevronRight, Sparkles, Star } from 'lucide-react'
+import { MapPin, Settings, ChevronRight, Sparkles, Star } from 'lucide-react'
 
 interface UserProfile {
   name: string

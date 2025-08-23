@@ -81,7 +81,7 @@ export default function ProfileFormPage() {
       });
 
       if (res.ok) {
-        const data = await res.json();
+        await res.json(); // consume response
         hapticFeedback('notification', 'success');
         
         // Navigate back to profile or show success
@@ -101,7 +101,7 @@ export default function ProfileFormPage() {
 
   const handleReset = () => {
     hapticFeedback('impact', 'light');
-    setInitialData(undefined);
+    setInitialData(null);
   };
 
   if (loadingProfile) {
@@ -130,7 +130,7 @@ export default function ProfileFormPage() {
         <ProfileForm
           onSubmit={handleSubmit}
           loading={loading}
-          initialData={initialData}
+          initialData={initialData || undefined}
           onReset={handleReset}
         />
       </div>

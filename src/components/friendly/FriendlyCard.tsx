@@ -79,7 +79,7 @@ export default function FriendlyCard({ tgId, className = '' }: FriendlyCardProps
 
   const handleRefresh = () => {
     if (refreshing) return;
-    loadTips(false);
+    loadTips();
   };
 
   if (loading) {
