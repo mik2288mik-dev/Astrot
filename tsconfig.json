@@ -23,7 +23,7 @@
       "@/providers/*": ["src/providers/*"],
       "@/shared/*": ["src/shared/*"],
       "@/config/*": ["src/config/*"],
-      "@/types/*": ["types/*"],
+      "@/types/*": ["types/*", "src/types/*"],
       "@/styles/*": ["src/styles/*"]
     },
     "plugins": [{ "name": "next" }],

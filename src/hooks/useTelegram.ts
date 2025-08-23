@@ -4,13 +4,13 @@ import { useEffect, useState } from 'react';
 
 interface TelegramUser {
   id: number;
-  is_bot?: boolean;
   first_name: string;
   last_name?: string;
   username?: string;
   language_code?: string;
-  is_premium?: boolean;
   photo_url?: string;
+  is_bot?: boolean;
+  is_premium?: boolean;
 }
 
 interface WebApp {
@@ -94,14 +94,6 @@ interface WebApp {
   requestWriteAccess: (callback?: (granted: boolean) => void) => void;
   requestContact: (callback?: (shared: boolean) => void) => void;
   invokeCustomMethod: (method: string, params?: object, callback?: (result: unknown) => void) => void;
-}
-
-declare global {
-  interface Window {
-    Telegram?: {
-      WebApp: WebApp;
-    };
-  }
 }
 
 export function useTelegram() {

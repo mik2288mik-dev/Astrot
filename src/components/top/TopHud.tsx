@@ -2,8 +2,9 @@
 import Image from "next/image";
 import { useTelegramUser } from "@/lib/telegram";
 import { useMemo, useState } from "react";
+import type { TgUser } from "@/types/telegram";
 
-function titleOf(u: any) {
+function titleOf(u: TgUser | null) {
   if (!u) return "Гость";
   if (u.username) return `@${u.username}`;
   const full = [u.first_name, u.last_name].filter(Boolean).join(" ").trim();
@@ -15,7 +16,7 @@ interface TopHudProps {
 }
 
 export default function TopHud({ onMenuClick }: TopHudProps = {}) {
-  const user = useTelegramUser();
+  const { user } = useTelegramUser();
   const title = useMemo(() => titleOf(user), [user]);
   const avatar = user?.photo_url ?? null;
   const initial = title === "Гость" ? "G" : (title.startsWith("@") ? title.slice(1, 2) : title.slice(0, 1)).toUpperCase();

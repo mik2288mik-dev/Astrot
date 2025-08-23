@@ -41,7 +41,7 @@ export function AspectsLayer({
   radius, 
   chartData, 
   onSelect, 
-  isSelected 
+  isSelected: _isSelected
 }: AspectsLayerProps) {
   
   if (!chartData.aspects.length || !chartData.planets.length) {

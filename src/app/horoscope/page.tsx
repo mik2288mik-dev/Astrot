@@ -5,6 +5,8 @@ import { useSearchParams } from 'next/navigation';
 import { useTelegramUser } from '@/hooks/useTelegram';
 import { getActiveChart } from '../../../lib/birth/storage';
 import type { SavedChart } from '../../../lib/birth/storage';
+import { formatAspectTitle } from '@/lib/astro/labels';
+import { pickBirthFromChart } from '@/lib/astro/pickBirth';
 import { 
   CalendarIcon, 
   SparklesIcon, 
@@ -63,23 +65,22 @@ export default function HoroscopePage() {
     setError(null);
     
     try {
-      const requestData: any = {};
+      const requestData: Record<string, unknown> = {};
       
       if (activeChart) {
         // Helper: безопасно извлечь данные рождения из разных версий схемы
-        const birthData = activeChart.input;
+        const src = pickBirthFromChart(activeChart);
+        const birthDateISO = src?.date ? new Date(src.date).toISOString().split('T')[0] : undefined;
         
-        if (!birthData?.date) {
+        if (!birthDateISO) {
           console.warn("No birth date in activeChart, fallback to profile data");
         } else {
-          const birthDateISO = new Date(birthData.date).toISOString().split('T')[0];
-          
           requestData.birth = {
             date: birthDateISO,
-            time: birthData.time || '12:00',
-            lat: birthData.place?.lat,
-            lon: birthData.place?.lon,
-            city: birthData.place?.displayName,
+            time: src?.time || '12:00',
+            lat: activeChart.input?.place?.lat,
+            lon: activeChart.input?.place?.lon,
+            city: src?.city,
             // Используем дефолтную систему домов
             houseSystem: 'placidus'
           };
@@ -271,8 +272,12 @@ export default function HoroscopePage() {
             <div className="grid gap-4">
               {horoscope.keyTransits.map((transit, index) => (
                 <div key={index} className="card">
-                  <h3 className="font-medium mb-2">{transit.title}</h3>
-                  <p className="text-sm text-gray-600 mb-2">{transit.description}</p>
+                  <h3 className="font-medium mb-2">
+                    {formatAspectTitle({ a: transit.title.split(' ')[0], b: transit.title.split(' ')[2], type: transit.title.split(' ')[1] })}
+                  </h3>
+                  <p className="text-sm text-gray-600 mb-2">
+                    {transit.description || 'Короткий совет от Astrot: будь добр к себе сегодня и действуй по-человечески :)'}
+                  </p>
                   <p className="text-sm text-blue-600">💡 {transit.advice}</p>
                 </div>
               ))}

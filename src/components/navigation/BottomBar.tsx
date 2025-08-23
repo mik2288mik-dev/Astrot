@@ -13,7 +13,7 @@ interface NavButtonProps {
   bgColor: string
 }
 
-function NavButton({ icon, label, route, isActive, onClick, bgColor }: NavButtonProps) {
+function NavButton({ icon, label, route: _route, isActive, onClick, bgColor }: NavButtonProps) {
   return (
     <button
       onClick={onClick}
@@ -57,7 +57,7 @@ interface MainButtonProps {
   onClick: () => void
 }
 
-function MainButton({ route, isActive, onClick }: MainButtonProps) {
+function MainButton({ route: _route, isActive, onClick }: MainButtonProps) {
   return (
     <button
       onClick={onClick}
