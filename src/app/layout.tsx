@@ -11,6 +11,7 @@ import { TelegramViewportProvider } from '@/providers/telegram-viewport';
 import { ThemeProvider } from '@/providers/ThemeProvider';
 import SafeArea from '@/components/layout/SafeArea';
 import BottomBar from '@/components/navigation/BottomBar';
+import TopHud from '@/components/top/TopHud';
 import { Inter, Manrope } from 'next/font/google';
 
 const inter = Inter({ 
@@ -53,12 +54,13 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <meta name="apple-mobile-web-app-status-bar-style" content="default" />
         <Script src="https://telegram.org/js/telegram-web-app.js" strategy="beforeInteractive" />
       </head>
-      <body className={`${inter.variable} ${manrope.variable} font-sans`}>
+      <body className={`${inter.variable} ${manrope.variable} font-sans min-h-screen bg-gradient-to-b from-[#FFF6FB] to-[#FBEFFF]`}>
         <TelegramProvider>
           <TelegramViewportProvider>
             <ThemeProvider>
+              <TopHud />
               <SafeArea>
-                <div className="min-h-screen flex flex-col">
+                <div className="min-h-screen flex flex-col pt-[72px]">
                   <main className="flex-1 overflow-y-auto">
                     {children}
                   </main>
