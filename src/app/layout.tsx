@@ -5,13 +5,12 @@ import '@/styles/tokens.css';
 import '@/styles/nebula.css';
 import '@/styles/ui-kit.css';
 import '@/styles/safe.css';
-import '@/styles/theme-animations.css';
 import { TelegramProvider } from '@/providers/telegram-provider';
 import { TelegramViewportProvider } from '@/providers/telegram-viewport';
 import { ThemeProvider } from '@/providers/ThemeProvider';
 import SafeArea from '@/components/layout/SafeArea';
-import BottomBar from '@/components/navigation/BottomBar';
-import TopHud from '@/components/top/TopHud';
+import TopBar from '@/components/top/TopBar';
+import BottomNav from '@/components/navigation/BottomNav';
 import { Inter, Manrope } from 'next/font/google';
 
 const inter = Inter({ 
@@ -58,15 +57,16 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <TelegramProvider>
           <TelegramViewportProvider>
             <ThemeProvider>
-              <TopHud />
+              <TopBar />
               <SafeArea>
-                <div className="min-h-screen flex flex-col pt-[72px]">
+                <div className="min-h-screen flex flex-col" style={{paddingTop:'calc(env(safe-area-inset-top) + 56px + 8px)'}}>
                   <main className="flex-1 overflow-y-auto">
                     {children}
                   </main>
-                  <BottomBar />
+                  <div style={{height:'calc(72px + env(safe-area-inset-bottom))'}} />
                 </div>
               </SafeArea>
+              <BottomNav />
             </ThemeProvider>
           </TelegramViewportProvider>
         </TelegramProvider>
