@@ -1,9 +1,21 @@
-import { supabase, handleSupabaseError } from '@/lib/supabase'
-import type { 
-  UserSettings, 
-  UserSettingsInsert, 
-  UserSettingsUpdate 
-} from '@/types/database'
+import { supabase } from '@/lib/supabaseClient'
+import type { Database } from '@/lib/database.types'
+
+// Define types from Database
+type UserSettings = Database['public']['Tables']['user_settings']['Row']
+type UserSettingsInsert = Database['public']['Tables']['user_settings']['Insert']
+type UserSettingsUpdate = Database['public']['Tables']['user_settings']['Update']
+
+// Helper function for handling Supabase errors
+function handleSupabaseError(error: any): string {
+  if (error?.message) {
+    return error.message
+  }
+  if (error?.error_description) {
+    return error.error_description
+  }
+  return 'An unexpected error occurred'
+}
 
 export class UserSettingsService {
   /**
@@ -48,7 +60,7 @@ export class UserSettingsService {
 
       const { data: settings, error } = await supabase
         .from('user_settings')
-        .insert([defaultSettings])
+        .insert(defaultSettings)
         .select()
         .single()
 

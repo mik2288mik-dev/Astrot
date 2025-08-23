@@ -1,10 +1,22 @@
-import { supabase, handleSupabaseError } from '@/lib/supabase'
-import type { 
-  Profile, 
-  ProfileInsert, 
-  ProfileUpdate, 
-  ProfileWithRelations 
-} from '@/types/database'
+import { supabase } from '@/lib/supabaseClient'
+import type { Database } from '@/lib/database.types'
+import type { ProfileWithRelations } from '@/types/database'
+
+// Define types from Database
+type Profile = Database['public']['Tables']['profiles']['Row']
+type ProfileInsert = Database['public']['Tables']['profiles']['Insert']
+type ProfileUpdate = Database['public']['Tables']['profiles']['Update']
+
+// Helper function for handling Supabase errors
+function handleSupabaseError(error: any): string {
+  if (error?.message) {
+    return error.message
+  }
+  if (error?.error_description) {
+    return error.error_description
+  }
+  return 'An unexpected error occurred'
+}
 
 export class ProfileService {
   /**
@@ -14,7 +26,7 @@ export class ProfileService {
     try {
       const { data: profile, error } = await supabase
         .from('profiles')
-        .upsert([data], {
+        .upsert(data, {
           onConflict: 'telegram_id',
           ignoreDuplicates: false
         })
@@ -57,7 +69,13 @@ export class ProfileService {
         return null
       }
 
-      return profile as ProfileWithRelations
+      // Handle the arrays returned by Supabase joins
+      const result: ProfileWithRelations = {
+        ...profile,
+        natal_chart: Array.isArray(profile.natal_chart) ? profile.natal_chart[0] : profile.natal_chart,
+        settings: Array.isArray(profile.settings) ? profile.settings[0] : profile.settings
+      }
+      return result
     } catch (error) {
       console.error('Unexpected error in getProfileByTelegramId:', error)
       return null
@@ -84,7 +102,13 @@ export class ProfileService {
         return null
       }
 
-      return profile as ProfileWithRelations
+      // Handle the arrays returned by Supabase joins
+      const result: ProfileWithRelations = {
+        ...profile,
+        natal_chart: Array.isArray(profile.natal_chart) ? profile.natal_chart[0] : profile.natal_chart,
+        settings: Array.isArray(profile.settings) ? profile.settings[0] : profile.settings
+      }
+      return result
     } catch (error) {
       console.error('Unexpected error in getProfileById:', error)
       return null

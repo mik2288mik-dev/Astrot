@@ -90,13 +90,21 @@ export function useUserData(): UseUserDataReturn {
       
       // Load related data
       if (userProfile.natal_chart) {
-        setNatalChart(userProfile.natal_chart)
+        // Handle array or single value from Supabase join
+        const chart = Array.isArray(userProfile.natal_chart) 
+          ? userProfile.natal_chart[0] 
+          : userProfile.natal_chart
+        setNatalChart(chart)
       }
       
       // Load or create settings
       const userSettings = userProfile.settings || 
         await UserSettingsService.createDefaultSettings(userProfile.id)
-      setSettings(userSettings)
+      // Handle array or single value from Supabase join
+      const settings = Array.isArray(userSettings) 
+        ? userSettings[0] 
+        : userSettings
+      setSettings(settings)
       
       // Load today's advice if birth data is complete
       if (ProfileService.hasCompleteBirthData(userProfile)) {

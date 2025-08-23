@@ -1,9 +1,33 @@
-import { supabase, handleSupabaseError } from '@/lib/supabase'
-import type { 
-  NatalChart, 
-  NatalChartInsert, 
-  NatalChartData 
-} from '@/types/database'
+import { supabase } from '@/lib/supabaseClient'
+import type { Database } from '@/lib/database.types'
+
+// Define types from Database
+type NatalChart = Database['public']['Tables']['natal_charts']['Row']
+type NatalChartInsert = Database['public']['Tables']['natal_charts']['Insert']
+type Json = Database['public']['Tables']['natal_charts']['Row']['full_data']
+
+// Define NatalChartData interface
+interface NatalChartData {
+  planets: {
+    sun: { sign: string; degree: number; house: number }
+    moon: { sign: string; degree: number; house: number }
+    [key: string]: any
+  }
+  houses: Array<{ sign: string; degree: number }>
+  aspects?: any[]
+  [key: string]: any
+}
+
+// Helper function for handling Supabase errors
+function handleSupabaseError(error: any): string {
+  if (error?.message) {
+    return error.message
+  }
+  if (error?.error_description) {
+    return error.error_description
+  }
+  return 'An unexpected error occurred'
+}
 
 export class NatalChartService {
   /**
@@ -40,7 +64,7 @@ export class NatalChartService {
     try {
       const { data: chart, error } = await supabase
         .from('natal_charts')
-        .upsert([data], {
+        .upsert(data, {
           onConflict: 'profile_id'
         })
         .select()
@@ -76,7 +100,8 @@ export class NatalChartService {
         sun_sign: sunSign,
         moon_sign: moonSign,
         ascendant: ascendant,
-        full_data: chartData as any,
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        full_data: chartData as Json,
         calculated_at: new Date().toISOString()
       }
 

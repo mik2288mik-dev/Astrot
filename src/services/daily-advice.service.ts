@@ -1,10 +1,26 @@
-import { supabase, handleSupabaseError } from '@/lib/supabase'
-import type { 
-  DailyAdvice, 
-  DailyAdviceInsert,
-  AstroContext,
-  Json
-} from '@/types/database'
+import { supabase } from '@/lib/supabaseClient'
+import type { Database } from '@/lib/database.types'
+
+// Define types from Database
+type DailyAdvice = Database['public']['Tables']['daily_advice']['Row']
+type DailyAdviceInsert = Database['public']['Tables']['daily_advice']['Insert']
+type AstroContext = {
+  currentTransits?: any
+  moonPhase?: string
+  planetaryPositions?: any
+}
+type Json = Database['public']['Tables']['daily_advice']['Row']['astro_context']
+
+// Helper function for handling Supabase errors
+function handleSupabaseError(error: any): string {
+  if (error?.message) {
+    return error.message
+  }
+  if (error?.error_description) {
+    return error.error_description
+  }
+  return 'An unexpected error occurred'
+}
 
 export class DailyAdviceService {
   /**
@@ -114,7 +130,7 @@ export class DailyAdviceService {
 
       const { data: advice, error } = await supabase
         .from('daily_advice')
-        .upsert([insertData], {
+        .upsert(insertData, {
           onConflict: 'profile_id,date'
         })
         .select()
