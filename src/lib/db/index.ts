@@ -15,7 +15,18 @@ if (process.env.NODE_ENV !== 'production') {
 }
 
 // Supabase Client
-const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!
+// Allow using SUPABASE_URL as a fallback so production builds work even when
+// only server-side env vars are configured. Throw a clear error if neither is
+// provided.
+const supabaseUrl =
+  process.env.NEXT_PUBLIC_SUPABASE_URL || process.env.SUPABASE_URL
+
+if (!supabaseUrl) {
+  throw new Error(
+    'Supabase URL is required. Set NEXT_PUBLIC_SUPABASE_URL or SUPABASE_URL.'
+  )
+}
+
 const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
 const supabaseServiceKey = process.env.SUPABASE_SERVICE_ROLE_KEY!
 
