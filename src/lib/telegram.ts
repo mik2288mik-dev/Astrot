@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import type { TgUser } from '@/types/telegram';
 
 export type HapticImpactStyle = 'light' | 'medium' | 'heavy';
 export type HapticNotificationType = 'success' | 'warning' | 'error';
@@ -83,31 +84,11 @@ export function onTelegramEvent(event: 'themeChanged' | 'viewportChanged', handl
   return () => tg.offEvent?.(event, handler as any);
 }
 
-export type TgUser = {
-  id: number;
-  first_name?: string;
-  last_name?: string;
-  username?: string;
-  photo_url?: string;
-};
-
-declare global {
-  interface Window {
-    Telegram?: {
-      WebApp?: {
-        initDataUnsafe?: {
-          user?: TgUser;
-        };
-        ready?: () => void;
-        expand?: () => void;
-      };
-    };
-  }
-}
-
 export function getTelegramUser(): TgUser | null {
   try {
-    return window?.Telegram?.WebApp?.initDataUnsafe?.user ?? null;
+    // типы уже объявлены в src/types/telegram.d.ts
+    const user = window?.Telegram?.WebApp?.initDataUnsafe?.user as TgUser | undefined;
+    return user ?? null;
   } catch {
     return null;
   }
@@ -115,6 +96,7 @@ export function getTelegramUser(): TgUser | null {
 
 export function useTelegramUser() {
   const [user, setUser] = useState<TgUser | null>(null);
+  const [loaded, setLoaded] = useState(false);
   
   useEffect(() => {
     if (typeof window === "undefined") return;
@@ -124,6 +106,7 @@ export function useTelegramUser() {
       const u = getTelegramUser();
       if (u || tries++ > 12) {
         setUser(u ?? null);
+        setLoaded(true);
         clearInterval(id);
       }
     }, 150);
@@ -131,5 +114,5 @@ export function useTelegramUser() {
     return () => clearInterval(id);
   }, []);
   
-  return user;
+  return { user, loaded };
 }

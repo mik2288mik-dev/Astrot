@@ -25,7 +25,7 @@ export function HousesLayer({
   outerRadius, 
   chartData, 
   onSelect, 
-  isSelected 
+  isSelected: _isSelected 
 }: HousesLayerProps) {
   
   if (!chartData.houses.cusps.length) {

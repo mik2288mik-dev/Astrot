@@ -34,7 +34,7 @@ const SIGN_COLORS = {
   'Pisces': '#ff9ff3'
 };
 
-export function ZodiacLayer({ center, radius, chartData, onSelect, isSelected }: ZodiacLayerProps) {
+export function ZodiacLayer({ center, radius, chartData: _chartData, onSelect, isSelected: _isSelected }: ZodiacLayerProps) {
   const innerRadius = radius - 40;
   
   // Рассчитываем позицию каждого знака (30 градусов каждый)
