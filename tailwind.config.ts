@@ -15,9 +15,9 @@ const config: Config = {
       },
       colors: {
         // Boinkers style colors
-        surfaceDark: '#1e1f36',
-        accentAstrotFrom: '#cf5cff',
-        accentAstrotTo: '#ff6ad9',
+        surfaceDark: '#1E1F36',
+        accentFrom: '#CF5CFF',
+        accentTo: '#FF6AD9',
         // Премиальная мультяшная палитра
         cartoon: {
           // Основные тона
@@ -126,9 +126,9 @@ const config: Config = {
       },
       boxShadow: {
         // Boinkers style shadows
-        'nav-dark': '0 -4px 8px rgba(0,0,0,.45)',
-        'logo-3d': '0 6px 12px rgba(0,0,0,.45)',
-        'inner-bar': 'inset 0 -1px 2px rgba(0,0,0,.4)',
+        'navDark': '0 -4px 12px rgba(0,0,0,.45)',
+        'logo3D': '0 6px 12px rgba(0,0,0,.45)',
+        'innerBar': 'inset 0 -1px 2px rgba(0,0,0,.40)',
         'cartoon-sm': '0 2px 8px rgba(183, 148, 246, 0.15)',
         'cartoon-md': '0 4px 16px rgba(183, 148, 246, 0.2)',
         'cartoon-lg': '0 8px 30px rgba(183, 148, 246, 0.25)',
@@ -190,6 +190,9 @@ const config: Config = {
           '33%': { transform: 'translateY(-3px) rotate(2deg)' },
           '66%': { transform: 'translateY(3px) rotate(-1deg)' },
         },
+      },
+      borderRadius: {
+        nav: '8px',
       },
     }
   },
