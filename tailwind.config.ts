@@ -155,6 +155,11 @@ const config: Config = {
         'cartoon-pulse': 'cartoonPulse 2s infinite',
         'cartoon-tap': 'cartoonTap 0.3s ease-in-out',
         'cartoon-float': 'cartoonFloat 3s ease-in-out infinite',
+        // Custom animations
+        'fade-up': 'fadeUp 0.3s ease-out both',
+        'pop': 'pop 0.2s ease-out both',
+        'shimmer': 'shimmer 2s linear infinite',
+        'float': 'float 3s ease-in-out infinite',
       },
       keyframes: {
         cartoonBounce: {
@@ -190,13 +195,31 @@ const config: Config = {
           '33%': { transform: 'translateY(-3px) rotate(2deg)' },
           '66%': { transform: 'translateY(3px) rotate(-1deg)' },
         },
+        // Custom keyframes
+        fadeUp: {
+          '0%': { opacity: '0', transform: 'translateY(8px)' },
+          '100%': { opacity: '1', transform: 'translateY(0px)' },
+        },
+        pop: {
+          '0%': { transform: 'scale(0.96)' },
+          '100%': { transform: 'scale(1)' },
+        },
+        shimmer: {
+          '0%': { backgroundPosition: '-200% 0' },
+          '100%': { backgroundPosition: '200% 0' },
+        },
+        float: {
+          '0%, 100%': { transform: 'translateY(0px)' },
+          '50%': { transform: 'translateY(-4px)' },
+        },
       },
       borderRadius: {
         nav: '8px',
+        xl: '20px',
       },
     }
   },
-  plugins: [],
+  plugins: [require('tailwindcss-animate')],
 };
 
 export default config;
