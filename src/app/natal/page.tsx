@@ -90,28 +90,33 @@ export default function NatalPage() {
           // Если есть данные о рождении, заполняем форму
           if (profileData.birth_date) {
             setFormData({
-              name: profileData.name || user.firstName || '',
+              name: profileData.first_name || user.first_name || '',
               birthDate: profileData.birth_date,
               birthTime: profileData.birth_time || '',
               birthPlace: profileData.birth_place || '',
               timeUnknown: !profileData.birth_time,
-              lat: profileData.birth_lat || undefined,
-              lon: profileData.birth_lon || undefined
+              lat: undefined,
+              lon: undefined
             })
           } else {
             // Заполняем только имя из Telegram
             setFormData(prev => ({
               ...prev,
-              name: user.firstName || ''
+              name: user.first_name || ''
             }))
           }
           
           // Если есть рассчитанная карта, показываем результат
           if (profileData.natal_chart) {
-            const chartData = NatalChartService.getParsedChartData(profileData.natal_chart)
-            if (chartData) {
-              setChartData(chartData)
-              setShowResult(true)
+            const chart = Array.isArray(profileData.natal_chart) 
+              ? profileData.natal_chart[0] 
+              : profileData.natal_chart
+            if (chart) {
+              const chartData = NatalChartService.getParsedChartData(chart)
+              if (chartData) {
+                setChartData(chartData as ChartResult)
+                setShowResult(true)
+              }
             }
           }
         } else {
@@ -119,15 +124,14 @@ export default function NatalPage() {
           const newProfile = await ProfileService.upsertProfile({
             telegram_id: user.id,
             username: user.username,
-            name: user.firstName,
-            photo_url: user.photoUrl
+            first_name: user.first_name
           })
           
           if (newProfile) {
             setProfile(newProfile)
             setFormData(prev => ({
               ...prev,
-              name: user.firstName || ''
+              name: user.first_name || ''
             }))
           }
         }
@@ -187,12 +191,10 @@ export default function NatalPage() {
       // Сохраняем данные профиля
       if (profile) {
         await ProfileService.updateProfile(profile.id, {
-          name: formData.name,
+          first_name: formData.name,
           birth_date: formData.birthDate,
           birth_time: formData.timeUnknown ? null : formData.birthTime,
-          birth_place: formData.birthPlace,
-          birth_lat: lat,
-          birth_lon: lon
+          birth_place: formData.birthPlace
         })
       }
 
@@ -471,7 +473,7 @@ export default function NatalPage() {
           <span className="astrot-message-emoji">👋</span>
           <div>
             <h2 className="text-xl font-bold text-white mb-1">
-              Привет{user?.firstName ? `, ${user.firstName}` : ', друг'}!
+              Привет{user?.first_name ? `, ${user.first_name}` : ', друг'}!
             </h2>
             <p className="text-gray-300">
               Я ASTROT - твой космический приятель! Расскажи мне о себе, и я покажу, 
