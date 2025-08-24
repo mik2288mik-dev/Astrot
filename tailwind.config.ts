@@ -14,6 +14,10 @@ const config: Config = {
         'sans': ['var(--font-rubik)', 'system-ui', 'sans-serif'],
       },
       colors: {
+        // Boinkers style colors
+        surfaceDark: '#1e1f36',
+        accentAstrotFrom: '#cf5cff',
+        accentAstrotTo: '#ff6ad9',
         // Премиальная мультяшная палитра
         cartoon: {
           // Основные тона
@@ -121,6 +125,10 @@ const config: Config = {
         'safe-right': 'env(safe-area-inset-right)',
       },
       boxShadow: {
+        // Boinkers style shadows
+        'nav-dark': '0 -4px 8px rgba(0,0,0,.45)',
+        'logo-3d': '0 6px 12px rgba(0,0,0,.45)',
+        'inner-bar': 'inset 0 -1px 2px rgba(0,0,0,.4)',
         'cartoon-sm': '0 2px 8px rgba(183, 148, 246, 0.15)',
         'cartoon-md': '0 4px 16px rgba(183, 148, 246, 0.2)',
         'cartoon-lg': '0 8px 30px rgba(183, 148, 246, 0.25)',

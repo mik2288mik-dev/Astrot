@@ -1,12 +1,12 @@
 'use client'
 
 import { useRouter, usePathname } from 'next/navigation'
-import Image from 'next/image'
-import { astrotColors } from '../../styles/colors'
+import { Home, MoreVertical } from 'lucide-react'
 
 /**
- * BottomNav компонент с 3D центральной кнопкой
- * Высота: 72px + env(safe-area-inset-bottom)
+ * BottomNav компонент в стиле Boinkers
+ * Высота: 64px + safe-area-inset-bottom
+ * Прямая темная планка с 3D центральной кнопкой
  */
 export default function BottomNav() {
   const router = useRouter()
@@ -16,192 +16,110 @@ export default function BottomNav() {
 
   return (
     <nav 
-      className="fixed bottom-0 left-0 right-0 z-50"
+      className="fixed bottom-0 left-0 right-0 z-50 bg-surfaceDark border-t border-white/[0.22] shadow-nav-dark"
       style={{
         paddingBottom: 'env(safe-area-inset-bottom)',
+        borderBottomLeftRadius: '8px',
+        borderBottomRightRadius: '8px',
       }}
     >
-      <div className="mx-auto max-w-screen-md px-4">
-        <div 
-          className="relative h-[72px] rounded-[24px] flex items-center justify-between px-8"
-          style={{
-            background: astrotColors.background.card,
-            backdropFilter: 'blur(20px)',
-            WebkitBackdropFilter: 'blur(20px)',
-            boxShadow: astrotColors.shadows.strong,
-            border: '1px solid rgba(255, 255, 255, 0.3)',
-          }}
+      <div className="h-16 flex items-center justify-between px-5 relative">
+        {/* Левая кнопка - Домой */}
+        <button
+          onClick={() => router.push('/home')}
+          className="flex flex-col items-center gap-1 transition-all duration-200 active:scale-95 hover:scale-105 w-12 h-12 rounded-xl"
+          aria-label="Домой"
         >
-          {/* Левая кнопка - Домой */}
-          <button
-            onClick={() => router.push('/home')}
-            className="flex flex-col items-center gap-1 transition-all duration-200 active:scale-95"
-            aria-label="Домой"
-          >
-            <div 
-              className="w-11 h-11 rounded-2xl flex items-center justify-center transition-all duration-300"
-              style={{
-                background: isActive('/home') 
-                  ? astrotColors.gradients.accent 
-                  : 'rgba(255, 255, 255, 0.4)',
-                boxShadow: isActive('/home') 
-                  ? astrotColors.shadows.soft 
-                  : 'none',
-              }}
-            >
-              <svg 
-                width="24" 
-                height="24" 
-                viewBox="0 0 24 24" 
-                fill="none"
-                style={{
-                  color: isActive('/home') 
-                    ? astrotColors.neutral.white 
-                    : astrotColors.neutral.gray
-                }}
-              >
-                <path 
-                  d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z" 
-                  stroke="currentColor" 
-                  strokeWidth="2" 
-                  strokeLinecap="round" 
-                  strokeLinejoin="round"
-                />
-                <path 
-                  d="M9 22V12h6v10" 
-                  stroke="currentColor" 
-                  strokeWidth="2" 
-                  strokeLinecap="round" 
-                  strokeLinejoin="round"
-                />
-              </svg>
-            </div>
-            <span 
-              className="font-manrope text-xs font-medium"
-              style={{
-                color: isActive('/home') 
-                  ? astrotColors.accent.purple 
-                  : astrotColors.neutral.gray
-              }}
-            >
+          <div className="flex flex-col items-center">
+            <Home
+              size={24}
+              strokeWidth={2.5}
+              className={`transition-colors ${
+                isActive('/home') ? 'text-white' : 'text-white/60'
+              }`}
+            />
+            <span className={`font-manrope text-xs mt-1 ${
+              isActive('/home') ? 'text-white' : 'text-white/60'
+            }`}>
               Домой
             </span>
-          </button>
+          </div>
+        </button>
 
-          {/* Центральная кнопка - 3D логотип Astrot */}
-          <button
-            onClick={() => router.push('/natal')}
-            className="absolute left-1/2 -translate-x-1/2 -translate-y-5 group"
-            aria-label="Карта"
+        {/* Центральная кнопка - Карта */}
+        <button
+          onClick={() => router.push('/natal')}
+          className="absolute left-1/2 -translate-x-1/2 -top-8 group"
+          aria-label="Карта"
+        >
+          <div 
+            className="relative w-16 h-16 rounded-full flex items-center justify-center transition-all duration-300 group-active:scale-95"
+            style={{
+              background: 'linear-gradient(145deg, #cf5cff 0%, #ff6ad9 100%)',
+              border: '3px solid rgba(255, 255, 255, 0.25)',
+              boxShadow: `
+                0 6px 12px rgba(0, 0, 0, 0.45),
+                inset 0 4px 6px rgba(0, 0, 0, 0.4)
+              `,
+            }}
           >
+            {/* Внутреннее свечение */}
             <div 
-              className="relative w-16 h-16 rounded-full flex items-center justify-center transition-all duration-300 group-active:scale-95"
+              className="absolute inset-0 rounded-full"
               style={{
-                background: astrotColors.gradients.glow,
-                boxShadow: `
-                  0 8px 32px rgba(139, 92, 246, 0.35),
-                  0 0 80px rgba(236, 72, 153, 0.2),
-                  inset 0 2px 4px rgba(255, 255, 255, 0.6),
-                  inset 0 -2px 8px rgba(139, 92, 246, 0.3)
-                `,
-                transform: 'translateZ(20px)',
+                background: 'radial-gradient(circle at 30% 30%, rgba(255, 255, 255, 0.3) 0%, transparent 50%)',
               }}
+            />
+            
+            {/* Иконка карты */}
+            <svg 
+              width="28" 
+              height="28" 
+              viewBox="0 0 24 24" 
+              fill="none"
+              className="relative z-10 text-white"
             >
-              {/* Внутреннее свечение */}
-              <div 
-                className="absolute inset-0 rounded-full animate-pulse"
-                style={{
-                  background: 'radial-gradient(circle at 30% 30%, rgba(255, 255, 255, 0.4) 0%, transparent 60%)',
-                }}
-              />
-              
-              {/* 3D эффект ободка */}
-              <div 
-                className="absolute inset-0 rounded-full"
-                style={{
-                  background: 'conic-gradient(from 180deg at 50% 50%, rgba(255, 255, 255, 0.3) 0deg, transparent 60deg, transparent 300deg, rgba(255, 255, 255, 0.3) 360deg)',
-                }}
-              />
+              <circle cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round"/>
+              <path d="M12 2v20M2 12h20" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round"/>
+              <ellipse cx="12" cy="12" rx="4" ry="10" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round"/>
+            </svg>
 
-              {/* Логотип */}
-              <div className="relative z-10 w-10 h-10">
-                <Image 
-                  src="/logo.png" 
-                  alt="Astrot" 
-                  fill 
-                  className="object-contain drop-shadow-lg"
-                  priority
-                />
-              </div>
-
-              {/* Эффект нажатия */}
-              <div 
-                className="absolute inset-0 rounded-full opacity-0 group-active:opacity-100 transition-opacity duration-200"
-                style={{
-                  background: 'radial-gradient(circle at center, rgba(255, 255, 255, 0.3) 0%, transparent 70%)',
-                }}
-              />
-            </div>
-
-            {/* Подпись */}
-            <span 
-              className="block mt-2 font-manrope text-xs font-semibold"
-              style={{
-                color: isActive('/natal') 
-                  ? astrotColors.accent.purple 
-                  : astrotColors.neutral.dark,
-                textShadow: '0 2px 4px rgba(139, 92, 246, 0.2)',
-              }}
-            >
-              Карта
-            </span>
-          </button>
-
-          {/* Правая кнопка - Ещё */}
-          <button
-            onClick={() => router.push('/more')}
-            className="flex flex-col items-center gap-1 transition-all duration-200 active:scale-95"
-            aria-label="Ещё"
-          >
+            {/* Эффект нажатия */}
             <div 
-              className="w-11 h-11 rounded-2xl flex items-center justify-center transition-all duration-300"
+              className="absolute inset-0 rounded-full opacity-0 group-active:opacity-100 transition-opacity duration-200"
               style={{
-                background: isActive('/more') 
-                  ? astrotColors.gradients.accent 
-                  : 'rgba(255, 255, 255, 0.4)',
-                boxShadow: isActive('/more') 
-                  ? astrotColors.shadows.soft 
-                  : 'none',
+                background: 'radial-gradient(circle at center, rgba(255, 255, 255, 0.3) 0%, transparent 70%)',
               }}
-            >
-              <svg 
-                width="24" 
-                height="24" 
-                viewBox="0 0 24 24" 
-                fill="none"
-                style={{
-                  color: isActive('/more') 
-                    ? astrotColors.neutral.white 
-                    : astrotColors.neutral.gray
-                }}
-              >
-                <circle cx="12" cy="5" r="2" fill="currentColor"/>
-                <circle cx="12" cy="12" r="2" fill="currentColor"/>
-                <circle cx="12" cy="19" r="2" fill="currentColor"/>
-              </svg>
-            </div>
-            <span 
-              className="font-manrope text-xs font-medium"
-              style={{
-                color: isActive('/more') 
-                  ? astrotColors.accent.purple 
-                  : astrotColors.neutral.gray
-              }}
-            >
+            />
+          </div>
+
+          {/* Подпись */}
+          <span className="block mt-2 font-manrope text-xs font-semibold text-white">
+            Карта
+          </span>
+        </button>
+
+        {/* Правая кнопка - Ещё */}
+        <button
+          onClick={() => router.push('/more')}
+          className="flex flex-col items-center gap-1 transition-all duration-200 active:scale-95 hover:scale-105 w-12 h-12 rounded-xl"
+          aria-label="Ещё"
+        >
+          <div className="flex flex-col items-center">
+            <MoreVertical
+              size={24}
+              strokeWidth={2.5}
+              className={`transition-colors ${
+                isActive('/more') ? 'text-white' : 'text-white/60'
+              }`}
+            />
+            <span className={`font-manrope text-xs mt-1 ${
+              isActive('/more') ? 'text-white' : 'text-white/60'
+            }`}>
               Ещё
             </span>
-          </button>
-        </div>
+          </div>
+        </button>
       </div>
     </nav>
   )

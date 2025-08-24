@@ -25,8 +25,8 @@ export default function SafeAreaInit() {
       tg.disableClosingConfirmation?.()
       
       // Устанавливаем цвета для системных элементов
-      tg.setHeaderColor?.('#FFFFFF')
-      tg.setBackgroundColor?.('#FFF6FB')
+      tg.setHeaderColor?.('#1e1f36')
+      tg.setBackgroundColor?.('#1e1f36')
     }
     
     // Настройка стилей для предотвращения системных жестов
@@ -51,13 +51,13 @@ export default function SafeAreaInit() {
     // Настройка CSS переменных для safe area
     const setSafeAreaVars = () => {
       // Верхний отступ с учетом safe area
-      const topInset = 'calc(env(safe-area-inset-top) + 8px)'
+      const topInset = 'calc(env(safe-area-inset-top) + 6px)'
       const bottomInset = 'env(safe-area-inset-bottom)'
       
       html.style.setProperty('--safe-area-top', topInset)
       html.style.setProperty('--safe-area-bottom', bottomInset)
-      html.style.setProperty('--topbar-offset', 'calc(env(safe-area-inset-top) + 8px + 56px)')
-      html.style.setProperty('--bottomnav-height', 'calc(72px + env(safe-area-inset-bottom))')
+      html.style.setProperty('--topbar-offset', 'calc(env(safe-area-inset-top) + 6px + 56px)')
+      html.style.setProperty('--bottomnav-height', 'calc(64px + env(safe-area-inset-bottom))')
     }
     
     setSafeAreaVars()
