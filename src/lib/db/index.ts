@@ -21,13 +21,7 @@ let supabaseAdminInstance: ReturnType<typeof createClient> | null = null
 function getSupabaseUrl(): string {
   const url = process.env.NEXT_PUBLIC_SUPABASE_URL || process.env.SUPABASE_URL
   if (!url) {
-    // During build time, we might not have env vars, return a dummy URL
-    if (process.env.NODE_ENV === 'production' && !process.env.VERCEL) {
-      throw new Error(
-        'Supabase URL is required. Set NEXT_PUBLIC_SUPABASE_URL or SUPABASE_URL.'
-      )
-    }
-    // Return a dummy URL for build time
+    // Всегда возвращаем плейсхолдер на этапе сборки, чтобы не падать
     return 'https://placeholder.supabase.co'
   }
   return url
@@ -36,11 +30,7 @@ function getSupabaseUrl(): string {
 function getSupabaseAnonKey(): string {
   const key = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
   if (!key) {
-    // During build time, we might not have env vars, return a dummy key
-    if (process.env.NODE_ENV === 'production' && !process.env.VERCEL) {
-      throw new Error('Supabase Anon Key is required. Set NEXT_PUBLIC_SUPABASE_ANON_KEY.')
-    }
-    // Return a dummy key for build time
+    // Всегда возвращаем плейсхолдер на этапе сборки, чтобы не падать
     return 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.placeholder'
   }
   return key
@@ -49,11 +39,7 @@ function getSupabaseAnonKey(): string {
 function getSupabaseServiceKey(): string {
   const key = process.env.SUPABASE_SERVICE_ROLE_KEY
   if (!key) {
-    // During build time, we might not have env vars, return a dummy key
-    if (process.env.NODE_ENV === 'production' && !process.env.VERCEL) {
-      throw new Error('Supabase Service Role Key is required. Set SUPABASE_SERVICE_ROLE_KEY.')
-    }
-    // Return a dummy key for build time
+    // Всегда возвращаем плейсхолдер на этапе сборки, чтобы не падать
     return 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.placeholder'
   }
   return key

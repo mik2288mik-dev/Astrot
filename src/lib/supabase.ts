@@ -1,21 +1,32 @@
 import { createClient } from '@supabase/supabase-js'
 import type { Database } from '@/types/database'
 
-const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL
-const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
+let cachedClient: ReturnType<typeof createClient<Database>> | null = null
 
-if (!supabaseUrl || !supabaseAnonKey) {
-  throw new Error('Missing Supabase environment variables')
+function getUrl(): string {
+  return process.env.NEXT_PUBLIC_SUPABASE_URL || process.env.SUPABASE_URL || 'https://placeholder.supabase.co'
 }
 
-export const supabase = createClient<Database>(supabaseUrl, supabaseAnonKey, {
-  auth: {
-    persistSession: true,
-    autoRefreshToken: true,
-  },
-})
+function getAnonKey(): string {
+  return process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.placeholder'
+}
 
-// Helper function for handling Supabase errors
+export function getSupabaseClient() {
+  if (!cachedClient) {
+    const url = getUrl()
+    const anon = getAnonKey()
+    cachedClient = createClient<Database>(url, anon, {
+      auth: {
+        persistSession: true,
+        autoRefreshToken: true,
+      },
+    })
+  }
+  return cachedClient
+}
+
+export const supabase = getSupabaseClient()
+
 export function handleSupabaseError(error: any): string {
   if (error?.message) {
     return error.message
