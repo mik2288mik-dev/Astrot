@@ -15,7 +15,8 @@ interface TelegramUser {
 
 /**
  * TopBar компонент для Telegram WebApp
- * Высота: 56px + отступ сверху calc(env(safe-area-inset-top) + 8px)
+ * Высота: 56px + отступ сверху calc(env(safe-area-inset-top) + 20px)
+ * Увеличенный отступ для кнопки закрытия Telegram
  */
 export default function TopBar() {
   const [user, setUser] = useState<TelegramUser | null>(null)
@@ -50,7 +51,7 @@ export default function TopBar() {
     <header 
       className="fixed top-0 left-0 right-0 z-50"
       style={{
-        paddingTop: 'calc(env(safe-area-inset-top) + 8px)',
+        paddingTop: 'calc(env(safe-area-inset-top, 0px) + 20px)',
       }}
     >
       <div className="mx-auto max-w-screen-md px-4">
