@@ -20,21 +20,21 @@ html, body {
   --safe-bottom: env(safe-area-inset-bottom);
   --kb: 0px;
   
-  /* Мультяшная палитра Astrot */
-  --bg-primary: #FFFBF7;
-  --bg-secondary: #FFF5ED;
-  --bg-card: linear-gradient(135deg, rgba(255, 255, 255, 0.98) 0%, rgba(255, 245, 237, 0.98) 100%);
-  --bg-card-hover: linear-gradient(135deg, rgba(255, 251, 247, 1) 0%, rgba(255, 240, 230, 1) 100%);
+  /* ASTROT в стиле Boinkers - Темная игровая тема */
+  --bg-primary: #0F0F1E;
+  --bg-secondary: #1A1A2E;
+  --bg-card: linear-gradient(135deg, #16213E 0%, #1E2A4A 100%);
+  --bg-card-hover: linear-gradient(135deg, #1E2A4A 0%, #2A3655 100%);
   
-  --text-primary: #4A3D5C;
-  --text-secondary: #6B5D7A;
-  --text-hint: #9B8FAB;
-  --text-muted: #C4B5D3;
+  --text-primary: #FFFFFF;
+  --text-secondary: #A1A1AA;
+  --text-hint: #71717A;
+  --text-muted: #52525B;
   
-  --accent-primary: #B794F6;
-  --accent-secondary: #D6BCFA;
-  --accent-light: #F3E7FF;
-  --accent-glow: #E9D8FD;
+  --accent-primary: #8B5CF6;
+  --accent-secondary: #EC4899;
+  --accent-light: #3B82F6;
+  --accent-glow: #FCD34D;
   
   /* Пастельные цвета */
   --pastel-pink: #FFE0EC;
@@ -85,9 +85,9 @@ html {
 
 body {
   margin: 0;
-  background: linear-gradient(180deg, #FFFBF7 0%, #FFE5ED 50%, #FFE0EC 100%);
+  background: linear-gradient(180deg, #0F0F1E 0%, #1A1A2E 50%, #16213E 100%);
   color: var(--text-primary);
-  font-family: 'Baloo 2', 'Comic Neue', 'Fredoka', -apple-system, BlinkMacSystemFont, 'Segoe UI', cursive, sans-serif;
+  font-family: 'Roboto', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   font-size: 16px;

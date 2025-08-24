@@ -1,0 +1,394 @@
+/* ASTROT - Дружелюбная натальная карта в стиле Boinkers */
+
+:root {
+  /* Яркие игровые цвета Boinkers */
+  --boinkers-purple: #8B5CF6;
+  --boinkers-pink: #EC4899;
+  --boinkers-blue: #3B82F6;
+  --boinkers-cyan: #06B6D4;
+  --boinkers-yellow: #FCD34D;
+  --boinkers-orange: #FB923C;
+  --boinkers-green: #10B981;
+  --boinkers-red: #EF4444;
+  
+  /* Темная тема основа */
+  --astrot-bg-primary: #0F0F1E;
+  --astrot-bg-secondary: #1A1A2E;
+  --astrot-bg-card: #16213E;
+  --astrot-bg-hover: #1E2A4A;
+  
+  /* Градиенты для карточек */
+  --astrot-gradient-purple: linear-gradient(135deg, #8B5CF6 0%, #7C3AED 100%);
+  --astrot-gradient-pink: linear-gradient(135deg, #EC4899 0%, #DB2777 100%);
+  --astrot-gradient-blue: linear-gradient(135deg, #3B82F6 0%, #2563EB 100%);
+  --astrot-gradient-cosmic: linear-gradient(135deg, #8B5CF6 0%, #EC4899 50%, #3B82F6 100%);
+  --astrot-gradient-gold: linear-gradient(135deg, #FCD34D 0%, #F59E0B 100%);
+  
+  /* Текст */
+  --astrot-text-primary: #FFFFFF;
+  --astrot-text-secondary: #A1A1AA;
+  --astrot-text-muted: #71717A;
+  --astrot-text-accent: #FCD34D;
+  
+  /* Игровые тени с неоном */
+  --astrot-glow-purple: 0 0 30px rgba(139, 92, 246, 0.5);
+  --astrot-glow-pink: 0 0 30px rgba(236, 72, 153, 0.5);
+  --astrot-glow-blue: 0 0 30px rgba(59, 130, 246, 0.5);
+  --astrot-shadow-card: 0 10px 40px rgba(0, 0, 0, 0.5);
+  --astrot-shadow-button: 0 4px 15px rgba(0, 0, 0, 0.3);
+  
+  /* Размеры по Material Design 3 */
+  --astrot-radius-sm: 8px;
+  --astrot-radius-md: 12px;
+  --astrot-radius-lg: 20px;
+  --astrot-radius-xl: 28px;
+  --astrot-radius-full: 9999px;
+  
+  /* Анимации */
+  --astrot-bounce: cubic-bezier(0.68, -0.55, 0.265, 1.55);
+  --astrot-smooth: cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* Игровые кнопки в стиле Boinkers */
+.astrot-button {
+  background: var(--astrot-gradient-purple);
+  color: white;
+  border: none;
+  border-radius: var(--astrot-radius-lg);
+  padding: 16px 32px;
+  font-size: 18px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  cursor: pointer;
+  position: relative;
+  overflow: hidden;
+  box-shadow: var(--astrot-shadow-button);
+  transition: all 0.3s var(--astrot-bounce);
+  animation: pulse 2s infinite;
+}
+
+.astrot-button:before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent);
+  transition: left 0.5s;
+}
+
+.astrot-button:hover {
+  transform: translateY(-3px) scale(1.05);
+  box-shadow: var(--astrot-glow-purple), var(--astrot-shadow-card);
+}
+
+.astrot-button:hover:before {
+  left: 100%;
+}
+
+.astrot-button:active {
+  transform: translateY(0) scale(0.98);
+}
+
+/* Пульсирующая анимация */
+@keyframes pulse {
+  0%, 100% {
+    box-shadow: var(--astrot-shadow-button);
+  }
+  50% {
+    box-shadow: var(--astrot-shadow-button), 0 0 20px rgba(139, 92, 246, 0.4);
+  }
+}
+
+/* Игровые карточки */
+.astrot-card {
+  background: var(--astrot-bg-card);
+  border-radius: var(--astrot-radius-xl);
+  padding: 24px;
+  position: relative;
+  overflow: hidden;
+  box-shadow: var(--astrot-shadow-card);
+  border: 2px solid rgba(139, 92, 246, 0.2);
+  transition: all 0.3s var(--astrot-smooth);
+}
+
+.astrot-card:hover {
+  transform: translateY(-5px);
+  border-color: rgba(139, 92, 246, 0.5);
+  box-shadow: var(--astrot-glow-purple), var(--astrot-shadow-card);
+}
+
+.astrot-card::before {
+  content: '';
+  position: absolute;
+  top: -2px;
+  left: -2px;
+  right: -2px;
+  bottom: -2px;
+  background: var(--astrot-gradient-cosmic);
+  border-radius: var(--astrot-radius-xl);
+  opacity: 0;
+  z-index: -1;
+  transition: opacity 0.3s;
+}
+
+.astrot-card:hover::before {
+  opacity: 0.3;
+}
+
+/* Звездочки и частицы */
+.astrot-stars {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  overflow: hidden;
+  z-index: 1;
+}
+
+.astrot-star {
+  position: absolute;
+  width: 2px;
+  height: 2px;
+  background: white;
+  border-radius: 50%;
+  animation: twinkle 3s infinite;
+}
+
+@keyframes twinkle {
+  0%, 100% { opacity: 0; }
+  50% { opacity: 1; }
+}
+
+/* Эмодзи планеты */
+.astrot-planet {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 60px;
+  height: 60px;
+  background: var(--astrot-gradient-purple);
+  border-radius: 50%;
+  font-size: 32px;
+  box-shadow: var(--astrot-shadow-button);
+  animation: float 3s ease-in-out infinite;
+  cursor: pointer;
+  transition: all 0.3s var(--astrot-bounce);
+}
+
+.astrot-planet:hover {
+  transform: scale(1.2) rotate(10deg);
+  box-shadow: var(--astrot-glow-purple);
+}
+
+@keyframes float {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-10px); }
+}
+
+/* Прогресс бар в стиле игры */
+.astrot-progress {
+  width: 100%;
+  height: 32px;
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: var(--astrot-radius-full);
+  overflow: hidden;
+  position: relative;
+  border: 2px solid rgba(139, 92, 246, 0.3);
+}
+
+.astrot-progress-fill {
+  height: 100%;
+  background: var(--astrot-gradient-cosmic);
+  border-radius: var(--astrot-radius-full);
+  position: relative;
+  animation: progress-glow 2s ease-in-out infinite;
+  transition: width 0.5s var(--astrot-smooth);
+}
+
+.astrot-progress-fill::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  width: 30px;
+  background: linear-gradient(90deg, transparent, rgba(255,255,255,0.5));
+  animation: shine 2s infinite;
+}
+
+@keyframes progress-glow {
+  0%, 100% { box-shadow: inset 0 0 10px rgba(255,255,255,0.2); }
+  50% { box-shadow: inset 0 0 20px rgba(255,255,255,0.4); }
+}
+
+@keyframes shine {
+  0% { transform: translateX(-30px); }
+  100% { transform: translateX(30px); }
+}
+
+/* Дружелюбные сообщения */
+.astrot-message {
+  background: linear-gradient(135deg, var(--astrot-bg-card), rgba(139, 92, 246, 0.1));
+  border-left: 4px solid var(--boinkers-purple);
+  border-radius: var(--astrot-radius-md);
+  padding: 20px;
+  margin: 16px 0;
+  position: relative;
+  animation: slideIn 0.5s var(--astrot-bounce);
+}
+
+.astrot-message-emoji {
+  font-size: 28px;
+  margin-right: 12px;
+  animation: bounce 2s infinite;
+}
+
+@keyframes slideIn {
+  from {
+    opacity: 0;
+    transform: translateX(-20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+@keyframes bounce {
+  0%, 100% { transform: translateY(0); }
+  25% { transform: translateY(-5px); }
+  75% { transform: translateY(5px); }
+}
+
+/* Игровые бейджи */
+.astrot-badge {
+  display: inline-flex;
+  align-items: center;
+  padding: 8px 16px;
+  background: var(--astrot-gradient-gold);
+  color: var(--astrot-bg-primary);
+  border-radius: var(--astrot-radius-full);
+  font-weight: 700;
+  font-size: 14px;
+  box-shadow: var(--astrot-shadow-button);
+  animation: badge-glow 2s infinite;
+}
+
+@keyframes badge-glow {
+  0%, 100% {
+    box-shadow: var(--astrot-shadow-button);
+  }
+  50% {
+    box-shadow: 0 0 20px rgba(252, 211, 77, 0.6);
+  }
+}
+
+/* Колесо натальной карты в игровом стиле */
+.astrot-wheel {
+  width: 300px;
+  height: 300px;
+  border-radius: 50%;
+  background: radial-gradient(circle at center, var(--astrot-bg-hover), var(--astrot-bg-card));
+  border: 4px solid var(--boinkers-purple);
+  position: relative;
+  box-shadow: var(--astrot-glow-purple), var(--astrot-shadow-card);
+  animation: rotate 60s linear infinite;
+}
+
+@keyframes rotate {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+/* Интерактивные подсказки */
+.astrot-tooltip {
+  background: var(--astrot-bg-card);
+  color: var(--astrot-text-primary);
+  padding: 12px 16px;
+  border-radius: var(--astrot-radius-md);
+  font-size: 14px;
+  box-shadow: var(--astrot-shadow-card);
+  border: 1px solid rgba(139, 92, 246, 0.3);
+  position: absolute;
+  z-index: 1000;
+  animation: fadeIn 0.3s;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: scale(0.9); }
+  to { opacity: 1; transform: scale(1); }
+}
+
+/* Монетки и награды */
+.astrot-coin {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  background: var(--astrot-gradient-gold);
+  border-radius: 50%;
+  font-size: 24px;
+  box-shadow: var(--astrot-shadow-button);
+  animation: coin-spin 3s linear infinite;
+}
+
+@keyframes coin-spin {
+  from { transform: rotateY(0deg); }
+  to { transform: rotateY(360deg); }
+}
+
+/* Дружелюбный чат-бот */
+.astrot-chat {
+  background: var(--astrot-bg-card);
+  border-radius: var(--astrot-radius-xl);
+  padding: 20px;
+  margin: 16px 0;
+  position: relative;
+}
+
+.astrot-chat::before {
+  content: '';
+  position: absolute;
+  bottom: -10px;
+  left: 30px;
+  width: 20px;
+  height: 20px;
+  background: var(--astrot-bg-card);
+  transform: rotate(45deg);
+}
+
+.astrot-chat-avatar {
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  background: var(--astrot-gradient-purple);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 28px;
+  margin-bottom: 12px;
+  animation: float 3s ease-in-out infinite;
+}
+
+/* Мобильная адаптация */
+@media (max-width: 768px) {
+  .astrot-button {
+    padding: 14px 24px;
+    font-size: 16px;
+  }
+  
+  .astrot-wheel {
+    width: 250px;
+    height: 250px;
+  }
+  
+  .astrot-card {
+    padding: 20px;
+  }
+}
