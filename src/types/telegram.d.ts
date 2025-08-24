@@ -1,6 +1,15 @@
-// единая декларация, совместимая с @telegram-apps/sdk
-import type { WebApp } from '@telegram-apps/sdk';
+import type { WebApp } from '@twa-dev/types';
 
+// Глобальное расширение Window
+declare global {
+  interface Window {
+    Telegram?: {
+      WebApp: WebApp;
+    };
+  }
+}
+
+// Экспортируем типы для использования в проекте
 export type TgUser = {
   id: number;
   first_name?: string;
@@ -10,10 +19,4 @@ export type TgUser = {
   language_code?: string;
 };
 
-declare global {
-  interface Window {
-    Telegram?: {
-      WebApp: WebApp;          // ВАЖНО: без "?" у WebApp, чтобы совпало с базовой декларацией
-    };
-  }
-}
+export {};
