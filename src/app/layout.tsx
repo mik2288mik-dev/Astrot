@@ -51,7 +51,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <Script src="https://telegram.org/js/telegram-web-app.js" strategy="beforeInteractive" />
       </head>
       <body 
-        className="font-manrope min-h-screen"
+        className={`${manrope.className} min-h-screen`}
         style={{
           background: `linear-gradient(180deg, ${astrotColors.background.primary} 0%, ${astrotColors.background.secondary} 100%)`,
         }}
@@ -66,8 +66,8 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
               <main 
                 className="min-h-screen"
                 style={{
-                  paddingTop: 'calc(env(safe-area-inset-top) + 8px + 56px + 16px)',
-                  paddingBottom: 'calc(72px + env(safe-area-inset-bottom) + 16px)',
+                  paddingTop: 'calc(env(safe-area-inset-top) + 6px + 56px + 16px)',
+                  paddingBottom: 'calc(64px + env(safe-area-inset-bottom) + 16px)',
                 }}
               >
                 <div className="mx-auto max-w-screen-md px-4">
