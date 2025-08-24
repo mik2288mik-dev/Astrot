@@ -14,15 +14,6 @@ interface TelegramUser {
   is_premium?: boolean;
 }
 
-// Расширяем window для Telegram
-declare global {
-  interface Window {
-    Telegram?: {
-      WebApp: WebApp;
-    };
-  }
-}
-
 export function useTelegram() {
   const [webApp, setWebApp] = useState<WebApp | null>(null);
   const [user, setUser] = useState<TelegramUser | null>(null);

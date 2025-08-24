@@ -1,6 +1,6 @@
 'use client'
 
-import { useRouter, usePathname } from 'next/navigation'
+import { useRouter } from 'next/navigation'
 
 // SVG иконки inline
 const HomeIcon = () => (
@@ -33,7 +33,6 @@ const AstrotLogoIcon = () => (
 
 export default function BottomNav() {
   const router = useRouter()
-  const pathname = usePathname()
 
   const handleNavigation = (path: string) => {
     router.push(path)

@@ -2,46 +2,26 @@
 
 import { useEffect } from 'react'
 
-declare global {
-  interface Window {
-    Telegram?: {
-      WebApp?: {
-        ready?: () => void
-        expand?: () => void
-        disableVerticalSwipes?: () => void
-        disableClosingConfirmation?: () => void
-        initDataUnsafe?: {
-          user?: {
-            id: number
-            first_name?: string
-            last_name?: string
-            username?: string
-            language_code?: string
-            photo_url?: string
-          }
-        }
-      }
-    }
-  }
-}
-
 export default function SafeAreaInit() {
   useEffect(() => {
     // Инициализация Telegram WebApp
-    if (typeof window !== 'undefined' && window.Telegram?.WebApp) {
-      const tg = window.Telegram.WebApp
-      
+    const tg = window.Telegram?.WebApp
+    if (tg) {
       // Готовность приложения
-      tg.ready?.()
+      tg.ready()
       
       // Разворачиваем на весь экран
-      tg.expand?.()
+      tg.expand()
       
       // Отключаем вертикальные свайпы для закрытия
-      tg.disableVerticalSwipes?.()
+      if (typeof tg.disableVerticalSwipes === 'function') {
+        tg.disableVerticalSwipes()
+      }
       
       // Отключаем подтверждение закрытия
-      tg.disableClosingConfirmation?.()
+      if (typeof tg.disableClosingConfirmation === 'function') {
+        tg.disableClosingConfirmation()
+      }
     }
     
     // Отключаем overscroll behavior для предотвращения bounce эффекта
@@ -50,17 +30,21 @@ export default function SafeAreaInit() {
       document.body.style.overscrollBehavior = 'none'
       
       // Добавляем CSS переменные для safe area
-      const updateViewportHeight = () => {
+      const updateSafeAreaVariables = () => {
         const vh = window.innerHeight * 0.01
         document.documentElement.style.setProperty('--vh', `${vh}px`)
+        document.documentElement.style.setProperty('--safe-area-top', 'env(safe-area-inset-top)')
+        document.documentElement.style.setProperty('--safe-area-bottom', 'env(safe-area-inset-bottom)')
+        document.documentElement.style.setProperty('--safe-area-left', 'env(safe-area-inset-left)')
+        document.documentElement.style.setProperty('--safe-area-right', 'env(safe-area-inset-right)')
       }
       
-      updateViewportHeight()
-      window.addEventListener('resize', updateViewportHeight)
+      updateSafeAreaVariables()
+      window.addEventListener('resize', updateSafeAreaVariables)
       
       // Cleanup
       return () => {
-        window.removeEventListener('resize', updateViewportHeight)
+        window.removeEventListener('resize', updateSafeAreaVariables)
       }
     }
   }, [])

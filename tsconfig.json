@@ -4,6 +4,7 @@
     "lib": ["dom", "dom.iterable", "esnext"],
     "allowJs": false,
     "skipLibCheck": true,
+    "types": ["@twa-dev/types"],
     "strict": true,
     "noUncheckedIndexedAccess": false,
     "exactOptionalPropertyTypes": false,
@@ -38,7 +39,10 @@
     ".next/types/**/*.ts",
     "types/**/*.d.ts",
     "types/**/*.ts",
-    "lib/**/*.ts"
+    "lib/**/*.ts",
+    "src",
+    "types",
+    "src/types"
   ],
   "exclude": ["node_modules"]
 }

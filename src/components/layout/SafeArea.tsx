@@ -1,15 +1,5 @@
 'use client';
 import { useEffect } from 'react';
-import type { WebApp } from '@twa-dev/types';
-
-// Расширяем window для Telegram
-declare global {
-  interface Window {
-    Telegram?: {
-      WebApp: WebApp;
-    };
-  }
-}
 
 export function SafeAreaInit() {
   useEffect(() => {
