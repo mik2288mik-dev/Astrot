@@ -1,227 +1,104 @@
-'use client';
+'use client'
 
-import { useRouter, usePathname } from 'next/navigation';
-import { useCallback } from 'react';
+import { useRouter, usePathname } from 'next/navigation'
 
-/**
- * BottomNav компонент в стиле BOINKERS
- * Высота: 64px + safe area bottom
- * Три пункта: Домой | Карта (центр, 3D) | Ещё
- */
+// SVG иконки inline
+const HomeIcon = () => (
+  <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <path d="M3 9.5L12 2L21 9.5V20C21 20.5304 20.7893 21.0391 20.4142 21.4142C20.0391 21.7893 19.5304 22 19 22H5C4.46957 22 3.96086 21.7893 3.58579 21.4142C3.21071 21.0391 3 20.5304 3 20V9.5Z" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"/>
+    <path d="M9 22V12H15V22" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"/>
+  </svg>
+)
+
+const AppsAstroIcon = () => (
+  <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <rect x="4" y="4" width="5" height="5" rx="1.5" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"/>
+    <rect x="11" y="4" width="5" height="5" rx="1.5" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"/>
+    <rect x="4" y="11" width="5" height="5" rx="1.5" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"/>
+    <rect x="11" y="11" width="5" height="5" rx="1.5" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"/>
+    <rect x="4" y="18" width="5" height="5" rx="1.5" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"/>
+    <rect x="11" y="18" width="5" height="5" rx="1.5" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"/>
+    <path d="M19 2L19.5 3.5L21 4L19.5 4.5L19 6L18.5 4.5L17 4L18.5 3.5L19 2Z" fill="currentColor"/>
+  </svg>
+)
+
+const AstrotLogoIcon = () => (
+  <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <path d="M12 3L7 18M12 3L17 18M7 18L5 21M17 18L19 21M9 13H15" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"/>
+    <circle cx="12" cy="3" r="1.5" fill="currentColor"/>
+    <circle cx="5" cy="21" r="1" fill="currentColor"/>
+    <circle cx="19" cy="21" r="1" fill="currentColor"/>
+  </svg>
+)
+
 export default function BottomNav() {
-  const router = useRouter();
-  const pathname = usePathname();
-  
-  const handleNavigation = useCallback((path: string) => {
-    router.push(path);
-  }, [router]);
-  
-  // Определяем активный пункт
-  const isHomeActive = pathname === '/' || pathname === '/home';
-  const isMapActive = pathname === '/map' || pathname === '/natal';
-  const isMoreActive = pathname === '/more' || pathname === '/apps';
-  
+  const router = useRouter()
+  const pathname = usePathname()
+
+  const handleNavigation = (path: string) => {
+    router.push(path)
+  }
+
   return (
-    <nav 
-      className="fixed bottom-0 left-0 right-0 z-50 bg-surfaceDark border-t border-white/[0.22] shadow-navDark"
+    <div 
+      className="fixed bottom-0 left-0 right-0 z-50 animate-[fadeUp_0.3s_ease-out]"
       style={{
+        height: 'calc(64px + env(safe-area-inset-bottom))',
         paddingBottom: 'env(safe-area-inset-bottom)',
+        background: '#1E1F36',
+        borderTop: '1px solid rgba(255,255,255,.22)',
+        boxShadow: '0 -4px 12px rgba(0,0,0,.45)'
       }}
-      aria-label="Основная навигация"
     >
-      <div className="h-16 relative flex items-center justify-around px-4">
-        {/* Левая кнопка - Домой */}
-        <button
+      <div className="relative h-16 flex items-center justify-between px-5">
+        {/* Кнопка Домой */}
+        <button 
           onClick={() => handleNavigation('/')}
-          className="flex flex-col items-center justify-center min-w-[48px] min-h-[44px] p-2 transition-all duration-200 active:scale-95"
-          aria-label="Домой"
-          aria-current={isHomeActive ? 'page' : undefined}
+          className="flex flex-col items-center justify-center gap-1 w-12 h-12 rounded-xl transition-transform duration-200 active:scale-[0.96]"
         >
-          <svg 
-            width="24" 
-            height="24" 
-            viewBox="0 0 24 24" 
-            fill="none"
-            className={`transition-colors ${isHomeActive ? 'text-white' : 'text-white/60'}`}
-          >
-            <path 
-              d="M4 10.5C4 9.5 4.5 8.5 5.5 7.5L11 3C11.5 2.5 12.5 2.5 13 3L18.5 7.5C19.5 8.5 20 9.5 20 10.5V19C20 20.5 19 21 17.5 21H6.5C5 21 4 20.5 4 19V10.5Z" 
-              stroke="currentColor" 
-              strokeWidth="2.5" 
-              strokeLinecap="round" 
-              strokeLinejoin="round"
-            />
-            <path 
-              d="M10 21V15C10 14 10.5 13 12 13C13.5 13 14 14 14 15V21" 
-              stroke="currentColor" 
-              strokeWidth="2.5" 
-              strokeLinecap="round" 
-              strokeLinejoin="round"
-            />
-          </svg>
-          <span className={`text-xs font-manrope font-semibold mt-1 transition-colors ${isHomeActive ? 'text-white' : 'text-white/60'}`}>
+          <div className="text-white">
+            <HomeIcon />
+          </div>
+          <span className="text-white font-manrope font-semibold text-xs">
             Домой
           </span>
         </button>
-        
-        {/* Центральная кнопка - Карта (3D эффект) */}
-        <button
-          onClick={() => handleNavigation('/natal')}
-          className="absolute left-1/2 -translate-x-1/2 -top-5 group"
-          aria-label="Карта"
-          aria-current={isMapActive ? 'page' : undefined}
-        >
-          {/* Внешний круг с градиентом и эффектами */}
-          <div 
-            className="relative w-16 h-16 rounded-full bg-gradient-to-br from-accentFrom to-accentTo shadow-logo3D transition-all duration-200 group-active:scale-96 group-active:shadow-lg"
-            style={{
-              border: '3px solid rgba(255,255,255,0.25)',
-              boxShadow: '0 6px 12px rgba(0,0,0,0.45), inset 0 4px 8px rgba(255,255,255,0.25)',
-            }}
+
+        {/* Центральная кнопка Карта */}
+        <div className="absolute left-1/2 -translate-x-1/2 -top-5">
+          <button 
+            onClick={() => handleNavigation('/map')}
+            className="relative flex flex-col items-center gap-1 transition-transform duration-200 active:scale-[0.98]"
           >
-            {/* Внутренний блик для 3D эффекта */}
             <div 
-              className="absolute inset-0 rounded-full opacity-50"
+              className="w-16 h-16 rounded-full flex items-center justify-center text-white"
               style={{
-                background: 'radial-gradient(circle at 30% 30%, rgba(255,255,255,0.4) 0%, transparent 60%)',
+                background: 'linear-gradient(145deg, #CF5CFF 0%, #FF6AD9 100%)',
+                border: '3px solid rgba(255,255,255,.25)',
+                boxShadow: '0 6px 12px rgba(0,0,0,.45), inset 0 4px 8px rgba(255,255,255,.25)'
               }}
-            />
-            
-            {/* Иконка логотипа */}
-            <div className="absolute inset-0 flex items-center justify-center">
-              <svg 
-                width="24" 
-                height="24" 
-                viewBox="0 0 24 24" 
-                fill="none"
-                className="text-white"
-              >
-                <circle 
-                  cx="12" 
-                  cy="12" 
-                  r="10" 
-                  stroke="currentColor" 
-                  strokeWidth="2.5" 
-                  strokeLinecap="round" 
-                  strokeLinejoin="round"
-                />
-                <path 
-                  d="M12 6L14 10.5L19 11L15.5 14L16.5 19L12 16.5L7.5 19L8.5 14L5 11L10 10.5Z" 
-                  stroke="currentColor" 
-                  strokeWidth="2.5" 
-                  strokeLinecap="round" 
-                  strokeLinejoin="round"
-                />
-              </svg>
+            >
+              <AstrotLogoIcon />
             </div>
-            
-            {/* Пульсирующий эффект при активном состоянии */}
-            {isMapActive && (
-              <div className="absolute inset-0 rounded-full animate-ping opacity-30 bg-gradient-to-br from-accentFrom to-accentTo" />
-            )}
-          </div>
-          
-          {/* Подпись под кнопкой */}
-          <span className={`text-xs font-manrope font-semibold mt-2 block transition-colors ${isMapActive ? 'text-white' : 'text-white/80'}`}>
-            Карта
-          </span>
-        </button>
-        
-        {/* Правая кнопка - Ещё */}
-        <button
-          onClick={() => handleNavigation('/apps')}
-          className="flex flex-col items-center justify-center min-w-[48px] min-h-[44px] p-2 transition-all duration-200 active:scale-95"
-          aria-label="Ещё"
-          aria-current={isMoreActive ? 'page' : undefined}
+            <span className="text-white font-manrope font-semibold text-xs mt-1">
+              Карта
+            </span>
+          </button>
+        </div>
+
+        {/* Кнопка Ещё */}
+        <button 
+          onClick={() => handleNavigation('/more')}
+          className="flex flex-col items-center justify-center gap-1 w-12 h-12 rounded-xl transition-transform duration-200 active:scale-[0.96]"
         >
-          <svg 
-            width="24" 
-            height="24" 
-            viewBox="0 0 24 24" 
-            fill="none"
-            className={`transition-colors ${isMoreActive ? 'text-white' : 'text-white/60'}`}
-          >
-            {/* Grid of rounded squares 2x3 */}
-            <rect 
-              x="3" 
-              y="3" 
-              width="6" 
-              height="6" 
-              rx="2" 
-              stroke="currentColor" 
-              strokeWidth="2.5" 
-              strokeLinecap="round" 
-              strokeLinejoin="round"
-            />
-            <rect 
-              x="15" 
-              y="3" 
-              width="6" 
-              height="6" 
-              rx="2" 
-              stroke="currentColor" 
-              strokeWidth="2.5" 
-              strokeLinecap="round" 
-              strokeLinejoin="round"
-            />
-            <rect 
-              x="3" 
-              y="9" 
-              width="6" 
-              height="6" 
-              rx="2" 
-              stroke="currentColor" 
-              strokeWidth="2.5" 
-              strokeLinecap="round" 
-              strokeLinejoin="round"
-            />
-            <rect 
-              x="15" 
-              y="9" 
-              width="6" 
-              height="6" 
-              rx="2" 
-              stroke="currentColor" 
-              strokeWidth="2.5" 
-              strokeLinecap="round" 
-              strokeLinejoin="round"
-            />
-            <rect 
-              x="3" 
-              y="15" 
-              width="6" 
-              height="6" 
-              rx="2" 
-              stroke="currentColor" 
-              strokeWidth="2.5" 
-              strokeLinecap="round" 
-              strokeLinejoin="round"
-            />
-            <rect 
-              x="15" 
-              y="15" 
-              width="6" 
-              height="6" 
-              rx="2" 
-              stroke="currentColor" 
-              strokeWidth="2.5" 
-              strokeLinecap="round" 
-              strokeLinejoin="round"
-            />
-            {/* Small star in top right corner */}
-            <path 
-              d="M18 2L18.5 3L19.5 3.5L18.5 4L18 5L17.5 4L16.5 3.5L17.5 3Z" 
-              stroke="currentColor" 
-              strokeWidth="2.5" 
-              strokeLinecap="round" 
-              strokeLinejoin="round"
-            />
-          </svg>
-          <span className={`text-xs font-manrope font-semibold mt-1 transition-colors ${isMoreActive ? 'text-white' : 'text-white/60'}`}>
+          <div className="text-white">
+            <AppsAstroIcon />
+          </div>
+          <span className="text-white font-manrope font-semibold text-xs">
             Ещё
           </span>
         </button>
       </div>
-    </nav>
-  );
+    </div>
+  )
 }
