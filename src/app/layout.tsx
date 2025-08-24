@@ -1,34 +1,29 @@
-import Script from 'next/script';
-import type { Metadata } from 'next';
-import '@/app/globals.css';
-import '@/styles/tokens.css';
-import '@/styles/nebula.css';
-import '@/styles/ui-kit.css';
-import '@/styles/safe.css';
-import { TelegramProvider } from '@/providers/telegram-provider';
-import { TelegramViewportProvider } from '@/providers/telegram-viewport';
-import { ThemeProvider } from '@/providers/ThemeProvider';
-import SafeArea, { SafeAreaInit } from '@/components/layout/SafeArea';
-import TopBar from '@/components/layout/TopBar';
-import BottomNav from '@/components/layout/BottomNav';
-import { Rubik, Manrope } from 'next/font/google';
+import Script from 'next/script'
+import type { Metadata } from 'next'
+import '@/app/globals.css'
+import '@/styles/tokens.css'
+import '@/styles/nebula.css'
+import '@/styles/ui-kit.css'
+import '@/styles/safe.css'
+import { TelegramProvider } from '@/providers/telegram-provider'
+import { TelegramViewportProvider } from '@/providers/telegram-viewport'
+import { ThemeProvider } from '@/providers/ThemeProvider'
+import SafeAreaInit from '@/components/SafeAreaInit'
+import TopBar from '@/components/TopBar'
+import BottomNav from '@/components/BottomNav'
+import { Manrope } from 'next/font/google'
+import { astrotColors } from '../../styles/colors'
 
-const rubik = Rubik({ 
-  subsets: ['latin', 'cyrillic'],
-  variable: '--font-rubik',
-  weight: ['300', '400', '500', '600', '700'],
-  display: 'swap',
-});
-
+// Подключаем Manrope с поддержкой кириллицы
 const manrope = Manrope({ 
   subsets: ['latin', 'cyrillic'],
   variable: '--font-manrope',
   weight: ['400', '500', '600', '700', '800'],
   display: 'swap',
-});
+})
 
-export const runtime = 'nodejs';
-export const dynamic = 'force-dynamic';
+export const runtime = 'nodejs'
+export const dynamic = 'force-dynamic'
 
 export const metadata: Metadata = {
   title: 'Astrot - Астрологическое приложение',
@@ -43,37 +38,48 @@ export const metadata: Metadata = {
     apple: '/logo.png'
   },
   manifest: '/manifest.webmanifest',
-  themeColor: '#000000',
+  themeColor: astrotColors.primary.start,
   viewport: 'width=device-width,initial-scale=1,viewport-fit=cover,user-scalable=no'
-};
+}
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="ru">
+    <html lang="ru" className={manrope.variable}>
       <head>
         <meta name="apple-mobile-web-app-capable" content="yes" />
         <meta name="apple-mobile-web-app-status-bar-style" content="default" />
         <Script src="https://telegram.org/js/telegram-web-app.js" strategy="beforeInteractive" />
       </head>
-      <body className={`${rubik.variable} ${manrope.variable} font-rubik min-h-screen bg-gradient-to-b from-[#FFF6FB] to-[#FBEFFF]`}>
+      <body 
+        className="font-manrope min-h-screen"
+        style={{
+          background: `linear-gradient(180deg, ${astrotColors.background.primary} 0%, ${astrotColors.background.secondary} 100%)`,
+        }}
+      >
         <SafeAreaInit />
         <TelegramProvider>
           <TelegramViewportProvider>
             <ThemeProvider>
               <TopBar />
-              <SafeArea>
-                <div className="min-h-screen flex flex-col" style={{paddingTop:'calc(env(safe-area-inset-top) + 56px + 8px)'}}>
-                  <main className="flex-1 overflow-y-auto">
-                    {children}
-                  </main>
-                  <div style={{height:'calc(72px + env(safe-area-inset-bottom))'}} />
+              
+              {/* Основной контент с правильными отступами */}
+              <main 
+                className="min-h-screen"
+                style={{
+                  paddingTop: 'calc(env(safe-area-inset-top) + 8px + 56px + 16px)',
+                  paddingBottom: 'calc(72px + env(safe-area-inset-bottom) + 16px)',
+                }}
+              >
+                <div className="mx-auto max-w-screen-md px-4">
+                  {children}
                 </div>
-              </SafeArea>
+              </main>
+              
               <BottomNav />
             </ThemeProvider>
           </TelegramViewportProvider>
         </TelegramProvider>
       </body>
     </html>
-  );
+  )
 }
