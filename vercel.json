@@ -1,1 +1,6 @@
-{}
+{
+  "buildCommand": "pnpm build",
+  "outputDirectory": ".next",
+  "framework": "nextjs",
+  "ignoreCommand": "echo Skip"
+}
