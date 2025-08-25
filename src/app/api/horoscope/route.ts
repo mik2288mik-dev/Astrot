@@ -15,6 +15,13 @@ const RequestSchema = z.object({
   date: z.string().optional() // дата для гороскопа, по умолчанию - сегодня
 });
 
+function resolveBaseUrl(req: Request): string {
+  const url = new URL(req.url);
+  const host = url.host;
+  const protocol = url.protocol; // preserves https/http
+  return `${protocol}//${host}`;
+}
+
 export async function POST(req: Request) {
   const debugId = generateDebugId();
   const startTime = Date.now();
@@ -54,7 +61,8 @@ export async function POST(req: Request) {
     // Если передан tgId, пытаемся загрузить профиль
     if (tgId && !birth) {
       try {
-        const profileResponse = await fetch(`${process.env.NEXTAUTH_URL || 'http://localhost:3000'}/api/profile?tgId=${tgId}`);
+        const base = process.env.NEXTAUTH_URL || resolveBaseUrl(req);
+        const profileResponse = await fetch(`${base}/api/profile?tgId=${tgId}`);
         if (profileResponse.ok) {
           const profileData = await profileResponse.json();
           if (profileData.profile?.birthDate) {
