@@ -1,0 +1,174 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider  = "postgresql"
+  url       = env("DATABASE_URL")
+  directUrl = env("DIRECT_URL")
+}
+
+// Модель пользователя из Telegram
+model User {
+  id            String    @id @default(cuid())
+  tgId          String    @unique
+  username      String?
+  firstName     String?
+  lastName      String?
+  languageCode  String?   @default("ru")
+  isPremium     Boolean   @default(false)
+  photoUrl      String?
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+  
+  profile       Profile?
+  natalCharts   NatalChart[]
+  horoscopes    Horoscope[]
+  
+  @@index([tgId])
+}
+
+// Профиль с данными рождения
+model Profile {
+  id            String    @id @default(cuid())
+  userId        String    @unique
+  user          User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  
+  // Данные рождения
+  birthDate     DateTime
+  birthTime     String?   // Формат "HH:MM"
+  timeUnknown   Boolean   @default(false)
+  birthPlace    String
+  latitude      Float
+  longitude     Float
+  timezone      String
+  tzOffset      Int       // Смещение от UTC в минутах
+  
+  // Персональные данные
+  name          String?
+  gender        String?   // 'male', 'female', 'other'
+  email         String?
+  phone         String?
+  
+  // Настройки
+  houseSystem   String    @default("P") // P - Placidus, K - Koch, E - Equal, etc
+  
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+  
+  @@index([userId])
+}
+
+// Натальная карта
+model NatalChart {
+  id            String    @id @default(cuid())
+  userId        String
+  user          User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  
+  title         String?
+  description   String?
+  pinned        Boolean   @default(false)
+  
+  // Входные данные для расчета
+  inputData     Json      // BirthData: {date, time, lat, lon, tzOffset, houseSystem}
+  
+  // Результаты расчета
+  chartData     Json      // Планеты, дома, аспекты, etc
+  
+  // Метаданные
+  timeUnknown   Boolean   @default(false)
+  houseSystem   String    @default("P")
+  
+  // AI интерпретации
+  interpretations Interpretation[]
+  
+  // Треды обсуждений (для AI чата)
+  threads       ChatThread[]
+  
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+  
+  @@index([userId, createdAt])
+  @@index([userId, pinned])
+}
+
+// Интерпретация карты от AI
+model Interpretation {
+  id            String    @id @default(cuid())
+  chartId       String
+  chart         NatalChart @relation(fields: [chartId], references: [id], onDelete: Cascade)
+  
+  type          String    // 'general', 'love', 'career', 'health', 'year', etc
+  content       String    @db.Text
+  model         String    // AI модель: 'gpt-4o-mini', 'gpt-4', etc
+  
+  // Кэш промпта для отладки
+  prompt        String?   @db.Text
+  
+  createdAt     DateTime  @default(now())
+  
+  @@unique([chartId, type])
+  @@index([chartId, type])
+}
+
+// Гороскоп
+model Horoscope {
+  id            String    @id @default(cuid())
+  userId        String
+  user          User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  
+  date          DateTime  @db.Date
+  type          String    // 'daily', 'weekly', 'monthly', 'yearly'
+  sign          String    // Знак зодиака
+  
+  // Контент гороскопа
+  content       Json      // {general, love, career, health, etc}
+  
+  // AI модель
+  model         String    @default("gpt-4o-mini")
+  
+  createdAt     DateTime  @default(now())
+  
+  @@unique([userId, date, type])
+  @@index([userId, date])
+  @@index([date, sign, type])
+}
+
+// Чат-треды для обсуждения карты
+model ChatThread {
+  id            String    @id @default(cuid())
+  chartId       String
+  chart         NatalChart @relation(fields: [chartId], references: [id], onDelete: Cascade)
+  
+  title         String
+  messages      ChatMessage[]
+  
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+  
+  @@index([chartId])
+}
+
+// Сообщения в чате
+model ChatMessage {
+  id            String    @id @default(cuid())
+  threadId      String
+  thread        ChatThread @relation(fields: [threadId], references: [id], onDelete: Cascade)
+  
+  role          String    // 'user' или 'assistant'
+  content       String    @db.Text
+  
+  // Для AI сообщений
+  model         String?   // AI модель
+  tokens        Int?      // Количество токенов
+  
+  createdAt     DateTime  @default(now())
+  
+  @@index([threadId, createdAt])
+}

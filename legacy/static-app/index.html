@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Material Design Dark Theme App</title>
+    
+    <!-- Material Icons -->
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    
+    <!-- Roboto Font -->
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700;900&display=swap" rel="stylesheet">
+    
+    <!-- Styles -->
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <!-- Status Bar -->
+    <div class="status-bar">
+        <div class="status-bar-left">
+            <span class="time">9:41</span>
+        </div>
+        <div class="status-bar-right">
+            <i class="material-icons">signal_cellular_4_bar</i>
+            <i class="material-icons">wifi</i>
+            <i class="material-icons">battery_full</i>
+        </div>
+    </div>
+
+    <!-- Main Content -->
+    <div class="app-container">
+        <!-- Header Section -->
+        <header class="app-header">
+            <div class="profile-section">
+                <div class="avatar">
+                    <img src="https://via.placeholder.com/64/BB86FC/FFFFFF?text=P" alt="Avatar">
+                </div>
+                <div class="profile-info">
+                    <h1 class="username">publicnameee</h1>
+                    <div class="stats">
+                        <div class="stat">
+                            <span class="stat-value">457</span>
+                            <span class="stat-label">Подписчики</span>
+                        </div>
+                        <div class="stat">
+                            <span class="stat-value">56.58M</span>
+                            <span class="stat-label">Просмотры</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </header>
+
+        <!-- Main Card -->
+        <div class="main-card">
+            <div class="card-header">
+                <span class="card-label">PRE PASS</span>
+                <div class="timer">
+                    <i class="material-icons">schedule</i>
+                    <span>23:59:47</span>
+                </div>
+            </div>
+            
+            <div class="card-content">
+                <div class="big-number">99.999</div>
+                <div class="currency">USDT</div>
+                
+                <div class="progress-container">
+                    <div class="progress-bar">
+                        <div class="progress-fill" style="width: 65%;"></div>
+                    </div>
+                    <div class="progress-labels">
+                        <span>0</span>
+                        <span>150.000</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card-actions">
+                <button class="btn btn-primary">
+                    <i class="material-icons">shopping_cart</i>
+                    КУПИТЬ
+                </button>
+                <button class="btn btn-secondary">
+                    <i class="material-icons">attach_money</i>
+                    ЗАРАБОТАТЬ
+                </button>
+            </div>
+        </div>
+
+        <!-- Secondary Cards Grid -->
+        <div class="cards-grid">
+            <div class="small-card">
+                <div class="small-card-icon">
+                    <i class="material-icons">trending_up</i>
+                </div>
+                <div class="small-card-content">
+                    <span class="small-card-value">+24.5%</span>
+                    <span class="small-card-label">Рост за неделю</span>
+                </div>
+            </div>
+            
+            <div class="small-card">
+                <div class="small-card-icon">
+                    <i class="material-icons">account_balance_wallet</i>
+                </div>
+                <div class="small-card-content">
+                    <span class="small-card-value">1,234</span>
+                    <span class="small-card-label">Активы</span>
+                </div>
+            </div>
+            
+            <div class="small-card">
+                <div class="small-card-icon">
+                    <i class="material-icons">star</i>
+                </div>
+                <div class="small-card-content">
+                    <span class="small-card-value">4.8</span>
+                    <span class="small-card-label">Рейтинг</span>
+                </div>
+            </div>
+            
+            <div class="small-card">
+                <div class="small-card-icon">
+                    <i class="material-icons">group</i>
+                </div>
+                <div class="small-card-content">
+                    <span class="small-card-value">12K</span>
+                    <span class="small-card-label">Сообщество</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Activity List -->
+        <div class="activity-section">
+            <h2 class="section-title">Последняя активность</h2>
+            <div class="activity-list">
+                <div class="activity-item">
+                    <div class="activity-icon">
+                        <i class="material-icons">arrow_upward</i>
+                    </div>
+                    <div class="activity-content">
+                        <span class="activity-title">Покупка завершена</span>
+                        <span class="activity-time">2 минуты назад</span>
+                    </div>
+                    <div class="activity-amount positive">+125.00</div>
+                </div>
+                
+                <div class="activity-item">
+                    <div class="activity-icon">
+                        <i class="material-icons">arrow_downward</i>
+                    </div>
+                    <div class="activity-content">
+                        <span class="activity-title">Вывод средств</span>
+                        <span class="activity-time">1 час назад</span>
+                    </div>
+                    <div class="activity-amount negative">-50.00</div>
+                </div>
+                
+                <div class="activity-item">
+                    <div class="activity-icon">
+                        <i class="material-icons">swap_horiz</i>
+                    </div>
+                    <div class="activity-content">
+                        <span class="activity-title">Обмен валюты</span>
+                        <span class="activity-time">3 часа назад</span>
+                    </div>
+                    <div class="activity-amount">200.00</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Bottom Navigation -->
+    <nav class="bottom-nav">
+        <button class="nav-item active">
+            <i class="material-icons">home</i>
+            <span>Главная</span>
+        </button>
+        <button class="nav-item">
+            <i class="material-icons">explore</i>
+            <span>Обзор</span>
+        </button>
+        <button class="nav-item">
+            <i class="material-icons">account_balance_wallet</i>
+            <span>Кошелек</span>
+        </button>
+        <button class="nav-item">
+            <i class="material-icons">person</i>
+            <span>Профиль</span>
+        </button>
+    </nav>
+
+    <script src="script.js"></script>
+</body>
+</html>

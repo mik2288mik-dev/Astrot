@@ -1,0 +1,163 @@
+/* Анимации для тем */
+
+/* Базовые анимации частиц */
+@keyframes gentle {
+  0%, 100% { transform: translateY(0px); }
+  50% { transform: translateY(-5px); }
+}
+
+@keyframes sparkle {
+  0%, 100% { transform: scale(1) rotate(0deg); opacity: 1; }
+  50% { transform: scale(1.1) rotate(180deg); opacity: 0.8; }
+}
+
+@keyframes spooky {
+  0%, 100% { transform: translateX(0px); }
+  25% { transform: translateX(-3px); }
+  75% { transform: translateX(3px); }
+}
+
+@keyframes bloom {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.05); }
+}
+
+@keyframes sunshine {
+  0%, 100% { transform: rotate(0deg); }
+  50% { transform: rotate(180deg); }
+}
+
+@keyframes falling {
+  0% { transform: translateY(-10px) rotate(0deg); }
+  100% { transform: translateY(10px) rotate(360deg); }
+}
+
+@keyframes snow {
+  0% { transform: translateY(-10px) translateX(0px); }
+  50% { transform: translateY(5px) translateX(5px); }
+  100% { transform: translateY(10px) translateX(-5px); }
+}
+
+@keyframes hearts {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.2); }
+}
+
+/* Применение анимаций к элементам */
+body[data-theme-animation="gentle"] .animate-theme {
+  animation: gentle 3s ease-in-out infinite;
+}
+
+body[data-theme-animation="sparkle"] .animate-theme {
+  animation: sparkle 2s ease-in-out infinite;
+}
+
+body[data-theme-animation="spooky"] .animate-theme {
+  animation: spooky 1s ease-in-out infinite;
+}
+
+body[data-theme-animation="bloom"] .animate-theme {
+  animation: bloom 4s ease-in-out infinite;
+}
+
+body[data-theme-animation="sunshine"] .animate-theme {
+  animation: sunshine 8s linear infinite;
+}
+
+body[data-theme-animation="falling"] .animate-theme {
+  animation: falling 3s ease-in-out infinite;
+}
+
+body[data-theme-animation="snow"] .animate-theme {
+  animation: snow 4s ease-in-out infinite;
+}
+
+body[data-theme-animation="hearts"] .animate-theme {
+  animation: hearts 2s ease-in-out infinite;
+}
+
+/* Частицы в фоне */
+.theme-particles {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  pointer-events: none;
+  z-index: 1;
+  overflow: hidden;
+}
+
+.theme-particle {
+  position: absolute;
+  font-size: 20px;
+  opacity: 0.3;
+  animation-duration: 6s;
+  animation-iteration-count: infinite;
+  animation-timing-function: ease-in-out;
+}
+
+/* Переходы между темами */
+.theme-transition {
+  transition: all 0.5s ease-in-out;
+}
+
+/* Градиентные фоны для разных тем */
+body[data-theme="new_year"] {
+  background: linear-gradient(135deg, #FFE6E6 0%, #E6F3FF 100%);
+}
+
+body[data-theme="halloween"] {
+  background: linear-gradient(135deg, #2D1810 0%, #1A0A0A 100%);
+}
+
+body[data-theme="spring"] {
+  background: linear-gradient(135deg, #F0FFF4 0%, #F5FFFA 100%);
+}
+
+body[data-theme="summer"] {
+  background: linear-gradient(135deg, #FFFACD 0%, #F0F8FF 100%);
+}
+
+body[data-theme="autumn"] {
+  background: linear-gradient(135deg, #FFF8DC 0%, #FAEBD7 100%);
+}
+
+body[data-theme="winter"] {
+  background: linear-gradient(135deg, #F0F8FF 0%, #E6E6FA 100%);
+}
+
+body[data-theme="valentine"] {
+  background: linear-gradient(135deg, #FFF0F5 0%, #FFE4E1 100%);
+}
+
+/* Тематические эффекты для карточек */
+body[data-theme="new_year"] .card {
+  box-shadow: 0 4px 20px rgba(255, 107, 107, 0.15);
+}
+
+body[data-theme="halloween"] .card {
+  box-shadow: 0 4px 20px rgba(255, 140, 0, 0.2);
+  background: rgba(26, 14, 10, 0.9);
+  color: #FFA500;
+}
+
+body[data-theme="spring"] .card {
+  box-shadow: 0 4px 20px rgba(152, 216, 200, 0.15);
+}
+
+body[data-theme="summer"] .card {
+  box-shadow: 0 4px 20px rgba(255, 217, 61, 0.15);
+}
+
+body[data-theme="autumn"] .card {
+  box-shadow: 0 4px 20px rgba(210, 105, 30, 0.15);
+}
+
+body[data-theme="winter"] .card {
+  box-shadow: 0 4px 20px rgba(135, 206, 235, 0.15);
+}
+
+body[data-theme="valentine"] .card {
+  box-shadow: 0 4px 20px rgba(255, 105, 180, 0.15);
+}

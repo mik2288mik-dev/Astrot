@@ -1,0 +1,19 @@
+html,body{background:#000;min-height:100%;overscroll-behavior-y:contain}
+.astrot-bg{
+  position:fixed; inset:0; z-index:-2;
+  background:
+    radial-gradient(1200px 800px at 20% 10%, var(--bg-1), transparent 60%),
+    radial-gradient(1000px 700px at 80% 30%, var(--bg-2), transparent 60%),
+    radial-gradient(900px 900px at 60% 80%, var(--bg-3), transparent 60%),
+    linear-gradient(180deg, #221633 0%, #1A0F29 100%);
+}
+.astrot-stars::before{
+  content:""; position:fixed; inset:0; z-index:-1; pointer-events:none;
+  background-image:
+    radial-gradient(2px 2px at 20% 30%, rgba(255,255,255,.6) 40%, transparent 41%),
+    radial-gradient(1px 1px at 70% 20%, rgba(255,255,255,.5) 40%, transparent 41%),
+    radial-gradient(1.5px 1.5px at 40% 70%, rgba(255,255,255,.5) 40%, transparent 41%),
+    radial-gradient(1px 1px at 85% 65%, rgba(255,255,255,.5) 40%, transparent 41%);
+  filter: blur(.2px) brightness(1.08);
+  opacity:.12;
+}

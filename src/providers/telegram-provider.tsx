@@ -1,32 +1,151 @@
 "use client";
 
-import React, { createContext, useContext, useEffect, useMemo, useRef, useState } from 'react';
-import { getTelegramWebApp, onTelegramEvent, type TelegramWebApp, type TelegramThemeParams } from '@/lib/telegram';
+import React, { createContext, useContext, useEffect, useMemo, useState } from 'react';
+
+export type TelegramUser = {
+  id: number;
+  firstName: string;
+  lastName?: string;
+  username?: string;
+  languageCode?: string;
+  isPremium?: boolean;
+  photoUrl?: string;
+};
+
+export type TelegramThemeParams = {
+  bg_color?: string;
+  text_color?: string;
+  hint_color?: string;
+  button_color?: string;
+  button_text_color?: string;
+  secondary_bg_color?: string;
+  header_bg_color?: string;
+  accent_text_color?: string;
+  section_bg_color?: string;
+  section_header_text_color?: string;
+  subtitle_text_color?: string;
+  destructive_text_color?: string;
+};
 
 export type TelegramContextValue = {
-  tg: TelegramWebApp | null;
-  themeParams: TelegramThemeParams;
+  user: TelegramUser | null;
+  isReady: boolean;
   colorScheme: 'light' | 'dark';
-  initDataUnsafe: unknown;
-  isWebApp: boolean;
+  themeParams: TelegramThemeParams;
+  platform: string | undefined;
 };
 
 const TelegramContext = createContext<TelegramContextValue>({
-  tg: null,
-  themeParams: {},
+  user: null,
+  isReady: false,
   colorScheme: 'dark',
-  initDataUnsafe: null,
-  isWebApp: false,
+  themeParams: {},
+  platform: undefined,
 });
 
-function hexToRgb(hex: string): { r: number; g: number; b: number } | null {
-  const normalized = hex.replace('#', '');
-  const bigint = parseInt(normalized.length === 3 ? normalized.repeat(2) : normalized, 16);
-  if (Number.isNaN(bigint)) return null;
-  const r = (bigint >> 16) & 255;
-  const g = (bigint >> 8) & 255;
-  const b = bigint & 255;
-  return { r, g, b };
+export function TelegramProvider({ children }: { children: React.ReactNode }) {
+  const [isReady, setIsReady] = useState(false);
+  const [user, setUser] = useState<TelegramUser | null>(null);
+  const [colorScheme, setColorScheme] = useState<'light' | 'dark'>('dark');
+  const [theme, setTheme] = useState<TelegramThemeParams>({});
+  const [platform, setPlatform] = useState<string>();
+
+  useEffect(() => {
+    const init = async () => {
+      try {
+        // Проверяем наличие Telegram WebApp
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        const tg = (window as any).Telegram?.WebApp;
+        
+        if (tg) {
+          // Инициализация
+          tg.ready();
+          tg.expand();
+          
+          // Получение данных пользователя
+          const initData = tg.initDataUnsafe;
+          if (initData?.user) {
+            const tgUser = initData.user;
+            setUser({
+              id: tgUser.id,
+              firstName: tgUser.first_name,
+              lastName: tgUser.last_name,
+              username: tgUser.username,
+              languageCode: tgUser.language_code,
+              isPremium: tgUser.is_premium,
+              photoUrl: tgUser.photo_url || (tgUser.username ? 
+                `https://t.me/i/userpic/320/${tgUser.username}.jpg` : undefined),
+            });
+          }
+          
+          // Получение темы
+          const themeParams = tg.themeParams || {};
+          setTheme(themeParams);
+          setColorScheme(tg.colorScheme === 'light' ? 'light' : 'dark');
+          setPlatform(tg.platform);
+          
+          // Применение стилей
+          applyBrandTheme(tg.colorScheme === 'light' ? 'light' : 'dark', themeParams);
+          
+          // Слушаем изменения темы
+          tg.onEvent('themeChanged', () => {
+            const newColorScheme = tg.colorScheme === 'light' ? 'light' : 'dark';
+            setColorScheme(newColorScheme);
+            setTheme(tg.themeParams || {});
+            applyBrandTheme(newColorScheme, tg.themeParams);
+          });
+          
+          // Настройка viewport
+          if (tg.viewportHeight) {
+            document.documentElement.style.setProperty('--tg-viewport-height', `${tg.viewportHeight}px`);
+          }
+          
+          tg.onEvent('viewportChanged', () => {
+            if (tg.viewportHeight) {
+              document.documentElement.style.setProperty('--tg-viewport-height', `${tg.viewportHeight}px`);
+            }
+          });
+          
+          // Скрываем кнопки по умолчанию
+          if (tg.MainButton) {
+            tg.MainButton.hide();
+          }
+          if (tg.BackButton) {
+            tg.BackButton.hide();
+          }
+        } else {
+          // Fallback для разработки
+          applyBrandTheme('dark', {});
+        }
+        
+        setIsReady(true);
+      } catch (error) {
+        console.error('Failed to initialize Telegram Mini App:', error);
+        // Fallback для разработки
+        setIsReady(true);
+        applyBrandTheme('dark', {});
+      }
+    };
+    
+    init();
+  }, []);
+
+  const value = useMemo(
+    () => ({ 
+      user, 
+      isReady, 
+      colorScheme, 
+      themeParams: theme,
+      platform 
+    }),
+    [user, isReady, colorScheme, theme, platform]
+  );
+
+  return <TelegramContext.Provider value={value}>{children}</TelegramContext.Provider>;
+}
+
+export function useTelegram() {
+  return useContext(TelegramContext);
 }
 
 function applyBrandTheme(colorScheme: 'light' | 'dark', themeParams?: TelegramThemeParams) {
@@ -40,6 +159,7 @@ function applyBrandTheme(colorScheme: 'light' | 'dark', themeParams?: TelegramTh
         accent: '#7C5DFA',
         muted: '#A1A1B2',
         text: '#FFFFFF',
+        border: 'rgba(255, 255, 255, 0.1)',
       }
     : {
         bg: '#F7F7FB',
@@ -47,7 +167,14 @@ function applyBrandTheme(colorScheme: 'light' | 'dark', themeParams?: TelegramTh
         accent: '#7C5DFA',
         muted: '#8A8C99',
         text: '#0E0D1B',
+        border: 'rgba(0, 0, 0, 0.1)',
       };
+
+  // Применяем цвета из Telegram, если они есть
+  if (themeParams?.bg_color) palette.bg = themeParams.bg_color;
+  if (themeParams?.text_color) palette.text = themeParams.text_color;
+  if (themeParams?.button_color) palette.accent = themeParams.button_color;
+  if (themeParams?.hint_color) palette.muted = themeParams.hint_color;
 
   const pairs: Array<[string, string]> = [
     ['--astrot-bg', palette.bg],
@@ -55,95 +182,41 @@ function applyBrandTheme(colorScheme: 'light' | 'dark', themeParams?: TelegramTh
     ['--astrot-accent', palette.accent],
     ['--astrot-muted', palette.muted],
     ['--astrot-text', palette.text],
+    ['--astrot-border', palette.border],
   ];
-  pairs.forEach(([cssVar, hex]) => {
-    const rgb = hexToRgb(hex);
-    if (rgb) root.style.setProperty(cssVar, `${rgb.r} ${rgb.g} ${rgb.b}`);
+  
+  pairs.forEach(([cssVar, value]) => {
+    root.style.setProperty(cssVar, value);
   });
 
   // Keep Telegram variables in sync with brand
   const mapToTg: Record<string, string> = {
-    '--tg-bg-color': 'var(--astrot-bg)',
-    '--tg-text-color': 'var(--astrot-text)',
-    '--tg-hint-color': 'var(--astrot-muted)',
-    '--tg-link-color': 'var(--astrot-accent)',
-    '--tg-button-color': 'var(--astrot-accent)',
-    '--tg-button-text-color': 'var(--astrot-text)',
-    '--tg-theme-bg-color': 'var(--astrot-bg)',
-    '--tg-theme-text-color': 'var(--astrot-text)',
-    '--tg-theme-hint-color': 'var(--astrot-muted)',
-    '--tg-theme-link-color': 'var(--astrot-accent)',
-    '--tg-theme-button-color': 'var(--astrot-accent)',
-    '--tg-theme-button-text-color': 'var(--astrot-text)'
+    '--tg-bg-color': palette.bg,
+    '--tg-text-color': palette.text,
+    '--tg-hint-color': palette.muted,
+    '--tg-link-color': palette.accent,
+    '--tg-button-color': palette.accent,
+    '--tg-button-text-color': '#FFFFFF',
+    '--tg-theme-bg-color': palette.bg,
+    '--tg-theme-text-color': palette.text,
+    '--tg-theme-hint-color': palette.muted,
+    '--tg-theme-link-color': palette.accent,
+    '--tg-theme-button-color': palette.accent,
+    '--tg-theme-button-text-color': '#FFFFFF'
   };
-  Object.entries(mapToTg).forEach(([cssVar, value]) => root.style.setProperty(cssVar, value));
+  
+  Object.entries(mapToTg).forEach(([cssVar, value]) => {
+    root.style.setProperty(cssVar, value);
+  });
 
-  // Update <meta name="theme-color"> to match Telegram theme bg (prefer Telegram themeParams if provided)
+  // Update <meta name="theme-color"> to match Telegram theme bg
   const meta = document.querySelector('meta[name="theme-color"]');
-  if (meta) {
-    const themeBgHex = (themeParams && (themeParams as Record<string, string>).bg_color) || palette.bg;
-    meta.setAttribute('content', themeBgHex);
+  if (!meta) {
+    const newMeta = document.createElement('meta');
+    newMeta.name = 'theme-color';
+    newMeta.content = palette.bg;
+    document.head.appendChild(newMeta);
+  } else {
+    meta.setAttribute('content', palette.bg);
   }
-}
-
-export function TelegramProvider({ children }: { children: React.ReactNode }) {
-  const [tg, setTg] = useState<TelegramWebApp | null>(null);
-  const [themeParams, setThemeParams] = useState<TelegramThemeParams>({});
-  const [colorScheme, setColorScheme] = useState<'light' | 'dark'>('dark');
-  const initDataRef = useRef<unknown>(null);
-
-  useEffect(() => {
-    const w = typeof window !== 'undefined';
-    const tgInstance = getTelegramWebApp();
-    const isWebApp = !!tgInstance;
-    if (!w || !isWebApp) {
-      applyBrandTheme('dark');
-      setTg(null);
-      setThemeParams({});
-      setColorScheme('dark');
-      initDataRef.current = null;
-      return;
-    }
-
-    // DO NOT call tg.ready()/expand() here; handled by TelegramViewportProvider
-    setTg(tgInstance);
-    const tp = tgInstance.themeParams ?? {};
-    const cs = (tgInstance.colorScheme as 'light' | 'dark') ?? 'dark';
-    setThemeParams(tp);
-    setColorScheme(cs);
-    initDataRef.current = tgInstance.initDataUnsafe ?? null;
-
-    applyBrandTheme(cs, tp);
-
-    const offTheme = onTelegramEvent('themeChanged', () => {
-      const newCs = (tgInstance.colorScheme as 'light' | 'dark') ?? 'dark';
-      setColorScheme(newCs);
-      applyBrandTheme(newCs);
-    });
-
-    return () => {
-      offTheme?.();
-    };
-  }, []);
-
-  // Ensure Telegram MainButton is hidden by default
-  useEffect(() => {
-    try {
-      tg?.MainButton?.hide?.();
-      tg?.MainButton?.setParams?.({ is_active: false, is_visible: false });
-    } catch {
-      // ignore
-    }
-  }, [tg]);
-
-  const value = useMemo(
-    () => ({ tg, themeParams, colorScheme, initDataUnsafe: initDataRef.current, isWebApp: !!tg }),
-    [tg, themeParams, colorScheme]
-  );
-
-  return <TelegramContext.Provider value={value}>{children}</TelegramContext.Provider>;
-}
-
-export function useTelegram() {
-  return useContext(TelegramContext);
 }

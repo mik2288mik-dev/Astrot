@@ -1,0 +1,191 @@
+{
+  "themes": [
+    {
+      "id": "new_year",
+      "title": "Новогодняя тема",
+      "dates": [
+        {
+          "start": "12-25",
+          "end": "01-07"
+        }
+      ],
+      "priority": 10,
+      "palette": {
+        "primary": "#FF6B6B",
+        "secondary": "#4ECDC4",
+        "accent": "#FFE66D",
+        "background": "#FFF8F3",
+        "card": "rgba(255, 255, 255, 0.95)",
+        "gradient": "linear-gradient(135deg, #FF6B6B 0%, #FFE66D 50%, #4ECDC4 100%)"
+      },
+      "decor": {
+        "emoji": "🎄",
+        "particles": ["❄️", "⭐", "🎁"],
+        "animation": "sparkle"
+      }
+    },
+    {
+      "id": "halloween",
+      "title": "Хэллоуин",
+      "dates": [
+        {
+          "start": "10-25",
+          "end": "11-02"
+        }
+      ],
+      "priority": 9,
+      "palette": {
+        "primary": "#FF8C00",
+        "secondary": "#8B4513",
+        "accent": "#FF4500",
+        "background": "#1A0E0A",
+        "card": "rgba(26, 14, 10, 0.95)",
+        "gradient": "linear-gradient(135deg, #FF8C00 0%, #FF4500 100%)"
+      },
+      "decor": {
+        "emoji": "🎃",
+        "particles": ["🦇", "👻", "🕷️"],
+        "animation": "spooky"
+      }
+    },
+    {
+      "id": "spring",
+      "title": "Весенняя тема",
+      "dates": [
+        {
+          "start": "03-01",
+          "end": "05-31"
+        }
+      ],
+      "priority": 5,
+      "palette": {
+        "primary": "#98D8C8",
+        "secondary": "#F7DC6F",
+        "accent": "#BB8FCE",
+        "background": "#F8FFF8",
+        "card": "rgba(255, 255, 255, 0.95)",
+        "gradient": "linear-gradient(135deg, #98D8C8 0%, #F7DC6F 50%, #BB8FCE 100%)"
+      },
+      "decor": {
+        "emoji": "🌸",
+        "particles": ["🌺", "🦋", "🌿"],
+        "animation": "bloom"
+      }
+    },
+    {
+      "id": "summer",
+      "title": "Летняя тема",
+      "dates": [
+        {
+          "start": "06-01",
+          "end": "08-31"
+        }
+      ],
+      "priority": 5,
+      "palette": {
+        "primary": "#FFD93D",
+        "secondary": "#6BCF7F",
+        "accent": "#4D96FF",
+        "background": "#FFFEF7",
+        "card": "rgba(255, 255, 255, 0.95)",
+        "gradient": "linear-gradient(135deg, #FFD93D 0%, #6BCF7F 50%, #4D96FF 100%)"
+      },
+      "decor": {
+        "emoji": "☀️",
+        "particles": ["🌻", "🏖️", "🍉"],
+        "animation": "sunshine"
+      }
+    },
+    {
+      "id": "autumn",
+      "title": "Осенняя тема",
+      "dates": [
+        {
+          "start": "09-01",
+          "end": "11-30"
+        }
+      ],
+      "priority": 5,
+      "palette": {
+        "primary": "#D2691E",
+        "secondary": "#CD853F",
+        "accent": "#B22222",
+        "background": "#FFF8DC",
+        "card": "rgba(255, 255, 255, 0.95)",
+        "gradient": "linear-gradient(135deg, #D2691E 0%, #CD853F 50%, #B22222 100%)"
+      },
+      "decor": {
+        "emoji": "🍂",
+        "particles": ["🍁", "🌰", "🦔"],
+        "animation": "falling"
+      }
+    },
+    {
+      "id": "winter",
+      "title": "Зимняя тема",
+      "dates": [
+        {
+          "start": "12-01",
+          "end": "02-28"
+        }
+      ],
+      "priority": 3,
+      "palette": {
+        "primary": "#87CEEB",
+        "secondary": "#E6E6FA",
+        "accent": "#4169E1",
+        "background": "#F0F8FF",
+        "card": "rgba(255, 255, 255, 0.95)",
+        "gradient": "linear-gradient(135deg, #87CEEB 0%, #E6E6FA 50%, #4169E1 100%)"
+      },
+      "decor": {
+        "emoji": "❄️",
+        "particles": ["⛄", "🌨️", "❄️"],
+        "animation": "snow"
+      }
+    },
+    {
+      "id": "valentine",
+      "title": "День святого Валентина",
+      "dates": [
+        {
+          "start": "02-10",
+          "end": "02-16"
+        }
+      ],
+      "priority": 8,
+      "palette": {
+        "primary": "#FF69B4",
+        "secondary": "#FFB6C1",
+        "accent": "#FF1493",
+        "background": "#FFF0F5",
+        "card": "rgba(255, 255, 255, 0.95)",
+        "gradient": "linear-gradient(135deg, #FF69B4 0%, #FFB6C1 100%)"
+      },
+      "decor": {
+        "emoji": "💕",
+        "particles": ["💖", "💝", "🌹"],
+        "animation": "hearts"
+      }
+    },
+    {
+      "id": "default",
+      "title": "Базовая тема",
+      "dates": [],
+      "priority": 1,
+      "palette": {
+        "primary": "#7C4DFF",
+        "secondary": "#9C88FF",
+        "accent": "#7C4DFF",
+        "background": "#FAFBFC",
+        "card": "rgba(255, 255, 255, 0.95)",
+        "gradient": "linear-gradient(135deg, #7C4DFF 0%, #9C88FF 100%)"
+      },
+      "decor": {
+        "emoji": "✨",
+        "particles": ["⭐", "✨", "🌟"],
+        "animation": "gentle"
+      }
+    }
+  ]
+}

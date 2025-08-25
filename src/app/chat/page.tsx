@@ -1,0 +1,272 @@
+'use client';
+
+import React, { useState, useRef, useEffect } from 'react';
+import { useTelegram } from '@/hooks/useTelegram';
+import { useKeyboardInsets } from '@/hooks/useKeyboardInsets';
+import { type Domain } from '@/lib/chat/guard';
+import { 
+  PaperAirplaneIcon,
+  SparklesIcon,
+  PhotoIcon,
+  MicrophoneIcon
+} from '@heroicons/react/24/outline';
+
+interface Message {
+  id: string;
+  text: string;
+  sender: 'user' | 'ai';
+  timestamp: Date;
+  type?: 'guard';
+  options?: Array<{ label: string; prompt: string }>;
+}
+
+interface ChatState {
+  domain: Domain | null;
+  lastWasGuard: boolean;
+}
+
+const suggestedQuestions = [
+  'Расскажи о моем знаке зодиака',
+  'Что ждет меня сегодня?',
+  'Какая у меня совместимость с Львом?',
+  'Что означает Луна в Скорпионе?'
+];
+
+export default function ChatPage() {
+  const { hapticFeedback } = useTelegram();
+  useKeyboardInsets();
+  const [messages, setMessages] = useState<Message[]>([
+    {
+      id: '1',
+      text: 'Привет! Я ваш персональный AI астролог. Задайте мне любой вопрос о звездах, планетах или вашей судьбе ✨',
+      sender: 'ai',
+      timestamp: new Date()
+    }
+  ]);
+  const [inputText, setInputText] = useState('');
+  const [isTyping, setIsTyping] = useState(false);
+  const [chatState, setChatState] = useState<ChatState>({
+    domain: null,
+    lastWasGuard: false
+  });
+  const messagesEndRef = useRef<HTMLDivElement>(null);
+  const inputRef = useRef<HTMLInputElement>(null);
+
+  const scrollToBottom = () => {
+    messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
+  };
+
+  useEffect(() => {
+    scrollToBottom();
+  }, [messages]);
+
+  const sendMessage = async (text: string, _opts?: { domainHint?: boolean }) => {
+    if (!text.trim()) return;
+
+    hapticFeedback('impact', 'light');
+    
+    // Добавляем сообщение пользователя
+    const userMessage: Message = {
+      id: Date.now().toString(),
+      text,
+      sender: 'user',
+      timestamp: new Date()
+    };
+    
+    setMessages(prev => [...prev, userMessage]);
+    setInputText('');
+    setIsTyping(true);
+
+    try {
+      const res = await fetch('/api/chat', {
+        method: 'POST',
+        headers: { 'content-type': 'application/json' },
+        body: JSON.stringify({
+          message: text,
+          domain: chatState.domain,
+          lastWasGuard: chatState.lastWasGuard,
+        }),
+      });
+      
+      const data = await res.json();
+      
+      if (data.type === 'guard') {
+        const aiMessage: Message = {
+          id: (Date.now() + 1).toString(),
+          text: data.text,
+          sender: 'ai',
+          timestamp: new Date(),
+          type: 'guard',
+          options: data.options
+        };
+        setMessages(prev => [...prev, aiMessage]);
+        setChatState(s => ({ ...s, lastWasGuard: true }));
+      } else {
+        const aiMessage: Message = {
+          id: (Date.now() + 1).toString(),
+          text: data.error || data.text || 'Произошла ошибка при получении ответа',
+          sender: 'ai',
+          timestamp: new Date()
+        };
+        setMessages(prev => [...prev, aiMessage]);
+        setChatState(s => ({ ...s, lastWasGuard: false, domain: data.domain ?? s.domain }));
+      }
+      setIsTyping(false);
+      hapticFeedback('notification', 'success');
+    } catch (error) {
+      console.error('Chat error:', error);
+      const aiMessage: Message = {
+        id: (Date.now() + 1).toString(),
+        text: 'Извините, произошла ошибка. Попробуйте еще раз.',
+        sender: 'ai',
+        timestamp: new Date()
+      };
+      setMessages(prev => [...prev, aiMessage]);
+      setIsTyping(false);
+      hapticFeedback('notification', 'error');
+    }
+  };
+
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    sendMessage(inputText);
+  };
+
+  const handleSuggestionClick = (question: string) => {
+    hapticFeedback('selection');
+    sendMessage(question);
+  };
+
+  return (
+    <main className="safe-page px-4 pb-24">
+      <div className="page animate-fadeIn min-h-[calc(100vh-140px)] flex flex-col bg-gradient-to-b from-neutral-50 to-white" style={{ '--page-top': 'calc(var(--safe-top) + 32px)' } as React.CSSProperties}>
+      {/* Header */}
+      <div className="bg-white border-b border-neutral-100 py-3 flex items-center gap-3">
+        <div className="w-10 h-10 bg-gradient-to-br from-primary-400 to-primary-600 rounded-full flex items-center justify-center">
+          <SparklesIcon className="w-6 h-6 text-white" />
+        </div>
+        <div className="flex-1">
+          <h1 className="font-semibold text-neutral-900">AI Астролог</h1>
+          <p className="text-xs text-emerald-600">● Онлайн</p>
+        </div>
+      </div>
+
+      {/* Messages */}
+      <div className="flex-1 overflow-y-auto py-4">
+        {messages.length === 1 && (
+          <div className="mb-4">
+            <p className="text-sm text-neutral-500 mb-3">Популярные вопросы:</p>
+            <div className="flex flex-wrap gap-2">
+              {suggestedQuestions.map((question, index) => (
+                <button
+                  key={index}
+                  onClick={() => handleSuggestionClick(question)}
+                  className="bg-white border border-neutral-200 px-3 py-2 rounded-xl text-sm text-neutral-700 hover:bg-neutral-50 transition-colors"
+                >
+                  {question}
+                </button>
+              ))}
+            </div>
+          </div>
+        )}
+
+        {messages.map((message) => (
+          <div
+            key={message.id}
+            className={`mb-4 flex ${message.sender === 'user' ? 'justify-end' : 'justify-start'}`}
+          >
+            <div
+              className={`max-w-[80%] px-4 py-3 rounded-2xl ${
+                message.sender === 'user'
+                  ? 'bg-[linear-gradient(90deg,#C1B2FF_0%,#F5A8E9_100%)] text-white'
+                  : 'bg-white border border-[#EAEAF2] text-[#1F2937]'
+              }`}
+            >
+              <p className="text-sm leading-relaxed">{message.text}</p>
+              {message.type === 'guard' && Array.isArray(message.options) && (
+                <div className="mt-2 flex flex-wrap gap-2">
+                  {message.options.map((option: { label: string; prompt: string }) => (
+                    <button
+                      key={option.label}
+                      onClick={() => sendMessage(option.prompt, { domainHint: true })}
+                      className="rounded-2xl px-4 py-2 bg-white border border-[#EAEAF2] text-[#1F2937] hover:bg-gray-50 transition-colors"
+                    >
+                      {option.label}
+                    </button>
+                  ))}
+                </div>
+              )}
+              <p 
+                className={`text-xs mt-1 ${
+                  message.sender === 'user' ? 'text-white/70' : 'text-neutral-400'
+                }`}
+              >
+                {message.timestamp.toLocaleTimeString('ru-RU', { 
+                  hour: '2-digit', 
+                  minute: '2-digit' 
+                })}
+              </p>
+            </div>
+          </div>
+        ))}
+
+        {isTyping && (
+          <div className="flex justify-start mb-4">
+            <div className="bg-white border border-neutral-100 px-4 py-3 rounded-2xl">
+              <div className="flex gap-1">
+                <span className="w-2 h-2 bg-neutral-400 rounded-full animate-pulse"></span>
+                <span className="w-2 h-2 bg-neutral-400 rounded-full animate-pulse delay-100"></span>
+                <span className="w-2 h-2 bg-neutral-400 rounded-full animate-pulse delay-200"></span>
+              </div>
+            </div>
+          </div>
+        )}
+
+        <div ref={messagesEndRef} />
+      </div>
+
+      {/* Input */}
+      <form onSubmit={handleSubmit} className="chat-composer bg-white border-t border-neutral-100 py-3">
+        <div className="flex items-center gap-2">
+          <button
+            type="button"
+            className="p-2 text-neutral-400 hover:text-neutral-600 transition-colors"
+            onClick={() => hapticFeedback('impact', 'light')}
+          >
+            <PhotoIcon className="w-6 h-6" />
+          </button>
+          
+          <input
+            ref={inputRef}
+            type="text"
+            value={inputText}
+            onChange={(e) => setInputText(e.target.value)}
+            placeholder="Задайте ваш вопрос..."
+            className="flex-1 bg-neutral-50 border border-neutral-200 rounded-full px-4 py-2.5 text-sm focus:outline-none focus:border-primary-400 transition-colors"
+          />
+          
+          <button
+            type="button"
+            className="p-2 text-neutral-400 hover:text-neutral-600 transition-colors"
+            onClick={() => hapticFeedback('impact', 'light')}
+          >
+            <MicrophoneIcon className="w-6 h-6" />
+          </button>
+          
+          <button
+            type="submit"
+            disabled={!inputText.trim()}
+            className={`p-2 rounded-full transition-all ${
+              inputText.trim()
+                ? 'bg-gradient-to-r from-primary-500 to-primary-600 text-white'
+                : 'bg-neutral-100 text-neutral-400'
+            }`}
+          >
+            <PaperAirplaneIcon className="w-5 h-5" />
+          </button>
+        </div>
+      </form>
+      </div>
+    </main>
+  );
+}

@@ -1,3 +1,6 @@
+import { useEffect, useState } from "react";
+import type { TgUser } from '@/types/telegram';
+
 export type HapticImpactStyle = 'light' | 'medium' | 'heavy';
 export type HapticNotificationType = 'success' | 'warning' | 'error';
 
@@ -79,4 +82,37 @@ export function onTelegramEvent(event: 'themeChanged' | 'viewportChanged', handl
   if (!tg?.onEvent) return () => {};
   tg.onEvent?.(event, handler as any);
   return () => tg.offEvent?.(event, handler as any);
+}
+
+export function getTelegramUser(): TgUser | null {
+  try {
+    // типы уже объявлены в src/types/telegram.d.ts
+    const user = window?.Telegram?.WebApp?.initDataUnsafe?.user as TgUser | undefined;
+    return user ?? null;
+  } catch {
+    return null;
+  }
+}
+
+export function useTelegramUser() {
+  const [user, setUser] = useState<TgUser | null>(null);
+  const [loaded, setLoaded] = useState(false);
+  
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+    
+    let tries = 0;
+    const id = setInterval(() => {
+      const u = getTelegramUser();
+      if (u || tries++ > 12) {
+        setUser(u ?? null);
+        setLoaded(true);
+        clearInterval(id);
+      }
+    }, 150);
+    
+    return () => clearInterval(id);
+  }, []);
+  
+  return { user, loaded };
 }

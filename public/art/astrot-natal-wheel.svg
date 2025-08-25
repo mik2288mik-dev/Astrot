@@ -1,0 +1,132 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" width="1024" height="1024" viewBox="0 0 1024 1024" aria-label="Astrot Cosmic Natal Wheel">
+  <defs>
+    <!-- Pastel aurora background -->
+    <radialGradient id="bg" cx="50%" cy="45%" r="65%">
+      <stop offset="0%" stop-color="#FFF7FE"/>
+      <stop offset="45%" stop-color="#F4E8FF"/>
+      <stop offset="85%" stop-color="#EAF2FF"/>
+    </radialGradient>
+
+    <!-- Gold stroke for rim/lines -->
+    <linearGradient id="gold" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#F8D49B"/>
+      <stop offset="100%" stop-color="#E6B77A"/>
+    </linearGradient>
+
+    <!-- Soft outer glow -->
+    <filter id="outerGlow" x="-50%" y="-50%" width="200%" height="200%">
+      <feGaussianBlur stdDeviation="4" result="b"/>
+      <feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge>
+    </filter>
+
+    <!-- Subtle noise texture (vector-based) -->
+    <filter id="noise" x="-20%" y="-20%" width="140%" height="140%">
+      <feTurbulence type="fractalNoise" baseFrequency="0.9" numOctaves="2" seed="2" stitchTiles="stitch" result="t"/>
+      <feColorMatrix in="t" type="matrix" values="
+          0 0 0 0 1
+          0 0 0 0 1
+          0 0 0 0 1
+          0 0 0 .06 0" />
+    </filter>
+
+  </defs>
+
+  <!-- Background circle with aurora gradient -->
+  <circle cx="512" cy="512" r="494" fill="url(#bg)"/>
+
+  <!-- Outer rim -->
+  <circle cx="512" cy="512" r="480" fill="none" stroke="url(#gold)" stroke-width="8" filter="url(#outerGlow)"/>
+
+  <!-- 12 zodiac slices -->
+  <line x1="512" y1="512" x2="512.00" y2="32.00" stroke="url(#gold)" stroke-width="2" opacity="0.55"/>
+<line x1="512" y1="512" x2="752.00" y2="96.31" stroke="url(#gold)" stroke-width="2" opacity="0.55"/>
+<line x1="512" y1="512" x2="927.69" y2="272.00" stroke="url(#gold)" stroke-width="2" opacity="0.55"/>
+<line x1="512" y1="512" x2="992.00" y2="512.00" stroke="url(#gold)" stroke-width="2" opacity="0.55"/>
+<line x1="512" y1="512" x2="927.69" y2="752.00" stroke="url(#gold)" stroke-width="2" opacity="0.55"/>
+<line x1="512" y1="512" x2="752.00" y2="927.69" stroke="url(#gold)" stroke-width="2" opacity="0.55"/>
+<line x1="512" y1="512" x2="512.00" y2="992.00" stroke="url(#gold)" stroke-width="2" opacity="0.55"/>
+<line x1="512" y1="512" x2="272.00" y2="927.69" stroke="url(#gold)" stroke-width="2" opacity="0.55"/>
+<line x1="512" y1="512" x2="96.31" y2="752.00" stroke="url(#gold)" stroke-width="2" opacity="0.55"/>
+<line x1="512" y1="512" x2="32.00" y2="512.00" stroke="url(#gold)" stroke-width="2" opacity="0.55"/>
+<line x1="512" y1="512" x2="96.31" y2="272.00" stroke="url(#gold)" stroke-width="2" opacity="0.55"/>
+<line x1="512" y1="512" x2="272.00" y2="96.31" stroke="url(#gold)" stroke-width="2" opacity="0.55"/>
+
+
+  <!-- Inner ring -->
+  <circle cx="512" cy="512" r="380" fill="none" stroke="url(#gold)" stroke-width="2" opacity="0.7"/>
+
+  <!-- Central "eye" motif -->
+  <ellipse cx="512" cy="512" rx="54" ry="36" fill="none" stroke="url(#gold)" stroke-width="3"/>
+  <circle cx="512" cy="512" r="16" fill="none" stroke="url(#gold)" stroke-width="3"/>
+
+  <!-- Starfield -->
+  <circle cx="818.02" cy="560.49" r="1.2" fill="#FFFFFF" opacity="0.35"/>
+<circle cx="500.61" cy="378.29" r="2.0" fill="#FFFFFF" opacity="0.25"/>
+<circle cx="795.44" cy="569.37" r="0.8" fill="#FFFFFF" opacity="0.35"/>
+<circle cx="401.25" cy="429.37" r="2.0" fill="#FFFFFF" opacity="0.35"/>
+<circle cx="408.98" cy="185.72" r="1.6" fill="#FFFFFF" opacity="0.35"/>
+<circle cx="471.55" cy="737.97" r="0.8" fill="#FFFFFF" opacity="0.35"/>
+<circle cx="332.26" cy="794.24" r="0.9" fill="#FFFFFF" opacity="0.35"/>
+<circle cx="282.20" cy="891.84" r="0.8" fill="#FFFFFF" opacity="0.6"/>
+<circle cx="558.47" cy="445.88" r="2.0" fill="#FFFFFF" opacity="0.45"/>
+<circle cx="463.66" cy="134.47" r="2.0" fill="#FFFFFF" opacity="0.25"/>
+<circle cx="186.34" cy="823.51" r="2.0" fill="#FFFFFF" opacity="0.45"/>
+<circle cx="225.23" cy="247.68" r="1.2" fill="#FFFFFF" opacity="0.35"/>
+<circle cx="835.44" cy="607.79" r="0.9" fill="#FFFFFF" opacity="0.45"/>
+<circle cx="792.06" cy="152.43" r="0.8" fill="#FFFFFF" opacity="0.6"/>
+<circle cx="408.48" cy="393.56" r="1.2" fill="#FFFFFF" opacity="0.35"/>
+<circle cx="561.39" cy="701.90" r="1.2" fill="#FFFFFF" opacity="0.25"/>
+<circle cx="653.24" cy="773.33" r="0.9" fill="#FFFFFF" opacity="0.35"/>
+<circle cx="482.61" cy="745.23" r="2.0" fill="#FFFFFF" opacity="0.35"/>
+<circle cx="693.18" cy="237.50" r="0.8" fill="#FFFFFF" opacity="0.35"/>
+<circle cx="643.13" cy="148.10" r="1.6" fill="#FFFFFF" opacity="0.45"/>
+<circle cx="570.06" cy="476.74" r="2.0" fill="#FFFFFF" opacity="0.45"/>
+<circle cx="382.27" cy="512.63" r="1.6" fill="#FFFFFF" opacity="0.35"/>
+<circle cx="515.22" cy="663.75" r="2.0" fill="#FFFFFF" opacity="0.45"/>
+<circle cx="192.07" cy="666.41" r="2.0" fill="#FFFFFF" opacity="0.6"/>
+<circle cx="704.74" cy="508.76" r="0.9" fill="#FFFFFF" opacity="0.6"/>
+<circle cx="586.95" cy="534.86" r="0.8" fill="#FFFFFF" opacity="0.35"/>
+<circle cx="591.65" cy="217.81" r="1.6" fill="#FFFFFF" opacity="0.25"/>
+<circle cx="345.26" cy="397.32" r="1.6" fill="#FFFFFF" opacity="0.45"/>
+<circle cx="800.40" cy="166.84" r="0.8" fill="#FFFFFF" opacity="0.25"/>
+<circle cx="193.12" cy="436.57" r="1.2" fill="#FFFFFF" opacity="0.45"/>
+<circle cx="432.14" cy="546.70" r="1.6" fill="#FFFFFF" opacity="0.25"/>
+<circle cx="826.57" cy="200.78" r="1.2" fill="#FFFFFF" opacity="0.35"/>
+<circle cx="711.50" cy="669.60" r="1.2" fill="#FFFFFF" opacity="0.35"/>
+<circle cx="520.21" cy="407.82" r="2.0" fill="#FFFFFF" opacity="0.25"/>
+<circle cx="220.00" cy="532.94" r="0.8" fill="#FFFFFF" opacity="0.45"/>
+<circle cx="713.67" cy="154.09" r="1.2" fill="#FFFFFF" opacity="0.35"/>
+<circle cx="558.42" cy="467.30" r="0.8" fill="#FFFFFF" opacity="0.25"/>
+<circle cx="652.61" cy="192.72" r="2.0" fill="#FFFFFF" opacity="0.35"/>
+<circle cx="418.95" cy="526.57" r="2.0" fill="#FFFFFF" opacity="0.35"/>
+<circle cx="617.63" cy="402.91" r="1.6" fill="#FFFFFF" opacity="0.35"/>
+<circle cx="526.29" cy="80.23" r="0.9" fill="#FFFFFF" opacity="0.45"/>
+<circle cx="413.56" cy="328.35" r="1.2" fill="#FFFFFF" opacity="0.6"/>
+<circle cx="111.71" cy="637.94" r="0.9" fill="#FFFFFF" opacity="0.35"/>
+<circle cx="578.43" cy="520.83" r="2.0" fill="#FFFFFF" opacity="0.35"/>
+<circle cx="800.03" cy="525.02" r="0.8" fill="#FFFFFF" opacity="0.35"/>
+<circle cx="579.11" cy="525.42" r="1.2" fill="#FFFFFF" opacity="0.25"/>
+<circle cx="466.27" cy="764.87" r="1.6" fill="#FFFFFF" opacity="0.35"/>
+<circle cx="467.41" cy="248.18" r="2.0" fill="#FFFFFF" opacity="0.6"/>
+<circle cx="371.51" cy="536.09" r="1.6" fill="#FFFFFF" opacity="0.35"/>
+<circle cx="468.81" cy="444.89" r="1.2" fill="#FFFFFF" opacity="0.6"/>
+<circle cx="652.01" cy="350.83" r="0.8" fill="#FFFFFF" opacity="0.25"/>
+<circle cx="503.05" cy="447.03" r="0.8" fill="#FFFFFF" opacity="0.35"/>
+<circle cx="394.28" cy="484.69" r="0.9" fill="#FFFFFF" opacity="0.6"/>
+<circle cx="397.79" cy="539.32" r="0.8" fill="#FFFFFF" opacity="0.6"/>
+<circle cx="747.33" cy="212.39" r="0.8" fill="#FFFFFF" opacity="0.25"/>
+<circle cx="206.99" cy="432.48" r="0.8" fill="#FFFFFF" opacity="0.25"/>
+<circle cx="762.43" cy="161.31" r="0.9" fill="#FFFFFF" opacity="0.6"/>
+<circle cx="567.31" cy="750.61" r="1.6" fill="#FFFFFF" opacity="0.25"/>
+<circle cx="621.47" cy="513.48" r="1.6" fill="#FFFFFF" opacity="0.45"/>
+<circle cx="606.36" cy="91.47" r="1.2" fill="#FFFFFF" opacity="0.6"/>
+<circle cx="471.20" cy="180.54" r="2.0" fill="#FFFFFF" opacity="0.6"/>
+<circle cx="481.53" cy="612.82" r="0.8" fill="#FFFFFF" opacity="0.25"/>
+<circle cx="844.95" cy="637.01" r="2.0" fill="#FFFFFF" opacity="0.6"/>
+<circle cx="663.71" cy="310.53" r="0.9" fill="#FFFFFF" opacity="0.25"/>
+
+
+  <!-- Very subtle grain over everything -->
+  <rect x="0" y="0" width="1024" height="1024" fill="none" filter="url(#noise)"/>
+</svg>

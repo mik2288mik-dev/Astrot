@@ -78,6 +78,8 @@ export async function fetchNatalFromAstroApi(params: AstroApiParams): Promise<Na
 
 function normalizeAstroResponse(raw: any, params: AstroApiParams): NatalChartData {
   const dt = DateTime.fromISO(params.birthDateISO).setZone(params.timezone);
+  const interpretations = normalizeInterpretations(raw?.interpretations, params.language);
+  
   const data: NatalChartData = {
     metadata: {
       name: params.name,
@@ -87,25 +89,33 @@ function normalizeAstroResponse(raw: any, params: AstroApiParams): NatalChartDat
       source: 'external'
     },
     summary: {
-      sun: raw?.summary?.sun || raw?.summary?.Sun || undefined,
-      moon: raw?.summary?.moon || raw?.summary?.Moon || undefined,
-      ascendant: raw?.summary?.asc || raw?.summary?.Ascendant || raw?.asc || undefined
+      ...(raw?.summary?.sun || raw?.summary?.Sun ? { sun: raw.summary.sun || raw.summary.Sun } : {}),
+      ...(raw?.summary?.moon || raw?.summary?.Moon ? { moon: raw.summary.moon || raw.summary.Moon } : {}),
+      ...(raw?.summary?.asc || raw?.summary?.Ascendant || raw?.asc ? { ascendant: raw.summary?.asc || raw.summary?.Ascendant || raw.asc } : {})
     },
-    planets: Array.isArray(raw?.planets)
-      ? (raw.planets as any[]).map((p) => ({
-          name: String(p.name || p.planet || ''),
-          longitude: Number(p.longitude ?? p.lon ?? 0),
-          sign: p.sign || undefined,
-          house: p.house ? Number(p.house) : undefined
-        }))
-      : undefined,
-    houses: Array.isArray(raw?.houses)
-      ? (raw.houses as any[]).map((h, idx) => ({ number: Number(h.number ?? idx + 1), cuspLongitude: Number(h.cuspLongitude ?? h.cusp ?? 0) }))
-      : undefined,
-    aspects: Array.isArray(raw?.aspects)
-      ? (raw.aspects as any[]).map((a) => ({ a: String(a.a || a.from), b: String(a.b || a.to), type: String(a.type || a.aspect || ''), orb: a.orb ? Number(a.orb) : undefined }))
-      : undefined,
-    interpretations: normalizeInterpretations(raw?.interpretations, params.language)
+    ...(Array.isArray(raw?.planets) && {
+      planets: (raw.planets as any[]).map((p) => ({
+        name: String(p.name || p.planet || ''),
+        longitude: Number(p.longitude ?? p.lon ?? 0),
+        sign: p.sign,
+        house: p.house ? Number(p.house) : undefined
+      })) as NormalizedPlanetPosition[]
+    }),
+    ...(Array.isArray(raw?.houses) && {
+      houses: (raw.houses as any[]).map((h, idx) => ({ 
+        number: Number(h.number ?? idx + 1), 
+        cuspLongitude: Number(h.cuspLongitude ?? h.cusp ?? 0) 
+      }))
+    }),
+    ...(Array.isArray(raw?.aspects) && {
+      aspects: (raw.aspects as any[]).map((a) => ({ 
+        a: String(a.a || a.from), 
+        b: String(a.b || a.to), 
+        type: String(a.type || a.aspect || ''), 
+        ...(a.orb && { orb: Number(a.orb) })
+      }))
+    }),
+    ...(interpretations && { interpretations })
   };
   return data;
 }
@@ -118,12 +128,22 @@ function normalizeInterpretations(src: any, lang: 'ru' | 'en'): InterpretationBl
     if (typeof v === 'string') return v.split(/\n{2,}/).map((s) => s.trim()).filter(Boolean);
     return undefined;
   };
-  return {
-    personality: toArr(src.personality || src.traits),
-    strengths: toArr(src.strengths || src.advantages),
-    compatibility: toArr(src.compatibility || src.relationships),
-    transits: toArr(src.transits)
-  };
+  
+  const result: InterpretationBlocks = {};
+  
+  const personality = toArr(src.personality || src.traits);
+  if (personality) result.personality = personality;
+  
+  const strengths = toArr(src.strengths || src.advantages);
+  if (strengths) result.strengths = strengths;
+  
+  const compatibility = toArr(src.compatibility || src.relationships);
+  if (compatibility) result.compatibility = compatibility;
+  
+  const transits = toArr(src.transits);
+  if (transits) result.transits = transits;
+  
+  return Object.keys(result).length > 0 ? result : undefined;
 }
 
 function buildMockNatal(params: AstroApiParams, withWarning = false, error?: unknown): NatalChartData {
@@ -165,10 +185,8 @@ function buildMockNatal(params: AstroApiParams, withWarning = false, error?: unk
       source: 'mock',
       warnings: metadataWarnings
     },
-    summary: { sun: sunSign[params.language], moon: undefined, ascendant: undefined },
+    summary: { sun: sunSign[params.language] },
     planets,
-    houses: undefined,
-    aspects: undefined,
     interpretations
   };
 }
@@ -192,11 +210,20 @@ function approximateSunSign(dt: DateTime): { ru: string; en: string; midDegree: 
     { sign: { ru: 'Рыбы', en: 'Pisces' }, start: [2, 19], end: [3, 20], base: 330 }
   ];
   for (const r of ranges) {
+    const startMonth = r.start[0];
+    const startDay = r.start[1];
+    const endMonth = r.end[0];
+    const endDay = r.end[1];
+    
+    if (startMonth === undefined || startDay === undefined || endMonth === undefined || endDay === undefined) {
+      continue;
+    }
+    
     const inRange =
-      (month === r.start[0] && day >= r.start[1]) ||
-      (month === r.end[0] && day <= r.end[1]) ||
-      (month > r.start[0] && month < r.end[0]) ||
-      (r.start[0] > r.end[0] && (month > r.start[0] || month < r.end[0]));
+      (month === startMonth && day >= startDay) ||
+      (month === endMonth && day <= endDay) ||
+      (month > startMonth && month < endMonth) ||
+      (startMonth > endMonth && (month > startMonth || month < endMonth));
     if (inRange) return { ...r.sign, midDegree: r.base + 15 };
   }
   return { ru: 'Неизвестно', en: 'Unknown', midDegree: 0 };

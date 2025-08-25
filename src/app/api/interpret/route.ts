@@ -1,55 +1,35 @@
-import { NextRequest } from 'next/server';
-import OpenAI from 'openai';
+import { getOpenAI, getModel, defaultChatOptions } from '@/lib/ai/openai';
+import { toMessage } from '@/lib/utils/errors';
 
 export const runtime = 'nodejs';
 export const dynamic = 'force-dynamic';
-export const maxDuration = 10;
+export const revalidate = 0;
 
-const client = new OpenAI({ apiKey: process.env.OPENAI_API_KEY! });
-
-export async function POST(req: NextRequest) {
+export async function POST(req: Request) {
   try {
-    const { chart, locale = 'ru', tone = 'friendly' } = await req.json();
+    const openai = getOpenAI();
+    const body = await req.json(); // { natal, topic, depth, locale? }
 
-    const system = `
-Ты — опытный астролог и эмпатичный собеседник.
-Говори ясным человеческим языком, избегай пугающих формулировок.
-Стиль: теплый, современный, поддерживающий, но честный.
-Говори на языке пользователя: ${locale}.
-Тональность ответа: ${tone}.
-Структура ответа:
-1) "Большая тройка" (Солнце, Луна, Асцендент) — 3–5 предложений.
-2) Ключевые темы по планетам в домах — 6–10 пунктов.
-3) Мягкие рекомендации (3–5 коротких, практичных).
-Не используй жаргон вроде «квадратуры» без пояснений. Не выдумывай факты, опирайся только на данные карты.
-`;
+    const system = [
+      'Пиши простым, тёплым языком.',
+      'Без домов, аспектов и жаргона.',
+      'Ответ строго JSON: { "title": string, "oneLine": string, "content": string[], "suggestions": [{ "label": string, "topic": string, "depth": number }], "wheelFocus"?: { "sign"?: string, "planet"?: "sun"|"moon"|"asc" } }',
+      'Чем выше depth, тем конкретнее советы.'
+    ].join(' ');
 
-    const user = `
-Ниже — данные натальной карты в JSON.
-Нужно кратко и ёмко интерпретировать.
-
-Данные:
-${JSON.stringify(chart, null, 2)}
-`;
-
-    const completion = await client.chat.completions.create({
-      model: 'gpt-4o-mini',
-      temperature: 0.7,
+    const resp = await openai.chat.completions.create({
+      model: getModel(),            // <-- gpt-4o-mini по умолчанию
+      ...defaultChatOptions,
       messages: [
         { role: 'system', content: system },
-        { role: 'user', content: user }
+        { role: 'user', content: JSON.stringify(body) }
       ]
     });
 
-    const text = completion.choices[0]?.message?.content ?? '';
-    return new Response(JSON.stringify({ ok: true, text }), {
-      headers: { 'content-type': 'application/json' }
-    });
+    const text = resp.choices?.[0]?.message?.content || '{}';
+    return Response.json(JSON.parse(text));
   } catch (e: unknown) {
-    const message = e instanceof Error ? e.message : 'Error';
-    return new Response(JSON.stringify({ ok: false, error: message }), {
-      status: 400,
-      headers: { 'content-type': 'application/json' }
-    });
+    console.error('interpret error:', e);
+    return Response.json({ error: toMessage(e) }, { status: 502 });
   }
 }

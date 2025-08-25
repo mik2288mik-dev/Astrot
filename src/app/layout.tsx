@@ -1,56 +1,86 @@
-import type { Metadata, Viewport } from 'next';
-import '@/app/globals.css';
-import { TelegramProvider } from '@/providers/telegram-provider';
-import { ThemeProvider } from '@/providers/theme-provider';
-import { BottomNav } from '@/components/nav/bottom-nav';
-import Script from 'next/script';
-import { Inter } from 'next/font/google';
-import { TelegramViewportProvider } from '@/providers/telegram-viewport';
-import ExpandOverlay from '@/components/viewport/ExpandOverlay';
-import ViewportDebug from '@/components/viewport/ViewportDebug';
+import Script from 'next/script'
+import type { Metadata } from 'next'
+import '@/app/globals.css'
+import '@/styles/tokens.css'
+import '@/styles/nebula.css'
+import '@/styles/ui-kit.css'
+import '@/styles/safe.css'
+import '@/styles/astrot-boinkers.css'
+import { TelegramProvider } from '@/providers/telegram-provider'
+import { TelegramViewportProvider } from '@/providers/telegram-viewport'
+import { ThemeProvider } from '@/providers/ThemeProvider'
+import SafeAreaInit from '@/components/layout/SafeAreaInit'
+import TopBar from '@/components/layout/TopBar'
+import BottomNav from '@/components/layout/BottomNav'
+import { Manrope } from 'next/font/google'
+import { astrotColors } from '../../styles/colors'
 
-const inter = Inter({ subsets: ['latin', 'cyrillic'], weight: ['400', '500', '700'], variable: '--font-sans', display: 'swap' });
+// Подключаем Manrope с поддержкой кириллицы
+const manrope = Manrope({ 
+  subsets: ['latin', 'cyrillic'],
+  variable: '--font-manrope',
+  weight: ['400', '500', '600', '700', '800'],
+  display: 'swap',
+})
+
+export const runtime = 'nodejs'
+export const dynamic = 'force-dynamic'
 
 export const metadata: Metadata = {
-  title: 'Astrot — Твоя личная астрология',
-  description: 'Нативное мини‑приложение Telegram для астрологии',
-};
-
-export const viewport: Viewport = {
-  width: 'device-width',
-  initialScale: 1,
-  maximumScale: 1,
-  userScalable: false,
-  viewportFit: 'cover',
-};
+  title: 'Astrot - Астрологическое приложение',
+  description: 'Персональные гороскопы, натальные карты и астрологические консультации',
+  icons: {
+    icon: [
+      { url: '/favicon.png', sizes: '32x32', type: 'image/png' },
+      { url: '/favicon.svg', sizes: 'any', type: 'image/svg+xml' },
+      { url: '/logo.png', sizes: '512x512', type: 'image/png' }
+    ],
+    shortcut: '/favicon.png',
+    apple: '/logo.png'
+  },
+  manifest: '/manifest.webmanifest',
+  themeColor: astrotColors.primary.start,
+  viewport: 'width=device-width,initial-scale=1,viewport-fit=cover,user-scalable=no'
+}
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="ru" suppressHydrationWarning>
+    <html lang="ru" className={manrope.variable}>
       <head>
-        <meta name="theme-color" content="#000000" />
         <meta name="apple-mobile-web-app-capable" content="yes" />
-        <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
-        <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" />
-        <link rel="manifest" href="/manifest.webmanifest" />
+        <meta name="apple-mobile-web-app-status-bar-style" content="default" />
         <Script src="https://telegram.org/js/telegram-web-app.js" strategy="beforeInteractive" />
       </head>
-      <body className={`${inter.variable} h-full min-h-full overflow-hidden bg-[rgb(var(--astrot-bg))] text-[rgb(var(--astrot-text))] font-sans`}>
-        <TelegramViewportProvider>
-          <TelegramProvider>
+      <body 
+        className={`${manrope.className} min-h-screen`}
+        style={{
+          background: `linear-gradient(180deg, ${astrotColors.background.primary} 0%, ${astrotColors.background.secondary} 100%)`,
+        }}
+      >
+        <SafeAreaInit />
+        <TelegramProvider>
+          <TelegramViewportProvider>
             <ThemeProvider>
-              <div className="app-shell" data-app-root>
-                <main className="flex-1 overflow-auto pb-[var(--bottom-nav-total)]" style={{ WebkitOverflowScrolling: 'touch' }}>
-                  <div className="px-4 pb-4 max-w-lg mx-auto">{children}</div>
-                </main>
-                <BottomNav />
-              </div>
+              <TopBar />
+              
+              {/* Основной контент с правильными отступами */}
+              <main 
+                className="min-h-screen"
+                style={{
+                  paddingTop: 'calc(env(safe-area-inset-top) + 6px + 56px + 16px)',
+                  paddingBottom: 'calc(64px + env(safe-area-inset-bottom) + 16px)',
+                }}
+              >
+                <div className="mx-auto max-w-screen-md px-4">
+                  {children}
+                </div>
+              </main>
+              
+              <BottomNav />
             </ThemeProvider>
-          </TelegramProvider>
-          <ViewportDebug />
-          <ExpandOverlay />
-        </TelegramViewportProvider>
+          </TelegramViewportProvider>
+        </TelegramProvider>
       </body>
     </html>
-  );
+  )
 }
