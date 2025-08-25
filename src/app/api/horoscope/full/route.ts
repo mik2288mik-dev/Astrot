@@ -72,7 +72,8 @@ export async function POST(req: NextRequest) {
     let birthData = birth;
     if (!birthData && tgId) {
       try {
-        const profileRes = await fetch(`${process.env.NEXTAUTH_URL || 'http://localhost:3000'}/api/profile?tgId=${tgId}`);
+        const base = process.env.NEXTAUTH_URL || `${new URL(req.url).protocol}//${new URL(req.url).host}`;
+        const profileRes = await fetch(`${base}/api/profile?tgId=${tgId}`);
         if (profileRes.ok) {
           const profileData = await profileRes.json();
           if (profileData.profile?.birthDate) {
@@ -148,7 +149,8 @@ export async function POST(req: NextRequest) {
     let profile = null;
     if (tgId) {
       try {
-        const profileRes = await fetch(`${process.env.NEXTAUTH_URL || 'http://localhost:3000'}/api/profile?tgId=${tgId}`);
+        const base = process.env.NEXTAUTH_URL || `${new URL(req.url).protocol}//${new URL(req.url).host}`;
+        const profileRes = await fetch(`${base}/api/profile?tgId=${tgId}`);
         if (profileRes.ok) {
           const profileData = await profileRes.json();
           profile = profileData.profile;
